@@ -538,6 +538,26 @@ class ct03_pinjaman extends cTable {
 				$rswrk->MoveNext();
 			}
 		}
+
+		// Cascade Update detail table 't05_pinjamanjaminan'
+		$bCascadeUpdate = FALSE;
+		$rscascade = array();
+		if (!is_null($rsold) && (isset($rs['id']) && $rsold['id'] <> $rs['id'])) { // Update detail field 'pinjaman_id'
+			$bCascadeUpdate = TRUE;
+			$rscascade['pinjaman_id'] = $rs['id']; 
+		}
+		if ($bCascadeUpdate) {
+			if (!isset($GLOBALS["t05_pinjamanjaminan"])) $GLOBALS["t05_pinjamanjaminan"] = new ct05_pinjamanjaminan();
+			$rswrk = $GLOBALS["t05_pinjamanjaminan"]->LoadRs("`pinjaman_id` = " . ew_QuotedValue($rsold['id'], EW_DATATYPE_NUMBER, 'DB')); 
+			while ($rswrk && !$rswrk->EOF) {
+				$rskey = array();
+				$fldname = 'id';
+				$rskey[$fldname] = $rswrk->fields[$fldname];
+				$bUpdate = $GLOBALS["t05_pinjamanjaminan"]->Update($rscascade, $rskey, $rswrk->fields);
+				if (!$bUpdate) return FALSE;
+				$rswrk->MoveNext();
+			}
+		}
 		$bUpdate = $conn->Execute($this->UpdateSQL($rs, $where, $curfilter));
 		if ($bUpdate && $this->AuditTrailOnEdit) {
 			$rsaudit = $rs;
@@ -575,6 +595,14 @@ class ct03_pinjaman extends cTable {
 		$rscascade = $GLOBALS["t04_angsuran"]->LoadRs("`pinjaman_id` = " . ew_QuotedValue($rs['id'], EW_DATATYPE_NUMBER, "DB")); 
 		while ($rscascade && !$rscascade->EOF) {
 			$GLOBALS["t04_angsuran"]->Delete($rscascade->fields);
+			$rscascade->MoveNext();
+		}
+
+		// Cascade delete detail table 't05_pinjamanjaminan'
+		if (!isset($GLOBALS["t05_pinjamanjaminan"])) $GLOBALS["t05_pinjamanjaminan"] = new ct05_pinjamanjaminan();
+		$rscascade = $GLOBALS["t05_pinjamanjaminan"]->LoadRs("`pinjaman_id` = " . ew_QuotedValue($rs['id'], EW_DATATYPE_NUMBER, "DB")); 
+		while ($rscascade && !$rscascade->EOF) {
+			$GLOBALS["t05_pinjamanjaminan"]->Delete($rscascade->fields);
 			$rscascade->MoveNext();
 		}
 		$bDelete = $conn->Execute($this->DeleteSQL($rs, $where, $curfilter));
