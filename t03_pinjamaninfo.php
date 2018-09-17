@@ -1087,7 +1087,6 @@ class ct03_pinjaman extends cTable {
 			if ($Doc->Horizontal) { // Horizontal format, write header
 				$Doc->BeginExportRow();
 				if ($ExportPageType == "view") {
-					if ($this->id->Exportable) $Doc->ExportCaption($this->id);
 					if ($this->NoKontrak->Exportable) $Doc->ExportCaption($this->NoKontrak);
 					if ($this->TglKontrak->Exportable) $Doc->ExportCaption($this->TglKontrak);
 					if ($this->nasabah_id->Exportable) $Doc->ExportCaption($this->nasabah_id);
@@ -1145,7 +1144,6 @@ class ct03_pinjaman extends cTable {
 				if (!$Doc->ExportCustom) {
 					$Doc->BeginExportRow($RowCnt); // Allow CSS styles if enabled
 					if ($ExportPageType == "view") {
-						if ($this->id->Exportable) $Doc->ExportField($this->id);
 						if ($this->NoKontrak->Exportable) $Doc->ExportField($this->NoKontrak);
 						if ($this->TglKontrak->Exportable) $Doc->ExportField($this->TglKontrak);
 						if ($this->nasabah_id->Exportable) $Doc->ExportField($this->nasabah_id);

@@ -282,8 +282,6 @@ class ct03_pinjaman_delete extends ct03_pinjaman {
 			$Security->UserID_Loaded();
 		}
 		$this->CurrentAction = (@$_GET["a"] <> "") ? $_GET["a"] : @$_POST["a_list"]; // Set up current action
-		$this->id->SetVisibility();
-		$this->id->Visible = !$this->IsAdd() && !$this->IsCopy() && !$this->IsGridAdd();
 		$this->NoKontrak->SetVisibility();
 		$this->TglKontrak->SetVisibility();
 		$this->nasabah_id->SetVisibility();
@@ -653,11 +651,6 @@ class ct03_pinjaman_delete extends ct03_pinjaman {
 		$this->NoKontrakRefTo->ViewValue = $this->NoKontrakRefTo->CurrentValue;
 		$this->NoKontrakRefTo->ViewCustomAttributes = "";
 
-			// id
-			$this->id->LinkCustomAttributes = "";
-			$this->id->HrefValue = "";
-			$this->id->TooltipValue = "";
-
 			// NoKontrak
 			$this->NoKontrak->LinkCustomAttributes = "";
 			$this->NoKontrak->HrefValue = "";
@@ -971,9 +964,6 @@ $t03_pinjaman_delete->ShowMessage();
 <?php echo $t03_pinjaman->TableCustomInnerHtml ?>
 	<thead>
 	<tr class="ewTableHeader">
-<?php if ($t03_pinjaman->id->Visible) { // id ?>
-		<th><span id="elh_t03_pinjaman_id" class="t03_pinjaman_id"><?php echo $t03_pinjaman->id->FldCaption() ?></span></th>
-<?php } ?>
 <?php if ($t03_pinjaman->NoKontrak->Visible) { // NoKontrak ?>
 		<th><span id="elh_t03_pinjaman_NoKontrak" class="t03_pinjaman_NoKontrak"><?php echo $t03_pinjaman->NoKontrak->FldCaption() ?></span></th>
 <?php } ?>
@@ -1031,14 +1021,6 @@ while (!$t03_pinjaman_delete->Recordset->EOF) {
 	$t03_pinjaman_delete->RenderRow();
 ?>
 	<tr<?php echo $t03_pinjaman->RowAttributes() ?>>
-<?php if ($t03_pinjaman->id->Visible) { // id ?>
-		<td<?php echo $t03_pinjaman->id->CellAttributes() ?>>
-<span id="el<?php echo $t03_pinjaman_delete->RowCnt ?>_t03_pinjaman_id" class="t03_pinjaman_id">
-<span<?php echo $t03_pinjaman->id->ViewAttributes() ?>>
-<?php echo $t03_pinjaman->id->ListViewValue() ?></span>
-</span>
-</td>
-<?php } ?>
 <?php if ($t03_pinjaman->NoKontrak->Visible) { // NoKontrak ?>
 		<td<?php echo $t03_pinjaman->NoKontrak->CellAttributes() ?>>
 <span id="el<?php echo $t03_pinjaman_delete->RowCnt ?>_t03_pinjaman_NoKontrak" class="t03_pinjaman_NoKontrak">

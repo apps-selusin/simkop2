@@ -287,8 +287,6 @@ class ct03_pinjaman_edit extends ct03_pinjaman {
 		// Create form object
 		$objForm = new cFormObj();
 		$this->CurrentAction = (@$_GET["a"] <> "") ? $_GET["a"] : @$_POST["a_list"]; // Set up current action
-		$this->id->SetVisibility();
-		$this->id->Visible = !$this->IsAdd() && !$this->IsCopy() && !$this->IsGridAdd();
 		$this->NoKontrak->SetVisibility();
 		$this->TglKontrak->SetVisibility();
 		$this->nasabah_id->SetVisibility();
@@ -584,8 +582,6 @@ class ct03_pinjaman_edit extends ct03_pinjaman {
 
 		// Load from form
 		global $objForm;
-		if (!$this->id->FldIsDetailKey)
-			$this->id->setFormValue($objForm->GetValue("x_id"));
 		if (!$this->NoKontrak->FldIsDetailKey) {
 			$this->NoKontrak->setFormValue($objForm->GetValue("x_NoKontrak"));
 		}
@@ -623,6 +619,8 @@ class ct03_pinjaman_edit extends ct03_pinjaman {
 		if (!$this->NoKontrakRefTo->FldIsDetailKey) {
 			$this->NoKontrakRefTo->setFormValue($objForm->GetValue("x_NoKontrakRefTo"));
 		}
+		if (!$this->id->FldIsDetailKey)
+			$this->id->setFormValue($objForm->GetValue("x_id"));
 	}
 
 	// Restore form values
@@ -883,11 +881,6 @@ class ct03_pinjaman_edit extends ct03_pinjaman {
 		$this->NoKontrakRefTo->ViewValue = $this->NoKontrakRefTo->CurrentValue;
 		$this->NoKontrakRefTo->ViewCustomAttributes = "";
 
-			// id
-			$this->id->LinkCustomAttributes = "";
-			$this->id->HrefValue = "";
-			$this->id->TooltipValue = "";
-
 			// NoKontrak
 			$this->NoKontrak->LinkCustomAttributes = "";
 			$this->NoKontrak->HrefValue = "";
@@ -948,12 +941,6 @@ class ct03_pinjaman_edit extends ct03_pinjaman {
 			$this->NoKontrakRefTo->HrefValue = "";
 			$this->NoKontrakRefTo->TooltipValue = "";
 		} elseif ($this->RowType == EW_ROWTYPE_EDIT) { // Edit row
-
-			// id
-			$this->id->EditAttrs["class"] = "form-control";
-			$this->id->EditCustomAttributes = "";
-			$this->id->EditValue = $this->id->CurrentValue;
-			$this->id->ViewCustomAttributes = "";
 
 			// NoKontrak
 			$this->NoKontrak->EditAttrs["class"] = "form-control";
@@ -1055,12 +1042,8 @@ class ct03_pinjaman_edit extends ct03_pinjaman {
 			$this->NoKontrakRefTo->PlaceHolder = ew_RemoveHtml($this->NoKontrakRefTo->FldCaption());
 
 			// Edit refer script
-			// id
-
-			$this->id->LinkCustomAttributes = "";
-			$this->id->HrefValue = "";
-
 			// NoKontrak
+
 			$this->NoKontrak->LinkCustomAttributes = "";
 			$this->NoKontrak->HrefValue = "";
 
@@ -1710,18 +1693,6 @@ $t03_pinjaman_edit->ShowMessage();
 <input type="hidden" name="modal" value="1">
 <?php } ?>
 <div>
-<?php if ($t03_pinjaman->id->Visible) { // id ?>
-	<div id="r_id" class="form-group">
-		<label id="elh_t03_pinjaman_id" class="col-sm-2 control-label ewLabel"><?php echo $t03_pinjaman->id->FldCaption() ?></label>
-		<div class="col-sm-10"><div<?php echo $t03_pinjaman->id->CellAttributes() ?>>
-<span id="el_t03_pinjaman_id">
-<span<?php echo $t03_pinjaman->id->ViewAttributes() ?>>
-<p class="form-control-static"><?php echo $t03_pinjaman->id->EditValue ?></p></span>
-</span>
-<input type="hidden" data-table="t03_pinjaman" data-field="x_id" name="x_id" id="x_id" value="<?php echo ew_HtmlEncode($t03_pinjaman->id->CurrentValue) ?>">
-<?php echo $t03_pinjaman->id->CustomMsg ?></div></div>
-	</div>
-<?php } ?>
 <?php if ($t03_pinjaman->NoKontrak->Visible) { // NoKontrak ?>
 	<div id="r_NoKontrak" class="form-group">
 		<label id="elh_t03_pinjaman_NoKontrak" for="x_NoKontrak" class="col-sm-2 control-label ewLabel"><?php echo $t03_pinjaman->NoKontrak->FldCaption() ?><?php echo $Language->Phrase("FieldRequiredIndicator") ?></label>
@@ -1857,6 +1828,7 @@ ew_CreateCalendar("ft03_pinjamanedit", "x_TglKontrak", 7);
 	</div>
 <?php } ?>
 </div>
+<input type="hidden" data-table="t03_pinjaman" data-field="x_id" name="x_id" id="x_id" value="<?php echo ew_HtmlEncode($t03_pinjaman->id->CurrentValue) ?>">
 <?php if ($t03_pinjaman->getCurrentDetailTable() <> "") { ?>
 <?php
 	$t03_pinjaman_edit->DetailPages->ValidKeys = explode(",", $t03_pinjaman->getCurrentDetailTable());

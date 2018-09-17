@@ -385,8 +385,6 @@ class ct03_pinjaman_view extends ct03_pinjaman {
 
 		// Setup export options
 		$this->SetupExportOptions();
-		$this->id->SetVisibility();
-		$this->id->Visible = !$this->IsAdd() && !$this->IsCopy() && !$this->IsGridAdd();
 		$this->NoKontrak->SetVisibility();
 		$this->TglKontrak->SetVisibility();
 		$this->nasabah_id->SetVisibility();
@@ -1018,11 +1016,6 @@ class ct03_pinjaman_view extends ct03_pinjaman {
 		// NoKontrakRefTo
 		$this->NoKontrakRefTo->ViewValue = $this->NoKontrakRefTo->CurrentValue;
 		$this->NoKontrakRefTo->ViewCustomAttributes = "";
-
-			// id
-			$this->id->LinkCustomAttributes = "";
-			$this->id->HrefValue = "";
-			$this->id->TooltipValue = "";
 
 			// NoKontrak
 			$this->NoKontrak->LinkCustomAttributes = "";
@@ -1669,17 +1662,6 @@ $t03_pinjaman_view->ShowMessage();
 <input type="hidden" name="modal" value="1">
 <?php } ?>
 <table class="table table-bordered table-striped ewViewTable">
-<?php if ($t03_pinjaman->id->Visible) { // id ?>
-	<tr id="r_id">
-		<td><span id="elh_t03_pinjaman_id"><?php echo $t03_pinjaman->id->FldCaption() ?></span></td>
-		<td data-name="id"<?php echo $t03_pinjaman->id->CellAttributes() ?>>
-<span id="el_t03_pinjaman_id">
-<span<?php echo $t03_pinjaman->id->ViewAttributes() ?>>
-<?php echo $t03_pinjaman->id->ViewValue ?></span>
-</span>
-</td>
-	</tr>
-<?php } ?>
 <?php if ($t03_pinjaman->NoKontrak->Visible) { // NoKontrak ?>
 	<tr id="r_NoKontrak">
 		<td><span id="elh_t03_pinjaman_NoKontrak"><?php echo $t03_pinjaman->NoKontrak->FldCaption() ?></span></td>

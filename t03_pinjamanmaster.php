@@ -1,6 +1,5 @@
 <?php
 
-// id
 // NoKontrak
 // TglKontrak
 // nasabah_id
@@ -20,17 +19,6 @@
 <table id="tbl_t03_pinjamanmaster" class="table table-bordered table-striped ewViewTable">
 <?php echo $t03_pinjaman->TableCustomInnerHtml ?>
 	<tbody>
-<?php if ($t03_pinjaman->id->Visible) { // id ?>
-		<tr id="r_id">
-			<td><?php echo $t03_pinjaman->id->FldCaption() ?></td>
-			<td<?php echo $t03_pinjaman->id->CellAttributes() ?>>
-<span id="el_t03_pinjaman_id">
-<span<?php echo $t03_pinjaman->id->ViewAttributes() ?>>
-<?php echo $t03_pinjaman->id->ListViewValue() ?></span>
-</span>
-</td>
-		</tr>
-<?php } ?>
 <?php if ($t03_pinjaman->NoKontrak->Visible) { // NoKontrak ?>
 		<tr id="r_NoKontrak">
 			<td><?php echo $t03_pinjaman->NoKontrak->FldCaption() ?></td>
