@@ -1128,7 +1128,7 @@ class ct96_employees extends cTable {
 		$this->ReportsTo->PlaceHolder = ew_RemoveHtml($this->ReportsTo->FldCaption());
 
 		// Password
-		$this->Password->EditAttrs["class"] = "form-control ewPasswordStrength";
+		$this->Password->EditAttrs["class"] = "form-control";
 		$this->Password->EditCustomAttributes = "";
 		$this->Password->EditValue = $this->Password->CurrentValue;
 		$this->Password->PlaceHolder = ew_RemoveHtml($this->Password->FldCaption());
@@ -1184,7 +1184,6 @@ class ct96_employees extends cTable {
 			if ($Doc->Horizontal) { // Horizontal format, write header
 				$Doc->BeginExportRow();
 				if ($ExportPageType == "view") {
-					if ($this->EmployeeID->Exportable) $Doc->ExportCaption($this->EmployeeID);
 					if ($this->LastName->Exportable) $Doc->ExportCaption($this->LastName);
 					if ($this->FirstName->Exportable) $Doc->ExportCaption($this->FirstName);
 					if ($this->Title->Exportable) $Doc->ExportCaption($this->Title);
@@ -1260,7 +1259,6 @@ class ct96_employees extends cTable {
 				if (!$Doc->ExportCustom) {
 					$Doc->BeginExportRow($RowCnt); // Allow CSS styles if enabled
 					if ($ExportPageType == "view") {
-						if ($this->EmployeeID->Exportable) $Doc->ExportField($this->EmployeeID);
 						if ($this->LastName->Exportable) $Doc->ExportField($this->LastName);
 						if ($this->FirstName->Exportable) $Doc->ExportField($this->FirstName);
 						if ($this->Title->Exportable) $Doc->ExportField($this->Title);

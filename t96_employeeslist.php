@@ -410,25 +410,9 @@ class ct96_employees_list extends ct96_employees {
 
 		// Setup export options
 		$this->SetupExportOptions();
-		$this->EmployeeID->SetVisibility();
-		$this->EmployeeID->Visible = !$this->IsAdd() && !$this->IsCopy() && !$this->IsGridAdd();
 		$this->LastName->SetVisibility();
 		$this->FirstName->SetVisibility();
 		$this->Title->SetVisibility();
-		$this->TitleOfCourtesy->SetVisibility();
-		$this->BirthDate->SetVisibility();
-		$this->HireDate->SetVisibility();
-		$this->Address->SetVisibility();
-		$this->City->SetVisibility();
-		$this->Region->SetVisibility();
-		$this->PostalCode->SetVisibility();
-		$this->Country->SetVisibility();
-		$this->HomePhone->SetVisibility();
-		$this->Extension->SetVisibility();
-		$this->_Email->SetVisibility();
-		$this->Photo->SetVisibility();
-		$this->ReportsTo->SetVisibility();
-		$this->Password->SetVisibility();
 		$this->UserLevel->SetVisibility();
 		$this->Username->SetVisibility();
 		$this->Activated->SetVisibility();
@@ -1424,24 +1408,9 @@ class ct96_employees_list extends ct96_employees {
 		if (@$_GET["order"] <> "") {
 			$this->CurrentOrder = ew_StripSlashes(@$_GET["order"]);
 			$this->CurrentOrderType = @$_GET["ordertype"];
-			$this->UpdateSort($this->EmployeeID, $bCtrl); // EmployeeID
 			$this->UpdateSort($this->LastName, $bCtrl); // LastName
 			$this->UpdateSort($this->FirstName, $bCtrl); // FirstName
 			$this->UpdateSort($this->Title, $bCtrl); // Title
-			$this->UpdateSort($this->TitleOfCourtesy, $bCtrl); // TitleOfCourtesy
-			$this->UpdateSort($this->BirthDate, $bCtrl); // BirthDate
-			$this->UpdateSort($this->HireDate, $bCtrl); // HireDate
-			$this->UpdateSort($this->Address, $bCtrl); // Address
-			$this->UpdateSort($this->City, $bCtrl); // City
-			$this->UpdateSort($this->Region, $bCtrl); // Region
-			$this->UpdateSort($this->PostalCode, $bCtrl); // PostalCode
-			$this->UpdateSort($this->Country, $bCtrl); // Country
-			$this->UpdateSort($this->HomePhone, $bCtrl); // HomePhone
-			$this->UpdateSort($this->Extension, $bCtrl); // Extension
-			$this->UpdateSort($this->_Email, $bCtrl); // Email
-			$this->UpdateSort($this->Photo, $bCtrl); // Photo
-			$this->UpdateSort($this->ReportsTo, $bCtrl); // ReportsTo
-			$this->UpdateSort($this->Password, $bCtrl); // Password
 			$this->UpdateSort($this->UserLevel, $bCtrl); // UserLevel
 			$this->UpdateSort($this->Username, $bCtrl); // Username
 			$this->UpdateSort($this->Activated, $bCtrl); // Activated
@@ -1477,24 +1446,9 @@ class ct96_employees_list extends ct96_employees {
 			if ($this->Command == "resetsort") {
 				$sOrderBy = "";
 				$this->setSessionOrderBy($sOrderBy);
-				$this->EmployeeID->setSort("");
 				$this->LastName->setSort("");
 				$this->FirstName->setSort("");
 				$this->Title->setSort("");
-				$this->TitleOfCourtesy->setSort("");
-				$this->BirthDate->setSort("");
-				$this->HireDate->setSort("");
-				$this->Address->setSort("");
-				$this->City->setSort("");
-				$this->Region->setSort("");
-				$this->PostalCode->setSort("");
-				$this->Country->setSort("");
-				$this->HomePhone->setSort("");
-				$this->Extension->setSort("");
-				$this->_Email->setSort("");
-				$this->Photo->setSort("");
-				$this->ReportsTo->setSort("");
-				$this->Password->setSort("");
 				$this->UserLevel->setSort("");
 				$this->Username->setSort("");
 				$this->Activated->setSort("");
@@ -1551,6 +1505,14 @@ class ct96_employees_list extends ct96_employees {
 		$item->ShowInDropDown = FALSE;
 		$item->ShowInButtonGroup = FALSE;
 
+		// "sequence"
+		$item = &$this->ListOptions->Add("sequence");
+		$item->CssStyle = "white-space: nowrap;";
+		$item->Visible = TRUE;
+		$item->OnLeft = TRUE; // Always on left
+		$item->ShowInDropDown = FALSE;
+		$item->ShowInButtonGroup = FALSE;
+
 		// Drop down button for ListOptions
 		$this->ListOptions->UseImageAndText = TRUE;
 		$this->ListOptions->UseDropDownButton = FALSE;
@@ -1571,6 +1533,10 @@ class ct96_employees_list extends ct96_employees {
 	function RenderListOptions() {
 		global $Security, $Language, $objForm;
 		$this->ListOptions->LoadDefault();
+
+		// "sequence"
+		$oListOpt = &$this->ListOptions->Items["sequence"];
+		$oListOpt->Body = ew_FormatSeqNo($this->RecCnt);
 
 		// "view"
 		$oListOpt = &$this->ListOptions->Items["view"];
@@ -2303,11 +2269,6 @@ class ct96_employees_list extends ct96_employees {
 		}
 		$this->Activated->ViewCustomAttributes = "";
 
-			// EmployeeID
-			$this->EmployeeID->LinkCustomAttributes = "";
-			$this->EmployeeID->HrefValue = "";
-			$this->EmployeeID->TooltipValue = "";
-
 			// LastName
 			$this->LastName->LinkCustomAttributes = "";
 			$this->LastName->HrefValue = "";
@@ -2322,76 +2283,6 @@ class ct96_employees_list extends ct96_employees {
 			$this->Title->LinkCustomAttributes = "";
 			$this->Title->HrefValue = "";
 			$this->Title->TooltipValue = "";
-
-			// TitleOfCourtesy
-			$this->TitleOfCourtesy->LinkCustomAttributes = "";
-			$this->TitleOfCourtesy->HrefValue = "";
-			$this->TitleOfCourtesy->TooltipValue = "";
-
-			// BirthDate
-			$this->BirthDate->LinkCustomAttributes = "";
-			$this->BirthDate->HrefValue = "";
-			$this->BirthDate->TooltipValue = "";
-
-			// HireDate
-			$this->HireDate->LinkCustomAttributes = "";
-			$this->HireDate->HrefValue = "";
-			$this->HireDate->TooltipValue = "";
-
-			// Address
-			$this->Address->LinkCustomAttributes = "";
-			$this->Address->HrefValue = "";
-			$this->Address->TooltipValue = "";
-
-			// City
-			$this->City->LinkCustomAttributes = "";
-			$this->City->HrefValue = "";
-			$this->City->TooltipValue = "";
-
-			// Region
-			$this->Region->LinkCustomAttributes = "";
-			$this->Region->HrefValue = "";
-			$this->Region->TooltipValue = "";
-
-			// PostalCode
-			$this->PostalCode->LinkCustomAttributes = "";
-			$this->PostalCode->HrefValue = "";
-			$this->PostalCode->TooltipValue = "";
-
-			// Country
-			$this->Country->LinkCustomAttributes = "";
-			$this->Country->HrefValue = "";
-			$this->Country->TooltipValue = "";
-
-			// HomePhone
-			$this->HomePhone->LinkCustomAttributes = "";
-			$this->HomePhone->HrefValue = "";
-			$this->HomePhone->TooltipValue = "";
-
-			// Extension
-			$this->Extension->LinkCustomAttributes = "";
-			$this->Extension->HrefValue = "";
-			$this->Extension->TooltipValue = "";
-
-			// Email
-			$this->_Email->LinkCustomAttributes = "";
-			$this->_Email->HrefValue = "";
-			$this->_Email->TooltipValue = "";
-
-			// Photo
-			$this->Photo->LinkCustomAttributes = "";
-			$this->Photo->HrefValue = "";
-			$this->Photo->TooltipValue = "";
-
-			// ReportsTo
-			$this->ReportsTo->LinkCustomAttributes = "";
-			$this->ReportsTo->HrefValue = "";
-			$this->ReportsTo->TooltipValue = "";
-
-			// Password
-			$this->Password->LinkCustomAttributes = "";
-			$this->Password->HrefValue = "";
-			$this->Password->TooltipValue = "";
 
 			// UserLevel
 			$this->UserLevel->LinkCustomAttributes = "";
@@ -2408,18 +2299,6 @@ class ct96_employees_list extends ct96_employees {
 			$this->Activated->HrefValue = "";
 			$this->Activated->TooltipValue = "";
 		} elseif ($this->RowType == EW_ROWTYPE_SEARCH) { // Search row
-
-			// EmployeeID
-			$this->EmployeeID->EditAttrs["class"] = "form-control";
-			$this->EmployeeID->EditCustomAttributes = "";
-			if (!$Security->IsAdmin() && $Security->IsLoggedIn() && !$this->UserIDAllow($this->CurrentAction)) { // Non system admin
-				$this->EmployeeID->AdvancedSearch->SearchValue = CurrentUserID();
-			$this->EmployeeID->EditValue = $this->EmployeeID->AdvancedSearch->SearchValue;
-			$this->EmployeeID->ViewCustomAttributes = "";
-			} else {
-			$this->EmployeeID->EditValue = ew_HtmlEncode($this->EmployeeID->AdvancedSearch->SearchValue);
-			$this->EmployeeID->PlaceHolder = ew_RemoveHtml($this->EmployeeID->FldCaption());
-			}
 
 			// LastName
 			$this->LastName->EditAttrs["class"] = "form-control";
@@ -2438,90 +2317,6 @@ class ct96_employees_list extends ct96_employees {
 			$this->Title->EditCustomAttributes = "";
 			$this->Title->EditValue = ew_HtmlEncode($this->Title->AdvancedSearch->SearchValue);
 			$this->Title->PlaceHolder = ew_RemoveHtml($this->Title->FldCaption());
-
-			// TitleOfCourtesy
-			$this->TitleOfCourtesy->EditAttrs["class"] = "form-control";
-			$this->TitleOfCourtesy->EditCustomAttributes = "";
-			$this->TitleOfCourtesy->EditValue = ew_HtmlEncode($this->TitleOfCourtesy->AdvancedSearch->SearchValue);
-			$this->TitleOfCourtesy->PlaceHolder = ew_RemoveHtml($this->TitleOfCourtesy->FldCaption());
-
-			// BirthDate
-			$this->BirthDate->EditAttrs["class"] = "form-control";
-			$this->BirthDate->EditCustomAttributes = "";
-			$this->BirthDate->EditValue = ew_HtmlEncode(ew_FormatDateTime(ew_UnFormatDateTime($this->BirthDate->AdvancedSearch->SearchValue, 0), 8));
-			$this->BirthDate->PlaceHolder = ew_RemoveHtml($this->BirthDate->FldCaption());
-
-			// HireDate
-			$this->HireDate->EditAttrs["class"] = "form-control";
-			$this->HireDate->EditCustomAttributes = "";
-			$this->HireDate->EditValue = ew_HtmlEncode(ew_FormatDateTime(ew_UnFormatDateTime($this->HireDate->AdvancedSearch->SearchValue, 0), 8));
-			$this->HireDate->PlaceHolder = ew_RemoveHtml($this->HireDate->FldCaption());
-
-			// Address
-			$this->Address->EditAttrs["class"] = "form-control";
-			$this->Address->EditCustomAttributes = "";
-			$this->Address->EditValue = ew_HtmlEncode($this->Address->AdvancedSearch->SearchValue);
-			$this->Address->PlaceHolder = ew_RemoveHtml($this->Address->FldCaption());
-
-			// City
-			$this->City->EditAttrs["class"] = "form-control";
-			$this->City->EditCustomAttributes = "";
-			$this->City->EditValue = ew_HtmlEncode($this->City->AdvancedSearch->SearchValue);
-			$this->City->PlaceHolder = ew_RemoveHtml($this->City->FldCaption());
-
-			// Region
-			$this->Region->EditAttrs["class"] = "form-control";
-			$this->Region->EditCustomAttributes = "";
-			$this->Region->EditValue = ew_HtmlEncode($this->Region->AdvancedSearch->SearchValue);
-			$this->Region->PlaceHolder = ew_RemoveHtml($this->Region->FldCaption());
-
-			// PostalCode
-			$this->PostalCode->EditAttrs["class"] = "form-control";
-			$this->PostalCode->EditCustomAttributes = "";
-			$this->PostalCode->EditValue = ew_HtmlEncode($this->PostalCode->AdvancedSearch->SearchValue);
-			$this->PostalCode->PlaceHolder = ew_RemoveHtml($this->PostalCode->FldCaption());
-
-			// Country
-			$this->Country->EditAttrs["class"] = "form-control";
-			$this->Country->EditCustomAttributes = "";
-			$this->Country->EditValue = ew_HtmlEncode($this->Country->AdvancedSearch->SearchValue);
-			$this->Country->PlaceHolder = ew_RemoveHtml($this->Country->FldCaption());
-
-			// HomePhone
-			$this->HomePhone->EditAttrs["class"] = "form-control";
-			$this->HomePhone->EditCustomAttributes = "";
-			$this->HomePhone->EditValue = ew_HtmlEncode($this->HomePhone->AdvancedSearch->SearchValue);
-			$this->HomePhone->PlaceHolder = ew_RemoveHtml($this->HomePhone->FldCaption());
-
-			// Extension
-			$this->Extension->EditAttrs["class"] = "form-control";
-			$this->Extension->EditCustomAttributes = "";
-			$this->Extension->EditValue = ew_HtmlEncode($this->Extension->AdvancedSearch->SearchValue);
-			$this->Extension->PlaceHolder = ew_RemoveHtml($this->Extension->FldCaption());
-
-			// Email
-			$this->_Email->EditAttrs["class"] = "form-control";
-			$this->_Email->EditCustomAttributes = "";
-			$this->_Email->EditValue = ew_HtmlEncode($this->_Email->AdvancedSearch->SearchValue);
-			$this->_Email->PlaceHolder = ew_RemoveHtml($this->_Email->FldCaption());
-
-			// Photo
-			$this->Photo->EditAttrs["class"] = "form-control";
-			$this->Photo->EditCustomAttributes = "";
-			$this->Photo->EditValue = ew_HtmlEncode($this->Photo->AdvancedSearch->SearchValue);
-			$this->Photo->PlaceHolder = ew_RemoveHtml($this->Photo->FldCaption());
-
-			// ReportsTo
-			$this->ReportsTo->EditAttrs["class"] = "form-control";
-			$this->ReportsTo->EditCustomAttributes = "";
-			$this->ReportsTo->EditValue = ew_HtmlEncode($this->ReportsTo->AdvancedSearch->SearchValue);
-			$this->ReportsTo->PlaceHolder = ew_RemoveHtml($this->ReportsTo->FldCaption());
-
-			// Password
-			$this->Password->EditAttrs["class"] = "form-control ewPasswordStrength";
-			$this->Password->EditCustomAttributes = "";
-			$this->Password->EditValue = ew_HtmlEncode($this->Password->AdvancedSearch->SearchValue);
-			$this->Password->PlaceHolder = ew_RemoveHtml($this->Password->FldCaption());
 
 			// UserLevel
 			$this->UserLevel->EditAttrs["class"] = "form-control";
@@ -3344,15 +3139,6 @@ $t96_employees_list->RenderListOptions();
 // Render list options (header, left)
 $t96_employees_list->ListOptions->Render("header", "left");
 ?>
-<?php if ($t96_employees->EmployeeID->Visible) { // EmployeeID ?>
-	<?php if ($t96_employees->SortUrl($t96_employees->EmployeeID) == "") { ?>
-		<th data-name="EmployeeID"><div id="elh_t96_employees_EmployeeID" class="t96_employees_EmployeeID"><div class="ewTableHeaderCaption"><?php echo $t96_employees->EmployeeID->FldCaption() ?></div></div></th>
-	<?php } else { ?>
-		<th data-name="EmployeeID"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t96_employees->SortUrl($t96_employees->EmployeeID) ?>',2);"><div id="elh_t96_employees_EmployeeID" class="t96_employees_EmployeeID">
-			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t96_employees->EmployeeID->FldCaption() ?></span><span class="ewTableHeaderSort"><?php if ($t96_employees->EmployeeID->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t96_employees->EmployeeID->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
-        </div></div></th>
-	<?php } ?>
-<?php } ?>		
 <?php if ($t96_employees->LastName->Visible) { // LastName ?>
 	<?php if ($t96_employees->SortUrl($t96_employees->LastName) == "") { ?>
 		<th data-name="LastName"><div id="elh_t96_employees_LastName" class="t96_employees_LastName"><div class="ewTableHeaderCaption"><?php echo $t96_employees->LastName->FldCaption() ?></div></div></th>
@@ -3377,132 +3163,6 @@ $t96_employees_list->ListOptions->Render("header", "left");
 	<?php } else { ?>
 		<th data-name="Title"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t96_employees->SortUrl($t96_employees->Title) ?>',2);"><div id="elh_t96_employees_Title" class="t96_employees_Title">
 			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t96_employees->Title->FldCaption() ?><?php echo $Language->Phrase("SrchLegend") ?></span><span class="ewTableHeaderSort"><?php if ($t96_employees->Title->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t96_employees->Title->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
-        </div></div></th>
-	<?php } ?>
-<?php } ?>		
-<?php if ($t96_employees->TitleOfCourtesy->Visible) { // TitleOfCourtesy ?>
-	<?php if ($t96_employees->SortUrl($t96_employees->TitleOfCourtesy) == "") { ?>
-		<th data-name="TitleOfCourtesy"><div id="elh_t96_employees_TitleOfCourtesy" class="t96_employees_TitleOfCourtesy"><div class="ewTableHeaderCaption"><?php echo $t96_employees->TitleOfCourtesy->FldCaption() ?></div></div></th>
-	<?php } else { ?>
-		<th data-name="TitleOfCourtesy"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t96_employees->SortUrl($t96_employees->TitleOfCourtesy) ?>',2);"><div id="elh_t96_employees_TitleOfCourtesy" class="t96_employees_TitleOfCourtesy">
-			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t96_employees->TitleOfCourtesy->FldCaption() ?><?php echo $Language->Phrase("SrchLegend") ?></span><span class="ewTableHeaderSort"><?php if ($t96_employees->TitleOfCourtesy->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t96_employees->TitleOfCourtesy->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
-        </div></div></th>
-	<?php } ?>
-<?php } ?>		
-<?php if ($t96_employees->BirthDate->Visible) { // BirthDate ?>
-	<?php if ($t96_employees->SortUrl($t96_employees->BirthDate) == "") { ?>
-		<th data-name="BirthDate"><div id="elh_t96_employees_BirthDate" class="t96_employees_BirthDate"><div class="ewTableHeaderCaption"><?php echo $t96_employees->BirthDate->FldCaption() ?></div></div></th>
-	<?php } else { ?>
-		<th data-name="BirthDate"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t96_employees->SortUrl($t96_employees->BirthDate) ?>',2);"><div id="elh_t96_employees_BirthDate" class="t96_employees_BirthDate">
-			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t96_employees->BirthDate->FldCaption() ?></span><span class="ewTableHeaderSort"><?php if ($t96_employees->BirthDate->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t96_employees->BirthDate->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
-        </div></div></th>
-	<?php } ?>
-<?php } ?>		
-<?php if ($t96_employees->HireDate->Visible) { // HireDate ?>
-	<?php if ($t96_employees->SortUrl($t96_employees->HireDate) == "") { ?>
-		<th data-name="HireDate"><div id="elh_t96_employees_HireDate" class="t96_employees_HireDate"><div class="ewTableHeaderCaption"><?php echo $t96_employees->HireDate->FldCaption() ?></div></div></th>
-	<?php } else { ?>
-		<th data-name="HireDate"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t96_employees->SortUrl($t96_employees->HireDate) ?>',2);"><div id="elh_t96_employees_HireDate" class="t96_employees_HireDate">
-			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t96_employees->HireDate->FldCaption() ?></span><span class="ewTableHeaderSort"><?php if ($t96_employees->HireDate->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t96_employees->HireDate->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
-        </div></div></th>
-	<?php } ?>
-<?php } ?>		
-<?php if ($t96_employees->Address->Visible) { // Address ?>
-	<?php if ($t96_employees->SortUrl($t96_employees->Address) == "") { ?>
-		<th data-name="Address"><div id="elh_t96_employees_Address" class="t96_employees_Address"><div class="ewTableHeaderCaption"><?php echo $t96_employees->Address->FldCaption() ?></div></div></th>
-	<?php } else { ?>
-		<th data-name="Address"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t96_employees->SortUrl($t96_employees->Address) ?>',2);"><div id="elh_t96_employees_Address" class="t96_employees_Address">
-			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t96_employees->Address->FldCaption() ?><?php echo $Language->Phrase("SrchLegend") ?></span><span class="ewTableHeaderSort"><?php if ($t96_employees->Address->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t96_employees->Address->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
-        </div></div></th>
-	<?php } ?>
-<?php } ?>		
-<?php if ($t96_employees->City->Visible) { // City ?>
-	<?php if ($t96_employees->SortUrl($t96_employees->City) == "") { ?>
-		<th data-name="City"><div id="elh_t96_employees_City" class="t96_employees_City"><div class="ewTableHeaderCaption"><?php echo $t96_employees->City->FldCaption() ?></div></div></th>
-	<?php } else { ?>
-		<th data-name="City"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t96_employees->SortUrl($t96_employees->City) ?>',2);"><div id="elh_t96_employees_City" class="t96_employees_City">
-			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t96_employees->City->FldCaption() ?><?php echo $Language->Phrase("SrchLegend") ?></span><span class="ewTableHeaderSort"><?php if ($t96_employees->City->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t96_employees->City->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
-        </div></div></th>
-	<?php } ?>
-<?php } ?>		
-<?php if ($t96_employees->Region->Visible) { // Region ?>
-	<?php if ($t96_employees->SortUrl($t96_employees->Region) == "") { ?>
-		<th data-name="Region"><div id="elh_t96_employees_Region" class="t96_employees_Region"><div class="ewTableHeaderCaption"><?php echo $t96_employees->Region->FldCaption() ?></div></div></th>
-	<?php } else { ?>
-		<th data-name="Region"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t96_employees->SortUrl($t96_employees->Region) ?>',2);"><div id="elh_t96_employees_Region" class="t96_employees_Region">
-			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t96_employees->Region->FldCaption() ?><?php echo $Language->Phrase("SrchLegend") ?></span><span class="ewTableHeaderSort"><?php if ($t96_employees->Region->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t96_employees->Region->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
-        </div></div></th>
-	<?php } ?>
-<?php } ?>		
-<?php if ($t96_employees->PostalCode->Visible) { // PostalCode ?>
-	<?php if ($t96_employees->SortUrl($t96_employees->PostalCode) == "") { ?>
-		<th data-name="PostalCode"><div id="elh_t96_employees_PostalCode" class="t96_employees_PostalCode"><div class="ewTableHeaderCaption"><?php echo $t96_employees->PostalCode->FldCaption() ?></div></div></th>
-	<?php } else { ?>
-		<th data-name="PostalCode"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t96_employees->SortUrl($t96_employees->PostalCode) ?>',2);"><div id="elh_t96_employees_PostalCode" class="t96_employees_PostalCode">
-			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t96_employees->PostalCode->FldCaption() ?><?php echo $Language->Phrase("SrchLegend") ?></span><span class="ewTableHeaderSort"><?php if ($t96_employees->PostalCode->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t96_employees->PostalCode->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
-        </div></div></th>
-	<?php } ?>
-<?php } ?>		
-<?php if ($t96_employees->Country->Visible) { // Country ?>
-	<?php if ($t96_employees->SortUrl($t96_employees->Country) == "") { ?>
-		<th data-name="Country"><div id="elh_t96_employees_Country" class="t96_employees_Country"><div class="ewTableHeaderCaption"><?php echo $t96_employees->Country->FldCaption() ?></div></div></th>
-	<?php } else { ?>
-		<th data-name="Country"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t96_employees->SortUrl($t96_employees->Country) ?>',2);"><div id="elh_t96_employees_Country" class="t96_employees_Country">
-			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t96_employees->Country->FldCaption() ?><?php echo $Language->Phrase("SrchLegend") ?></span><span class="ewTableHeaderSort"><?php if ($t96_employees->Country->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t96_employees->Country->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
-        </div></div></th>
-	<?php } ?>
-<?php } ?>		
-<?php if ($t96_employees->HomePhone->Visible) { // HomePhone ?>
-	<?php if ($t96_employees->SortUrl($t96_employees->HomePhone) == "") { ?>
-		<th data-name="HomePhone"><div id="elh_t96_employees_HomePhone" class="t96_employees_HomePhone"><div class="ewTableHeaderCaption"><?php echo $t96_employees->HomePhone->FldCaption() ?></div></div></th>
-	<?php } else { ?>
-		<th data-name="HomePhone"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t96_employees->SortUrl($t96_employees->HomePhone) ?>',2);"><div id="elh_t96_employees_HomePhone" class="t96_employees_HomePhone">
-			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t96_employees->HomePhone->FldCaption() ?><?php echo $Language->Phrase("SrchLegend") ?></span><span class="ewTableHeaderSort"><?php if ($t96_employees->HomePhone->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t96_employees->HomePhone->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
-        </div></div></th>
-	<?php } ?>
-<?php } ?>		
-<?php if ($t96_employees->Extension->Visible) { // Extension ?>
-	<?php if ($t96_employees->SortUrl($t96_employees->Extension) == "") { ?>
-		<th data-name="Extension"><div id="elh_t96_employees_Extension" class="t96_employees_Extension"><div class="ewTableHeaderCaption"><?php echo $t96_employees->Extension->FldCaption() ?></div></div></th>
-	<?php } else { ?>
-		<th data-name="Extension"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t96_employees->SortUrl($t96_employees->Extension) ?>',2);"><div id="elh_t96_employees_Extension" class="t96_employees_Extension">
-			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t96_employees->Extension->FldCaption() ?><?php echo $Language->Phrase("SrchLegend") ?></span><span class="ewTableHeaderSort"><?php if ($t96_employees->Extension->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t96_employees->Extension->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
-        </div></div></th>
-	<?php } ?>
-<?php } ?>		
-<?php if ($t96_employees->_Email->Visible) { // Email ?>
-	<?php if ($t96_employees->SortUrl($t96_employees->_Email) == "") { ?>
-		<th data-name="_Email"><div id="elh_t96_employees__Email" class="t96_employees__Email"><div class="ewTableHeaderCaption"><?php echo $t96_employees->_Email->FldCaption() ?></div></div></th>
-	<?php } else { ?>
-		<th data-name="_Email"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t96_employees->SortUrl($t96_employees->_Email) ?>',2);"><div id="elh_t96_employees__Email" class="t96_employees__Email">
-			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t96_employees->_Email->FldCaption() ?><?php echo $Language->Phrase("SrchLegend") ?></span><span class="ewTableHeaderSort"><?php if ($t96_employees->_Email->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t96_employees->_Email->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
-        </div></div></th>
-	<?php } ?>
-<?php } ?>		
-<?php if ($t96_employees->Photo->Visible) { // Photo ?>
-	<?php if ($t96_employees->SortUrl($t96_employees->Photo) == "") { ?>
-		<th data-name="Photo"><div id="elh_t96_employees_Photo" class="t96_employees_Photo"><div class="ewTableHeaderCaption"><?php echo $t96_employees->Photo->FldCaption() ?></div></div></th>
-	<?php } else { ?>
-		<th data-name="Photo"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t96_employees->SortUrl($t96_employees->Photo) ?>',2);"><div id="elh_t96_employees_Photo" class="t96_employees_Photo">
-			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t96_employees->Photo->FldCaption() ?><?php echo $Language->Phrase("SrchLegend") ?></span><span class="ewTableHeaderSort"><?php if ($t96_employees->Photo->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t96_employees->Photo->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
-        </div></div></th>
-	<?php } ?>
-<?php } ?>		
-<?php if ($t96_employees->ReportsTo->Visible) { // ReportsTo ?>
-	<?php if ($t96_employees->SortUrl($t96_employees->ReportsTo) == "") { ?>
-		<th data-name="ReportsTo"><div id="elh_t96_employees_ReportsTo" class="t96_employees_ReportsTo"><div class="ewTableHeaderCaption"><?php echo $t96_employees->ReportsTo->FldCaption() ?></div></div></th>
-	<?php } else { ?>
-		<th data-name="ReportsTo"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t96_employees->SortUrl($t96_employees->ReportsTo) ?>',2);"><div id="elh_t96_employees_ReportsTo" class="t96_employees_ReportsTo">
-			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t96_employees->ReportsTo->FldCaption() ?></span><span class="ewTableHeaderSort"><?php if ($t96_employees->ReportsTo->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t96_employees->ReportsTo->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
-        </div></div></th>
-	<?php } ?>
-<?php } ?>		
-<?php if ($t96_employees->Password->Visible) { // Password ?>
-	<?php if ($t96_employees->SortUrl($t96_employees->Password) == "") { ?>
-		<th data-name="Password"><div id="elh_t96_employees_Password" class="t96_employees_Password"><div class="ewTableHeaderCaption"><?php echo $t96_employees->Password->FldCaption() ?></div></div></th>
-	<?php } else { ?>
-		<th data-name="Password"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t96_employees->SortUrl($t96_employees->Password) ?>',2);"><div id="elh_t96_employees_Password" class="t96_employees_Password">
-			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t96_employees->Password->FldCaption() ?><?php echo $Language->Phrase("SrchLegend") ?></span><span class="ewTableHeaderSort"><?php if ($t96_employees->Password->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t96_employees->Password->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
         </div></div></th>
 	<?php } ?>
 <?php } ?>		
@@ -3598,21 +3258,13 @@ while ($t96_employees_list->RecCnt < $t96_employees_list->StopRec) {
 // Render list options (body, left)
 $t96_employees_list->ListOptions->Render("body", "left", $t96_employees_list->RowCnt);
 ?>
-	<?php if ($t96_employees->EmployeeID->Visible) { // EmployeeID ?>
-		<td data-name="EmployeeID"<?php echo $t96_employees->EmployeeID->CellAttributes() ?>>
-<span id="el<?php echo $t96_employees_list->RowCnt ?>_t96_employees_EmployeeID" class="t96_employees_EmployeeID">
-<span<?php echo $t96_employees->EmployeeID->ViewAttributes() ?>>
-<?php echo $t96_employees->EmployeeID->ListViewValue() ?></span>
-</span>
-<a id="<?php echo $t96_employees_list->PageObjName . "_row_" . $t96_employees_list->RowCnt ?>"></a></td>
-	<?php } ?>
 	<?php if ($t96_employees->LastName->Visible) { // LastName ?>
 		<td data-name="LastName"<?php echo $t96_employees->LastName->CellAttributes() ?>>
 <span id="el<?php echo $t96_employees_list->RowCnt ?>_t96_employees_LastName" class="t96_employees_LastName">
 <span<?php echo $t96_employees->LastName->ViewAttributes() ?>>
 <?php echo $t96_employees->LastName->ListViewValue() ?></span>
 </span>
-</td>
+<a id="<?php echo $t96_employees_list->PageObjName . "_row_" . $t96_employees_list->RowCnt ?>"></a></td>
 	<?php } ?>
 	<?php if ($t96_employees->FirstName->Visible) { // FirstName ?>
 		<td data-name="FirstName"<?php echo $t96_employees->FirstName->CellAttributes() ?>>
@@ -3627,118 +3279,6 @@ $t96_employees_list->ListOptions->Render("body", "left", $t96_employees_list->Ro
 <span id="el<?php echo $t96_employees_list->RowCnt ?>_t96_employees_Title" class="t96_employees_Title">
 <span<?php echo $t96_employees->Title->ViewAttributes() ?>>
 <?php echo $t96_employees->Title->ListViewValue() ?></span>
-</span>
-</td>
-	<?php } ?>
-	<?php if ($t96_employees->TitleOfCourtesy->Visible) { // TitleOfCourtesy ?>
-		<td data-name="TitleOfCourtesy"<?php echo $t96_employees->TitleOfCourtesy->CellAttributes() ?>>
-<span id="el<?php echo $t96_employees_list->RowCnt ?>_t96_employees_TitleOfCourtesy" class="t96_employees_TitleOfCourtesy">
-<span<?php echo $t96_employees->TitleOfCourtesy->ViewAttributes() ?>>
-<?php echo $t96_employees->TitleOfCourtesy->ListViewValue() ?></span>
-</span>
-</td>
-	<?php } ?>
-	<?php if ($t96_employees->BirthDate->Visible) { // BirthDate ?>
-		<td data-name="BirthDate"<?php echo $t96_employees->BirthDate->CellAttributes() ?>>
-<span id="el<?php echo $t96_employees_list->RowCnt ?>_t96_employees_BirthDate" class="t96_employees_BirthDate">
-<span<?php echo $t96_employees->BirthDate->ViewAttributes() ?>>
-<?php echo $t96_employees->BirthDate->ListViewValue() ?></span>
-</span>
-</td>
-	<?php } ?>
-	<?php if ($t96_employees->HireDate->Visible) { // HireDate ?>
-		<td data-name="HireDate"<?php echo $t96_employees->HireDate->CellAttributes() ?>>
-<span id="el<?php echo $t96_employees_list->RowCnt ?>_t96_employees_HireDate" class="t96_employees_HireDate">
-<span<?php echo $t96_employees->HireDate->ViewAttributes() ?>>
-<?php echo $t96_employees->HireDate->ListViewValue() ?></span>
-</span>
-</td>
-	<?php } ?>
-	<?php if ($t96_employees->Address->Visible) { // Address ?>
-		<td data-name="Address"<?php echo $t96_employees->Address->CellAttributes() ?>>
-<span id="el<?php echo $t96_employees_list->RowCnt ?>_t96_employees_Address" class="t96_employees_Address">
-<span<?php echo $t96_employees->Address->ViewAttributes() ?>>
-<?php echo $t96_employees->Address->ListViewValue() ?></span>
-</span>
-</td>
-	<?php } ?>
-	<?php if ($t96_employees->City->Visible) { // City ?>
-		<td data-name="City"<?php echo $t96_employees->City->CellAttributes() ?>>
-<span id="el<?php echo $t96_employees_list->RowCnt ?>_t96_employees_City" class="t96_employees_City">
-<span<?php echo $t96_employees->City->ViewAttributes() ?>>
-<?php echo $t96_employees->City->ListViewValue() ?></span>
-</span>
-</td>
-	<?php } ?>
-	<?php if ($t96_employees->Region->Visible) { // Region ?>
-		<td data-name="Region"<?php echo $t96_employees->Region->CellAttributes() ?>>
-<span id="el<?php echo $t96_employees_list->RowCnt ?>_t96_employees_Region" class="t96_employees_Region">
-<span<?php echo $t96_employees->Region->ViewAttributes() ?>>
-<?php echo $t96_employees->Region->ListViewValue() ?></span>
-</span>
-</td>
-	<?php } ?>
-	<?php if ($t96_employees->PostalCode->Visible) { // PostalCode ?>
-		<td data-name="PostalCode"<?php echo $t96_employees->PostalCode->CellAttributes() ?>>
-<span id="el<?php echo $t96_employees_list->RowCnt ?>_t96_employees_PostalCode" class="t96_employees_PostalCode">
-<span<?php echo $t96_employees->PostalCode->ViewAttributes() ?>>
-<?php echo $t96_employees->PostalCode->ListViewValue() ?></span>
-</span>
-</td>
-	<?php } ?>
-	<?php if ($t96_employees->Country->Visible) { // Country ?>
-		<td data-name="Country"<?php echo $t96_employees->Country->CellAttributes() ?>>
-<span id="el<?php echo $t96_employees_list->RowCnt ?>_t96_employees_Country" class="t96_employees_Country">
-<span<?php echo $t96_employees->Country->ViewAttributes() ?>>
-<?php echo $t96_employees->Country->ListViewValue() ?></span>
-</span>
-</td>
-	<?php } ?>
-	<?php if ($t96_employees->HomePhone->Visible) { // HomePhone ?>
-		<td data-name="HomePhone"<?php echo $t96_employees->HomePhone->CellAttributes() ?>>
-<span id="el<?php echo $t96_employees_list->RowCnt ?>_t96_employees_HomePhone" class="t96_employees_HomePhone">
-<span<?php echo $t96_employees->HomePhone->ViewAttributes() ?>>
-<?php echo $t96_employees->HomePhone->ListViewValue() ?></span>
-</span>
-</td>
-	<?php } ?>
-	<?php if ($t96_employees->Extension->Visible) { // Extension ?>
-		<td data-name="Extension"<?php echo $t96_employees->Extension->CellAttributes() ?>>
-<span id="el<?php echo $t96_employees_list->RowCnt ?>_t96_employees_Extension" class="t96_employees_Extension">
-<span<?php echo $t96_employees->Extension->ViewAttributes() ?>>
-<?php echo $t96_employees->Extension->ListViewValue() ?></span>
-</span>
-</td>
-	<?php } ?>
-	<?php if ($t96_employees->_Email->Visible) { // Email ?>
-		<td data-name="_Email"<?php echo $t96_employees->_Email->CellAttributes() ?>>
-<span id="el<?php echo $t96_employees_list->RowCnt ?>_t96_employees__Email" class="t96_employees__Email">
-<span<?php echo $t96_employees->_Email->ViewAttributes() ?>>
-<?php echo $t96_employees->_Email->ListViewValue() ?></span>
-</span>
-</td>
-	<?php } ?>
-	<?php if ($t96_employees->Photo->Visible) { // Photo ?>
-		<td data-name="Photo"<?php echo $t96_employees->Photo->CellAttributes() ?>>
-<span id="el<?php echo $t96_employees_list->RowCnt ?>_t96_employees_Photo" class="t96_employees_Photo">
-<span<?php echo $t96_employees->Photo->ViewAttributes() ?>>
-<?php echo $t96_employees->Photo->ListViewValue() ?></span>
-</span>
-</td>
-	<?php } ?>
-	<?php if ($t96_employees->ReportsTo->Visible) { // ReportsTo ?>
-		<td data-name="ReportsTo"<?php echo $t96_employees->ReportsTo->CellAttributes() ?>>
-<span id="el<?php echo $t96_employees_list->RowCnt ?>_t96_employees_ReportsTo" class="t96_employees_ReportsTo">
-<span<?php echo $t96_employees->ReportsTo->ViewAttributes() ?>>
-<?php echo $t96_employees->ReportsTo->ListViewValue() ?></span>
-</span>
-</td>
-	<?php } ?>
-	<?php if ($t96_employees->Password->Visible) { // Password ?>
-		<td data-name="Password"<?php echo $t96_employees->Password->CellAttributes() ?>>
-<span id="el<?php echo $t96_employees_list->RowCnt ?>_t96_employees_Password" class="t96_employees_Password">
-<span<?php echo $t96_employees->Password->ViewAttributes() ?>>
-<?php echo $t96_employees->Password->ListViewValue() ?></span>
 </span>
 </td>
 	<?php } ?>

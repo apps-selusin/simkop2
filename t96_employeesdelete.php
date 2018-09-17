@@ -282,25 +282,9 @@ class ct96_employees_delete extends ct96_employees {
 			}
 		}
 		$this->CurrentAction = (@$_GET["a"] <> "") ? $_GET["a"] : @$_POST["a_list"]; // Set up current action
-		$this->EmployeeID->SetVisibility();
-		$this->EmployeeID->Visible = !$this->IsAdd() && !$this->IsCopy() && !$this->IsGridAdd();
 		$this->LastName->SetVisibility();
 		$this->FirstName->SetVisibility();
 		$this->Title->SetVisibility();
-		$this->TitleOfCourtesy->SetVisibility();
-		$this->BirthDate->SetVisibility();
-		$this->HireDate->SetVisibility();
-		$this->Address->SetVisibility();
-		$this->City->SetVisibility();
-		$this->Region->SetVisibility();
-		$this->PostalCode->SetVisibility();
-		$this->Country->SetVisibility();
-		$this->HomePhone->SetVisibility();
-		$this->Extension->SetVisibility();
-		$this->_Email->SetVisibility();
-		$this->Photo->SetVisibility();
-		$this->ReportsTo->SetVisibility();
-		$this->Password->SetVisibility();
 		$this->UserLevel->SetVisibility();
 		$this->Username->SetVisibility();
 		$this->Activated->SetVisibility();
@@ -700,11 +684,6 @@ class ct96_employees_delete extends ct96_employees {
 		}
 		$this->Activated->ViewCustomAttributes = "";
 
-			// EmployeeID
-			$this->EmployeeID->LinkCustomAttributes = "";
-			$this->EmployeeID->HrefValue = "";
-			$this->EmployeeID->TooltipValue = "";
-
 			// LastName
 			$this->LastName->LinkCustomAttributes = "";
 			$this->LastName->HrefValue = "";
@@ -719,76 +698,6 @@ class ct96_employees_delete extends ct96_employees {
 			$this->Title->LinkCustomAttributes = "";
 			$this->Title->HrefValue = "";
 			$this->Title->TooltipValue = "";
-
-			// TitleOfCourtesy
-			$this->TitleOfCourtesy->LinkCustomAttributes = "";
-			$this->TitleOfCourtesy->HrefValue = "";
-			$this->TitleOfCourtesy->TooltipValue = "";
-
-			// BirthDate
-			$this->BirthDate->LinkCustomAttributes = "";
-			$this->BirthDate->HrefValue = "";
-			$this->BirthDate->TooltipValue = "";
-
-			// HireDate
-			$this->HireDate->LinkCustomAttributes = "";
-			$this->HireDate->HrefValue = "";
-			$this->HireDate->TooltipValue = "";
-
-			// Address
-			$this->Address->LinkCustomAttributes = "";
-			$this->Address->HrefValue = "";
-			$this->Address->TooltipValue = "";
-
-			// City
-			$this->City->LinkCustomAttributes = "";
-			$this->City->HrefValue = "";
-			$this->City->TooltipValue = "";
-
-			// Region
-			$this->Region->LinkCustomAttributes = "";
-			$this->Region->HrefValue = "";
-			$this->Region->TooltipValue = "";
-
-			// PostalCode
-			$this->PostalCode->LinkCustomAttributes = "";
-			$this->PostalCode->HrefValue = "";
-			$this->PostalCode->TooltipValue = "";
-
-			// Country
-			$this->Country->LinkCustomAttributes = "";
-			$this->Country->HrefValue = "";
-			$this->Country->TooltipValue = "";
-
-			// HomePhone
-			$this->HomePhone->LinkCustomAttributes = "";
-			$this->HomePhone->HrefValue = "";
-			$this->HomePhone->TooltipValue = "";
-
-			// Extension
-			$this->Extension->LinkCustomAttributes = "";
-			$this->Extension->HrefValue = "";
-			$this->Extension->TooltipValue = "";
-
-			// Email
-			$this->_Email->LinkCustomAttributes = "";
-			$this->_Email->HrefValue = "";
-			$this->_Email->TooltipValue = "";
-
-			// Photo
-			$this->Photo->LinkCustomAttributes = "";
-			$this->Photo->HrefValue = "";
-			$this->Photo->TooltipValue = "";
-
-			// ReportsTo
-			$this->ReportsTo->LinkCustomAttributes = "";
-			$this->ReportsTo->HrefValue = "";
-			$this->ReportsTo->TooltipValue = "";
-
-			// Password
-			$this->Password->LinkCustomAttributes = "";
-			$this->Password->HrefValue = "";
-			$this->Password->TooltipValue = "";
 
 			// UserLevel
 			$this->UserLevel->LinkCustomAttributes = "";
@@ -1068,9 +977,6 @@ $t96_employees_delete->ShowMessage();
 <?php echo $t96_employees->TableCustomInnerHtml ?>
 	<thead>
 	<tr class="ewTableHeader">
-<?php if ($t96_employees->EmployeeID->Visible) { // EmployeeID ?>
-		<th><span id="elh_t96_employees_EmployeeID" class="t96_employees_EmployeeID"><?php echo $t96_employees->EmployeeID->FldCaption() ?></span></th>
-<?php } ?>
 <?php if ($t96_employees->LastName->Visible) { // LastName ?>
 		<th><span id="elh_t96_employees_LastName" class="t96_employees_LastName"><?php echo $t96_employees->LastName->FldCaption() ?></span></th>
 <?php } ?>
@@ -1079,48 +985,6 @@ $t96_employees_delete->ShowMessage();
 <?php } ?>
 <?php if ($t96_employees->Title->Visible) { // Title ?>
 		<th><span id="elh_t96_employees_Title" class="t96_employees_Title"><?php echo $t96_employees->Title->FldCaption() ?></span></th>
-<?php } ?>
-<?php if ($t96_employees->TitleOfCourtesy->Visible) { // TitleOfCourtesy ?>
-		<th><span id="elh_t96_employees_TitleOfCourtesy" class="t96_employees_TitleOfCourtesy"><?php echo $t96_employees->TitleOfCourtesy->FldCaption() ?></span></th>
-<?php } ?>
-<?php if ($t96_employees->BirthDate->Visible) { // BirthDate ?>
-		<th><span id="elh_t96_employees_BirthDate" class="t96_employees_BirthDate"><?php echo $t96_employees->BirthDate->FldCaption() ?></span></th>
-<?php } ?>
-<?php if ($t96_employees->HireDate->Visible) { // HireDate ?>
-		<th><span id="elh_t96_employees_HireDate" class="t96_employees_HireDate"><?php echo $t96_employees->HireDate->FldCaption() ?></span></th>
-<?php } ?>
-<?php if ($t96_employees->Address->Visible) { // Address ?>
-		<th><span id="elh_t96_employees_Address" class="t96_employees_Address"><?php echo $t96_employees->Address->FldCaption() ?></span></th>
-<?php } ?>
-<?php if ($t96_employees->City->Visible) { // City ?>
-		<th><span id="elh_t96_employees_City" class="t96_employees_City"><?php echo $t96_employees->City->FldCaption() ?></span></th>
-<?php } ?>
-<?php if ($t96_employees->Region->Visible) { // Region ?>
-		<th><span id="elh_t96_employees_Region" class="t96_employees_Region"><?php echo $t96_employees->Region->FldCaption() ?></span></th>
-<?php } ?>
-<?php if ($t96_employees->PostalCode->Visible) { // PostalCode ?>
-		<th><span id="elh_t96_employees_PostalCode" class="t96_employees_PostalCode"><?php echo $t96_employees->PostalCode->FldCaption() ?></span></th>
-<?php } ?>
-<?php if ($t96_employees->Country->Visible) { // Country ?>
-		<th><span id="elh_t96_employees_Country" class="t96_employees_Country"><?php echo $t96_employees->Country->FldCaption() ?></span></th>
-<?php } ?>
-<?php if ($t96_employees->HomePhone->Visible) { // HomePhone ?>
-		<th><span id="elh_t96_employees_HomePhone" class="t96_employees_HomePhone"><?php echo $t96_employees->HomePhone->FldCaption() ?></span></th>
-<?php } ?>
-<?php if ($t96_employees->Extension->Visible) { // Extension ?>
-		<th><span id="elh_t96_employees_Extension" class="t96_employees_Extension"><?php echo $t96_employees->Extension->FldCaption() ?></span></th>
-<?php } ?>
-<?php if ($t96_employees->_Email->Visible) { // Email ?>
-		<th><span id="elh_t96_employees__Email" class="t96_employees__Email"><?php echo $t96_employees->_Email->FldCaption() ?></span></th>
-<?php } ?>
-<?php if ($t96_employees->Photo->Visible) { // Photo ?>
-		<th><span id="elh_t96_employees_Photo" class="t96_employees_Photo"><?php echo $t96_employees->Photo->FldCaption() ?></span></th>
-<?php } ?>
-<?php if ($t96_employees->ReportsTo->Visible) { // ReportsTo ?>
-		<th><span id="elh_t96_employees_ReportsTo" class="t96_employees_ReportsTo"><?php echo $t96_employees->ReportsTo->FldCaption() ?></span></th>
-<?php } ?>
-<?php if ($t96_employees->Password->Visible) { // Password ?>
-		<th><span id="elh_t96_employees_Password" class="t96_employees_Password"><?php echo $t96_employees->Password->FldCaption() ?></span></th>
 <?php } ?>
 <?php if ($t96_employees->UserLevel->Visible) { // UserLevel ?>
 		<th><span id="elh_t96_employees_UserLevel" class="t96_employees_UserLevel"><?php echo $t96_employees->UserLevel->FldCaption() ?></span></th>
@@ -1152,14 +1016,6 @@ while (!$t96_employees_delete->Recordset->EOF) {
 	$t96_employees_delete->RenderRow();
 ?>
 	<tr<?php echo $t96_employees->RowAttributes() ?>>
-<?php if ($t96_employees->EmployeeID->Visible) { // EmployeeID ?>
-		<td<?php echo $t96_employees->EmployeeID->CellAttributes() ?>>
-<span id="el<?php echo $t96_employees_delete->RowCnt ?>_t96_employees_EmployeeID" class="t96_employees_EmployeeID">
-<span<?php echo $t96_employees->EmployeeID->ViewAttributes() ?>>
-<?php echo $t96_employees->EmployeeID->ListViewValue() ?></span>
-</span>
-</td>
-<?php } ?>
 <?php if ($t96_employees->LastName->Visible) { // LastName ?>
 		<td<?php echo $t96_employees->LastName->CellAttributes() ?>>
 <span id="el<?php echo $t96_employees_delete->RowCnt ?>_t96_employees_LastName" class="t96_employees_LastName">
@@ -1181,118 +1037,6 @@ while (!$t96_employees_delete->Recordset->EOF) {
 <span id="el<?php echo $t96_employees_delete->RowCnt ?>_t96_employees_Title" class="t96_employees_Title">
 <span<?php echo $t96_employees->Title->ViewAttributes() ?>>
 <?php echo $t96_employees->Title->ListViewValue() ?></span>
-</span>
-</td>
-<?php } ?>
-<?php if ($t96_employees->TitleOfCourtesy->Visible) { // TitleOfCourtesy ?>
-		<td<?php echo $t96_employees->TitleOfCourtesy->CellAttributes() ?>>
-<span id="el<?php echo $t96_employees_delete->RowCnt ?>_t96_employees_TitleOfCourtesy" class="t96_employees_TitleOfCourtesy">
-<span<?php echo $t96_employees->TitleOfCourtesy->ViewAttributes() ?>>
-<?php echo $t96_employees->TitleOfCourtesy->ListViewValue() ?></span>
-</span>
-</td>
-<?php } ?>
-<?php if ($t96_employees->BirthDate->Visible) { // BirthDate ?>
-		<td<?php echo $t96_employees->BirthDate->CellAttributes() ?>>
-<span id="el<?php echo $t96_employees_delete->RowCnt ?>_t96_employees_BirthDate" class="t96_employees_BirthDate">
-<span<?php echo $t96_employees->BirthDate->ViewAttributes() ?>>
-<?php echo $t96_employees->BirthDate->ListViewValue() ?></span>
-</span>
-</td>
-<?php } ?>
-<?php if ($t96_employees->HireDate->Visible) { // HireDate ?>
-		<td<?php echo $t96_employees->HireDate->CellAttributes() ?>>
-<span id="el<?php echo $t96_employees_delete->RowCnt ?>_t96_employees_HireDate" class="t96_employees_HireDate">
-<span<?php echo $t96_employees->HireDate->ViewAttributes() ?>>
-<?php echo $t96_employees->HireDate->ListViewValue() ?></span>
-</span>
-</td>
-<?php } ?>
-<?php if ($t96_employees->Address->Visible) { // Address ?>
-		<td<?php echo $t96_employees->Address->CellAttributes() ?>>
-<span id="el<?php echo $t96_employees_delete->RowCnt ?>_t96_employees_Address" class="t96_employees_Address">
-<span<?php echo $t96_employees->Address->ViewAttributes() ?>>
-<?php echo $t96_employees->Address->ListViewValue() ?></span>
-</span>
-</td>
-<?php } ?>
-<?php if ($t96_employees->City->Visible) { // City ?>
-		<td<?php echo $t96_employees->City->CellAttributes() ?>>
-<span id="el<?php echo $t96_employees_delete->RowCnt ?>_t96_employees_City" class="t96_employees_City">
-<span<?php echo $t96_employees->City->ViewAttributes() ?>>
-<?php echo $t96_employees->City->ListViewValue() ?></span>
-</span>
-</td>
-<?php } ?>
-<?php if ($t96_employees->Region->Visible) { // Region ?>
-		<td<?php echo $t96_employees->Region->CellAttributes() ?>>
-<span id="el<?php echo $t96_employees_delete->RowCnt ?>_t96_employees_Region" class="t96_employees_Region">
-<span<?php echo $t96_employees->Region->ViewAttributes() ?>>
-<?php echo $t96_employees->Region->ListViewValue() ?></span>
-</span>
-</td>
-<?php } ?>
-<?php if ($t96_employees->PostalCode->Visible) { // PostalCode ?>
-		<td<?php echo $t96_employees->PostalCode->CellAttributes() ?>>
-<span id="el<?php echo $t96_employees_delete->RowCnt ?>_t96_employees_PostalCode" class="t96_employees_PostalCode">
-<span<?php echo $t96_employees->PostalCode->ViewAttributes() ?>>
-<?php echo $t96_employees->PostalCode->ListViewValue() ?></span>
-</span>
-</td>
-<?php } ?>
-<?php if ($t96_employees->Country->Visible) { // Country ?>
-		<td<?php echo $t96_employees->Country->CellAttributes() ?>>
-<span id="el<?php echo $t96_employees_delete->RowCnt ?>_t96_employees_Country" class="t96_employees_Country">
-<span<?php echo $t96_employees->Country->ViewAttributes() ?>>
-<?php echo $t96_employees->Country->ListViewValue() ?></span>
-</span>
-</td>
-<?php } ?>
-<?php if ($t96_employees->HomePhone->Visible) { // HomePhone ?>
-		<td<?php echo $t96_employees->HomePhone->CellAttributes() ?>>
-<span id="el<?php echo $t96_employees_delete->RowCnt ?>_t96_employees_HomePhone" class="t96_employees_HomePhone">
-<span<?php echo $t96_employees->HomePhone->ViewAttributes() ?>>
-<?php echo $t96_employees->HomePhone->ListViewValue() ?></span>
-</span>
-</td>
-<?php } ?>
-<?php if ($t96_employees->Extension->Visible) { // Extension ?>
-		<td<?php echo $t96_employees->Extension->CellAttributes() ?>>
-<span id="el<?php echo $t96_employees_delete->RowCnt ?>_t96_employees_Extension" class="t96_employees_Extension">
-<span<?php echo $t96_employees->Extension->ViewAttributes() ?>>
-<?php echo $t96_employees->Extension->ListViewValue() ?></span>
-</span>
-</td>
-<?php } ?>
-<?php if ($t96_employees->_Email->Visible) { // Email ?>
-		<td<?php echo $t96_employees->_Email->CellAttributes() ?>>
-<span id="el<?php echo $t96_employees_delete->RowCnt ?>_t96_employees__Email" class="t96_employees__Email">
-<span<?php echo $t96_employees->_Email->ViewAttributes() ?>>
-<?php echo $t96_employees->_Email->ListViewValue() ?></span>
-</span>
-</td>
-<?php } ?>
-<?php if ($t96_employees->Photo->Visible) { // Photo ?>
-		<td<?php echo $t96_employees->Photo->CellAttributes() ?>>
-<span id="el<?php echo $t96_employees_delete->RowCnt ?>_t96_employees_Photo" class="t96_employees_Photo">
-<span<?php echo $t96_employees->Photo->ViewAttributes() ?>>
-<?php echo $t96_employees->Photo->ListViewValue() ?></span>
-</span>
-</td>
-<?php } ?>
-<?php if ($t96_employees->ReportsTo->Visible) { // ReportsTo ?>
-		<td<?php echo $t96_employees->ReportsTo->CellAttributes() ?>>
-<span id="el<?php echo $t96_employees_delete->RowCnt ?>_t96_employees_ReportsTo" class="t96_employees_ReportsTo">
-<span<?php echo $t96_employees->ReportsTo->ViewAttributes() ?>>
-<?php echo $t96_employees->ReportsTo->ListViewValue() ?></span>
-</span>
-</td>
-<?php } ?>
-<?php if ($t96_employees->Password->Visible) { // Password ?>
-		<td<?php echo $t96_employees->Password->CellAttributes() ?>>
-<span id="el<?php echo $t96_employees_delete->RowCnt ?>_t96_employees_Password" class="t96_employees_Password">
-<span<?php echo $t96_employees->Password->ViewAttributes() ?>>
-<?php echo $t96_employees->Password->ListViewValue() ?></span>
 </span>
 </td>
 <?php } ?>

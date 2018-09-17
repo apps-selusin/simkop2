@@ -285,8 +285,6 @@ class ct96_employees_edit extends ct96_employees {
 		// Create form object
 		$objForm = new cFormObj();
 		$this->CurrentAction = (@$_GET["a"] <> "") ? $_GET["a"] : @$_POST["a_list"]; // Set up current action
-		$this->EmployeeID->SetVisibility();
-		$this->EmployeeID->Visible = !$this->IsAdd() && !$this->IsCopy() && !$this->IsGridAdd();
 		$this->LastName->SetVisibility();
 		$this->FirstName->SetVisibility();
 		$this->Title->SetVisibility();
@@ -309,6 +307,9 @@ class ct96_employees_edit extends ct96_employees {
 		$this->Username->SetVisibility();
 		$this->Activated->SetVisibility();
 		$this->Profile->SetVisibility();
+
+		// Set up multi page object
+		$this->SetupMultiPages();
 
 		// Global Page Loading event (in userfn*.php)
 		Page_Loading();
@@ -404,6 +405,7 @@ class ct96_employees_edit extends ct96_employees {
 	var $RecCnt;
 	var $RecKey = array();
 	var $Recordset;
+	var $MultiPages; // Multi pages object
 
 	// 
 	// Page main
@@ -560,8 +562,6 @@ class ct96_employees_edit extends ct96_employees {
 
 		// Load from form
 		global $objForm;
-		if (!$this->EmployeeID->FldIsDetailKey)
-			$this->EmployeeID->setFormValue($objForm->GetValue("x_EmployeeID"));
 		if (!$this->LastName->FldIsDetailKey) {
 			$this->LastName->setFormValue($objForm->GetValue("x_LastName"));
 		}
@@ -630,6 +630,8 @@ class ct96_employees_edit extends ct96_employees {
 		if (!$this->Profile->FldIsDetailKey) {
 			$this->Profile->setFormValue($objForm->GetValue("x_Profile"));
 		}
+		if (!$this->EmployeeID->FldIsDetailKey)
+			$this->EmployeeID->setFormValue($objForm->GetValue("x_EmployeeID"));
 	}
 
 	// Restore form values
@@ -938,11 +940,6 @@ class ct96_employees_edit extends ct96_employees {
 		$this->Profile->ViewValue = $this->Profile->CurrentValue;
 		$this->Profile->ViewCustomAttributes = "";
 
-			// EmployeeID
-			$this->EmployeeID->LinkCustomAttributes = "";
-			$this->EmployeeID->HrefValue = "";
-			$this->EmployeeID->TooltipValue = "";
-
 			// LastName
 			$this->LastName->LinkCustomAttributes = "";
 			$this->LastName->HrefValue = "";
@@ -1054,12 +1051,6 @@ class ct96_employees_edit extends ct96_employees {
 			$this->Profile->TooltipValue = "";
 		} elseif ($this->RowType == EW_ROWTYPE_EDIT) { // Edit row
 
-			// EmployeeID
-			$this->EmployeeID->EditAttrs["class"] = "form-control";
-			$this->EmployeeID->EditCustomAttributes = "";
-			$this->EmployeeID->EditValue = $this->EmployeeID->CurrentValue;
-			$this->EmployeeID->ViewCustomAttributes = "";
-
 			// LastName
 			$this->LastName->EditAttrs["class"] = "form-control";
 			$this->LastName->EditCustomAttributes = "";
@@ -1163,7 +1154,7 @@ class ct96_employees_edit extends ct96_employees {
 			$this->ReportsTo->PlaceHolder = ew_RemoveHtml($this->ReportsTo->FldCaption());
 
 			// Password
-			$this->Password->EditAttrs["class"] = "form-control ewPasswordStrength";
+			$this->Password->EditAttrs["class"] = "form-control";
 			$this->Password->EditCustomAttributes = "";
 			$this->Password->EditValue = ew_HtmlEncode($this->Password->CurrentValue);
 			$this->Password->PlaceHolder = ew_RemoveHtml($this->Password->FldCaption());
@@ -1208,12 +1199,8 @@ class ct96_employees_edit extends ct96_employees {
 			$this->Profile->PlaceHolder = ew_RemoveHtml($this->Profile->FldCaption());
 
 			// Edit refer script
-			// EmployeeID
-
-			$this->EmployeeID->LinkCustomAttributes = "";
-			$this->EmployeeID->HrefValue = "";
-
 			// LastName
+
 			$this->LastName->LinkCustomAttributes = "";
 			$this->LastName->HrefValue = "";
 
@@ -1513,6 +1500,16 @@ class ct96_employees_edit extends ct96_employees {
 		$Breadcrumb->Add("edit", $PageId, $url);
 	}
 
+	// Set up multi pages
+	function SetupMultiPages() {
+		$pages = new cSubPages();
+		$pages->Add(0);
+		$pages->Add(1);
+		$pages->Add(2);
+		$pages->Add(3);
+		$this->MultiPages = $pages;
+	}
+
 	// Setup lookup filters of a field
 	function SetupLookupFilters($fld, $pageId = null) {
 		global $gsLanguage;
@@ -1661,9 +1658,6 @@ ft96_employeesedit.Validate = function() {
 			elm = this.GetElements("x" + infix + "_Password");
 			if (elm && !ew_IsHidden(elm) && !ew_HasValue(elm))
 				return this.OnError(elm, "<?php echo ew_JsEncode2(str_replace("%s", $t96_employees->Password->FldCaption(), $t96_employees->Password->ReqErrMsg)) ?>");
-			elm = this.GetElements("x" + infix + "_Password");
-			if (elm && $(elm).hasClass("ewPasswordStrength") && !$(elm).data("validated"))
-				return this.OnError(elm, ewLanguage.Phrase("PasswordTooSimple"));
 			elm = this.GetElements("x" + infix + "_Username");
 			if (elm && !ew_IsHidden(elm) && !ew_HasValue(elm))
 				return this.OnError(elm, "<?php echo ew_JsEncode2(str_replace("%s", $t96_employees->Username->FldCaption(), $t96_employees->Username->ReqErrMsg)) ?>");
@@ -1701,6 +1695,9 @@ ft96_employeesedit.ValidateRequired = true;
 <?php } else { ?>
 ft96_employeesedit.ValidateRequired = false; 
 <?php } ?>
+
+// Multi-Page
+ft96_employeesedit.MultiPage = new ew_MultiPage("ft96_employeesedit");
 
 // Dynamic selection lists
 ft96_employeesedit.Lists["x_UserLevel"] = {"LinkField":"x_userlevelid","Ajax":true,"AutoFill":false,"DisplayFields":["x_userlevelname","","",""],"ParentFields":[],"ChildFields":[],"FilterFields":[],"Options":[],"Template":"","LinkTable":"t97_userlevels"};
@@ -1781,204 +1778,29 @@ $t96_employees_edit->ShowMessage();
 <!-- Fields to prevent google autofill -->
 <input class="hidden" type="text" name="<?php echo ew_Encrypt(ew_Random()) ?>">
 <input class="hidden" type="password" name="<?php echo ew_Encrypt(ew_Random()) ?>">
+<div class="ewMultiPage">
+<div class="panel-group" id="t96_employees_edit">
+	<div class="panel panel-default<?php echo $t96_employees_edit->MultiPages->PageStyle("1") ?>">
+		<div class="panel-heading">
+			<h4 class="panel-title">
+				<a class="panel-toggle" data-toggle="collapse" data-parent="#t96_employees_edit" href="#tab_t96_employees1"><?php echo $t96_employees->PageCaption(1) ?></a>
+			</h4>
+		</div>
+		<div class="panel-collapse collapse<?php echo $t96_employees_edit->MultiPages->PageStyle("1") ?>" id="tab_t96_employees1">
+			<div class="panel-body">
 <div>
-<?php if ($t96_employees->EmployeeID->Visible) { // EmployeeID ?>
-	<div id="r_EmployeeID" class="form-group">
-		<label id="elh_t96_employees_EmployeeID" class="col-sm-2 control-label ewLabel"><?php echo $t96_employees->EmployeeID->FldCaption() ?></label>
-		<div class="col-sm-10"><div<?php echo $t96_employees->EmployeeID->CellAttributes() ?>>
-<span id="el_t96_employees_EmployeeID">
-<span<?php echo $t96_employees->EmployeeID->ViewAttributes() ?>>
-<p class="form-control-static"><?php echo $t96_employees->EmployeeID->EditValue ?></p></span>
-</span>
-<input type="hidden" data-table="t96_employees" data-field="x_EmployeeID" name="x_EmployeeID" id="x_EmployeeID" value="<?php echo ew_HtmlEncode($t96_employees->EmployeeID->CurrentValue) ?>">
-<?php echo $t96_employees->EmployeeID->CustomMsg ?></div></div>
-	</div>
-<?php } ?>
-<?php if ($t96_employees->LastName->Visible) { // LastName ?>
-	<div id="r_LastName" class="form-group">
-		<label id="elh_t96_employees_LastName" for="x_LastName" class="col-sm-2 control-label ewLabel"><?php echo $t96_employees->LastName->FldCaption() ?></label>
-		<div class="col-sm-10"><div<?php echo $t96_employees->LastName->CellAttributes() ?>>
-<span id="el_t96_employees_LastName">
-<input type="text" data-table="t96_employees" data-field="x_LastName" name="x_LastName" id="x_LastName" size="30" maxlength="20" placeholder="<?php echo ew_HtmlEncode($t96_employees->LastName->getPlaceHolder()) ?>" value="<?php echo $t96_employees->LastName->EditValue ?>"<?php echo $t96_employees->LastName->EditAttributes() ?>>
-</span>
-<?php echo $t96_employees->LastName->CustomMsg ?></div></div>
-	</div>
-<?php } ?>
-<?php if ($t96_employees->FirstName->Visible) { // FirstName ?>
-	<div id="r_FirstName" class="form-group">
-		<label id="elh_t96_employees_FirstName" for="x_FirstName" class="col-sm-2 control-label ewLabel"><?php echo $t96_employees->FirstName->FldCaption() ?></label>
-		<div class="col-sm-10"><div<?php echo $t96_employees->FirstName->CellAttributes() ?>>
-<span id="el_t96_employees_FirstName">
-<input type="text" data-table="t96_employees" data-field="x_FirstName" name="x_FirstName" id="x_FirstName" size="30" maxlength="10" placeholder="<?php echo ew_HtmlEncode($t96_employees->FirstName->getPlaceHolder()) ?>" value="<?php echo $t96_employees->FirstName->EditValue ?>"<?php echo $t96_employees->FirstName->EditAttributes() ?>>
-</span>
-<?php echo $t96_employees->FirstName->CustomMsg ?></div></div>
-	</div>
-<?php } ?>
-<?php if ($t96_employees->Title->Visible) { // Title ?>
-	<div id="r_Title" class="form-group">
-		<label id="elh_t96_employees_Title" for="x_Title" class="col-sm-2 control-label ewLabel"><?php echo $t96_employees->Title->FldCaption() ?></label>
-		<div class="col-sm-10"><div<?php echo $t96_employees->Title->CellAttributes() ?>>
-<span id="el_t96_employees_Title">
-<input type="text" data-table="t96_employees" data-field="x_Title" name="x_Title" id="x_Title" size="30" maxlength="30" placeholder="<?php echo ew_HtmlEncode($t96_employees->Title->getPlaceHolder()) ?>" value="<?php echo $t96_employees->Title->EditValue ?>"<?php echo $t96_employees->Title->EditAttributes() ?>>
-</span>
-<?php echo $t96_employees->Title->CustomMsg ?></div></div>
-	</div>
-<?php } ?>
-<?php if ($t96_employees->TitleOfCourtesy->Visible) { // TitleOfCourtesy ?>
-	<div id="r_TitleOfCourtesy" class="form-group">
-		<label id="elh_t96_employees_TitleOfCourtesy" for="x_TitleOfCourtesy" class="col-sm-2 control-label ewLabel"><?php echo $t96_employees->TitleOfCourtesy->FldCaption() ?></label>
-		<div class="col-sm-10"><div<?php echo $t96_employees->TitleOfCourtesy->CellAttributes() ?>>
-<span id="el_t96_employees_TitleOfCourtesy">
-<input type="text" data-table="t96_employees" data-field="x_TitleOfCourtesy" name="x_TitleOfCourtesy" id="x_TitleOfCourtesy" size="30" maxlength="25" placeholder="<?php echo ew_HtmlEncode($t96_employees->TitleOfCourtesy->getPlaceHolder()) ?>" value="<?php echo $t96_employees->TitleOfCourtesy->EditValue ?>"<?php echo $t96_employees->TitleOfCourtesy->EditAttributes() ?>>
-</span>
-<?php echo $t96_employees->TitleOfCourtesy->CustomMsg ?></div></div>
-	</div>
-<?php } ?>
-<?php if ($t96_employees->BirthDate->Visible) { // BirthDate ?>
-	<div id="r_BirthDate" class="form-group">
-		<label id="elh_t96_employees_BirthDate" for="x_BirthDate" class="col-sm-2 control-label ewLabel"><?php echo $t96_employees->BirthDate->FldCaption() ?></label>
-		<div class="col-sm-10"><div<?php echo $t96_employees->BirthDate->CellAttributes() ?>>
-<span id="el_t96_employees_BirthDate">
-<input type="text" data-table="t96_employees" data-field="x_BirthDate" name="x_BirthDate" id="x_BirthDate" placeholder="<?php echo ew_HtmlEncode($t96_employees->BirthDate->getPlaceHolder()) ?>" value="<?php echo $t96_employees->BirthDate->EditValue ?>"<?php echo $t96_employees->BirthDate->EditAttributes() ?>>
-</span>
-<?php echo $t96_employees->BirthDate->CustomMsg ?></div></div>
-	</div>
-<?php } ?>
-<?php if ($t96_employees->HireDate->Visible) { // HireDate ?>
-	<div id="r_HireDate" class="form-group">
-		<label id="elh_t96_employees_HireDate" for="x_HireDate" class="col-sm-2 control-label ewLabel"><?php echo $t96_employees->HireDate->FldCaption() ?></label>
-		<div class="col-sm-10"><div<?php echo $t96_employees->HireDate->CellAttributes() ?>>
-<span id="el_t96_employees_HireDate">
-<input type="text" data-table="t96_employees" data-field="x_HireDate" name="x_HireDate" id="x_HireDate" placeholder="<?php echo ew_HtmlEncode($t96_employees->HireDate->getPlaceHolder()) ?>" value="<?php echo $t96_employees->HireDate->EditValue ?>"<?php echo $t96_employees->HireDate->EditAttributes() ?>>
-</span>
-<?php echo $t96_employees->HireDate->CustomMsg ?></div></div>
-	</div>
-<?php } ?>
-<?php if ($t96_employees->Address->Visible) { // Address ?>
-	<div id="r_Address" class="form-group">
-		<label id="elh_t96_employees_Address" for="x_Address" class="col-sm-2 control-label ewLabel"><?php echo $t96_employees->Address->FldCaption() ?></label>
-		<div class="col-sm-10"><div<?php echo $t96_employees->Address->CellAttributes() ?>>
-<span id="el_t96_employees_Address">
-<input type="text" data-table="t96_employees" data-field="x_Address" name="x_Address" id="x_Address" size="30" maxlength="60" placeholder="<?php echo ew_HtmlEncode($t96_employees->Address->getPlaceHolder()) ?>" value="<?php echo $t96_employees->Address->EditValue ?>"<?php echo $t96_employees->Address->EditAttributes() ?>>
-</span>
-<?php echo $t96_employees->Address->CustomMsg ?></div></div>
-	</div>
-<?php } ?>
-<?php if ($t96_employees->City->Visible) { // City ?>
-	<div id="r_City" class="form-group">
-		<label id="elh_t96_employees_City" for="x_City" class="col-sm-2 control-label ewLabel"><?php echo $t96_employees->City->FldCaption() ?></label>
-		<div class="col-sm-10"><div<?php echo $t96_employees->City->CellAttributes() ?>>
-<span id="el_t96_employees_City">
-<input type="text" data-table="t96_employees" data-field="x_City" name="x_City" id="x_City" size="30" maxlength="15" placeholder="<?php echo ew_HtmlEncode($t96_employees->City->getPlaceHolder()) ?>" value="<?php echo $t96_employees->City->EditValue ?>"<?php echo $t96_employees->City->EditAttributes() ?>>
-</span>
-<?php echo $t96_employees->City->CustomMsg ?></div></div>
-	</div>
-<?php } ?>
-<?php if ($t96_employees->Region->Visible) { // Region ?>
-	<div id="r_Region" class="form-group">
-		<label id="elh_t96_employees_Region" for="x_Region" class="col-sm-2 control-label ewLabel"><?php echo $t96_employees->Region->FldCaption() ?></label>
-		<div class="col-sm-10"><div<?php echo $t96_employees->Region->CellAttributes() ?>>
-<span id="el_t96_employees_Region">
-<input type="text" data-table="t96_employees" data-field="x_Region" name="x_Region" id="x_Region" size="30" maxlength="15" placeholder="<?php echo ew_HtmlEncode($t96_employees->Region->getPlaceHolder()) ?>" value="<?php echo $t96_employees->Region->EditValue ?>"<?php echo $t96_employees->Region->EditAttributes() ?>>
-</span>
-<?php echo $t96_employees->Region->CustomMsg ?></div></div>
-	</div>
-<?php } ?>
-<?php if ($t96_employees->PostalCode->Visible) { // PostalCode ?>
-	<div id="r_PostalCode" class="form-group">
-		<label id="elh_t96_employees_PostalCode" for="x_PostalCode" class="col-sm-2 control-label ewLabel"><?php echo $t96_employees->PostalCode->FldCaption() ?></label>
-		<div class="col-sm-10"><div<?php echo $t96_employees->PostalCode->CellAttributes() ?>>
-<span id="el_t96_employees_PostalCode">
-<input type="text" data-table="t96_employees" data-field="x_PostalCode" name="x_PostalCode" id="x_PostalCode" size="30" maxlength="10" placeholder="<?php echo ew_HtmlEncode($t96_employees->PostalCode->getPlaceHolder()) ?>" value="<?php echo $t96_employees->PostalCode->EditValue ?>"<?php echo $t96_employees->PostalCode->EditAttributes() ?>>
-</span>
-<?php echo $t96_employees->PostalCode->CustomMsg ?></div></div>
-	</div>
-<?php } ?>
-<?php if ($t96_employees->Country->Visible) { // Country ?>
-	<div id="r_Country" class="form-group">
-		<label id="elh_t96_employees_Country" for="x_Country" class="col-sm-2 control-label ewLabel"><?php echo $t96_employees->Country->FldCaption() ?></label>
-		<div class="col-sm-10"><div<?php echo $t96_employees->Country->CellAttributes() ?>>
-<span id="el_t96_employees_Country">
-<input type="text" data-table="t96_employees" data-field="x_Country" name="x_Country" id="x_Country" size="30" maxlength="15" placeholder="<?php echo ew_HtmlEncode($t96_employees->Country->getPlaceHolder()) ?>" value="<?php echo $t96_employees->Country->EditValue ?>"<?php echo $t96_employees->Country->EditAttributes() ?>>
-</span>
-<?php echo $t96_employees->Country->CustomMsg ?></div></div>
-	</div>
-<?php } ?>
-<?php if ($t96_employees->HomePhone->Visible) { // HomePhone ?>
-	<div id="r_HomePhone" class="form-group">
-		<label id="elh_t96_employees_HomePhone" for="x_HomePhone" class="col-sm-2 control-label ewLabel"><?php echo $t96_employees->HomePhone->FldCaption() ?></label>
-		<div class="col-sm-10"><div<?php echo $t96_employees->HomePhone->CellAttributes() ?>>
-<span id="el_t96_employees_HomePhone">
-<input type="text" data-table="t96_employees" data-field="x_HomePhone" name="x_HomePhone" id="x_HomePhone" size="30" maxlength="24" placeholder="<?php echo ew_HtmlEncode($t96_employees->HomePhone->getPlaceHolder()) ?>" value="<?php echo $t96_employees->HomePhone->EditValue ?>"<?php echo $t96_employees->HomePhone->EditAttributes() ?>>
-</span>
-<?php echo $t96_employees->HomePhone->CustomMsg ?></div></div>
-	</div>
-<?php } ?>
-<?php if ($t96_employees->Extension->Visible) { // Extension ?>
-	<div id="r_Extension" class="form-group">
-		<label id="elh_t96_employees_Extension" for="x_Extension" class="col-sm-2 control-label ewLabel"><?php echo $t96_employees->Extension->FldCaption() ?></label>
-		<div class="col-sm-10"><div<?php echo $t96_employees->Extension->CellAttributes() ?>>
-<span id="el_t96_employees_Extension">
-<input type="text" data-table="t96_employees" data-field="x_Extension" name="x_Extension" id="x_Extension" size="30" maxlength="4" placeholder="<?php echo ew_HtmlEncode($t96_employees->Extension->getPlaceHolder()) ?>" value="<?php echo $t96_employees->Extension->EditValue ?>"<?php echo $t96_employees->Extension->EditAttributes() ?>>
-</span>
-<?php echo $t96_employees->Extension->CustomMsg ?></div></div>
-	</div>
-<?php } ?>
-<?php if ($t96_employees->_Email->Visible) { // Email ?>
-	<div id="r__Email" class="form-group">
-		<label id="elh_t96_employees__Email" for="x__Email" class="col-sm-2 control-label ewLabel"><?php echo $t96_employees->_Email->FldCaption() ?></label>
-		<div class="col-sm-10"><div<?php echo $t96_employees->_Email->CellAttributes() ?>>
-<span id="el_t96_employees__Email">
-<input type="text" data-table="t96_employees" data-field="x__Email" name="x__Email" id="x__Email" size="30" maxlength="30" placeholder="<?php echo ew_HtmlEncode($t96_employees->_Email->getPlaceHolder()) ?>" value="<?php echo $t96_employees->_Email->EditValue ?>"<?php echo $t96_employees->_Email->EditAttributes() ?>>
-</span>
-<?php echo $t96_employees->_Email->CustomMsg ?></div></div>
-	</div>
-<?php } ?>
-<?php if ($t96_employees->Photo->Visible) { // Photo ?>
-	<div id="r_Photo" class="form-group">
-		<label id="elh_t96_employees_Photo" for="x_Photo" class="col-sm-2 control-label ewLabel"><?php echo $t96_employees->Photo->FldCaption() ?></label>
-		<div class="col-sm-10"><div<?php echo $t96_employees->Photo->CellAttributes() ?>>
-<span id="el_t96_employees_Photo">
-<input type="text" data-table="t96_employees" data-field="x_Photo" name="x_Photo" id="x_Photo" size="30" maxlength="255" placeholder="<?php echo ew_HtmlEncode($t96_employees->Photo->getPlaceHolder()) ?>" value="<?php echo $t96_employees->Photo->EditValue ?>"<?php echo $t96_employees->Photo->EditAttributes() ?>>
-</span>
-<?php echo $t96_employees->Photo->CustomMsg ?></div></div>
-	</div>
-<?php } ?>
-<?php if ($t96_employees->Notes->Visible) { // Notes ?>
-	<div id="r_Notes" class="form-group">
-		<label id="elh_t96_employees_Notes" for="x_Notes" class="col-sm-2 control-label ewLabel"><?php echo $t96_employees->Notes->FldCaption() ?></label>
-		<div class="col-sm-10"><div<?php echo $t96_employees->Notes->CellAttributes() ?>>
-<span id="el_t96_employees_Notes">
-<textarea data-table="t96_employees" data-field="x_Notes" name="x_Notes" id="x_Notes" cols="35" rows="4" placeholder="<?php echo ew_HtmlEncode($t96_employees->Notes->getPlaceHolder()) ?>"<?php echo $t96_employees->Notes->EditAttributes() ?>><?php echo $t96_employees->Notes->EditValue ?></textarea>
-</span>
-<?php echo $t96_employees->Notes->CustomMsg ?></div></div>
-	</div>
-<?php } ?>
-<?php if ($t96_employees->ReportsTo->Visible) { // ReportsTo ?>
-	<div id="r_ReportsTo" class="form-group">
-		<label id="elh_t96_employees_ReportsTo" for="x_ReportsTo" class="col-sm-2 control-label ewLabel"><?php echo $t96_employees->ReportsTo->FldCaption() ?></label>
-		<div class="col-sm-10"><div<?php echo $t96_employees->ReportsTo->CellAttributes() ?>>
-<span id="el_t96_employees_ReportsTo">
-<input type="text" data-table="t96_employees" data-field="x_ReportsTo" name="x_ReportsTo" id="x_ReportsTo" size="30" placeholder="<?php echo ew_HtmlEncode($t96_employees->ReportsTo->getPlaceHolder()) ?>" value="<?php echo $t96_employees->ReportsTo->EditValue ?>"<?php echo $t96_employees->ReportsTo->EditAttributes() ?>>
-</span>
-<?php echo $t96_employees->ReportsTo->CustomMsg ?></div></div>
-	</div>
-<?php } ?>
 <?php if ($t96_employees->Password->Visible) { // Password ?>
 	<div id="r_Password" class="form-group">
 		<label id="elh_t96_employees_Password" for="x_Password" class="col-sm-2 control-label ewLabel"><?php echo $t96_employees->Password->FldCaption() ?><?php echo $Language->Phrase("FieldRequiredIndicator") ?></label>
 		<div class="col-sm-10"><div<?php echo $t96_employees->Password->CellAttributes() ?>>
 <span id="el_t96_employees_Password">
 <div class="input-group" id="ig_Password">
-<input type="text" data-password-strength="pst_Password" data-password-generated="pgt_Password" data-table="t96_employees" data-field="x_Password" name="x_Password" id="x_Password" value="<?php echo $t96_employees->Password->EditValue ?>" size="30" maxlength="50" placeholder="<?php echo ew_HtmlEncode($t96_employees->Password->getPlaceHolder()) ?>"<?php echo $t96_employees->Password->EditAttributes() ?>>
+<input type="text" data-password-generated="pgt_Password" data-table="t96_employees" data-field="x_Password" data-page="1" name="x_Password" id="x_Password" value="<?php echo $t96_employees->Password->EditValue ?>" size="30" maxlength="50" placeholder="<?php echo ew_HtmlEncode($t96_employees->Password->getPlaceHolder()) ?>"<?php echo $t96_employees->Password->EditAttributes() ?>>
 <span class="input-group-btn">
-	<button type="button" class="btn btn-default ewPasswordGenerator" title="<?php echo ew_HtmlTitle($Language->Phrase("GeneratePassword")) ?>" data-password-field="x_Password" data-password-confirm="c_Password" data-password-strength="pst_Password" data-password-generated="pgt_Password"><?php echo $Language->Phrase("GeneratePassword") ?></button>
+	<button type="button" class="btn btn-default ewPasswordGenerator" title="<?php echo ew_HtmlTitle($Language->Phrase("GeneratePassword")) ?>" data-password-field="x_Password" data-password-confirm="c_Password" data-password-generated="pgt_Password"><?php echo $Language->Phrase("GeneratePassword") ?></button>
 </span>
 </div>
 <span class="help-block" id="pgt_Password" style="display: none;"></span>
-<div class="progress ewPasswordStrengthBar" id="pst_Password" style="display: none;">
-	<div class="progress-bar" role="progressbar"></div>
-</div>
 </span>
 <?php echo $t96_employees->Password->CustomMsg ?></div></div>
 	</div>
@@ -1993,7 +1815,7 @@ $t96_employees_edit->ShowMessage();
 </span>
 <?php } else { ?>
 <span id="el_t96_employees_UserLevel">
-<select data-table="t96_employees" data-field="x_UserLevel" data-value-separator="<?php echo $t96_employees->UserLevel->DisplayValueSeparatorAttribute() ?>" id="x_UserLevel" name="x_UserLevel"<?php echo $t96_employees->UserLevel->EditAttributes() ?>>
+<select data-table="t96_employees" data-field="x_UserLevel" data-page="1" data-value-separator="<?php echo $t96_employees->UserLevel->DisplayValueSeparatorAttribute() ?>" id="x_UserLevel" name="x_UserLevel"<?php echo $t96_employees->UserLevel->EditAttributes() ?>>
 <?php echo $t96_employees->UserLevel->SelectOptionListHtml("x_UserLevel") ?>
 </select>
 <input type="hidden" name="s_x_UserLevel" id="s_x_UserLevel" value="<?php echo $t96_employees->UserLevel->LookupFilterQuery() ?>">
@@ -2007,7 +1829,7 @@ $t96_employees_edit->ShowMessage();
 		<label id="elh_t96_employees_Username" for="x_Username" class="col-sm-2 control-label ewLabel"><?php echo $t96_employees->Username->FldCaption() ?><?php echo $Language->Phrase("FieldRequiredIndicator") ?></label>
 		<div class="col-sm-10"><div<?php echo $t96_employees->Username->CellAttributes() ?>>
 <span id="el_t96_employees_Username">
-<input type="text" data-table="t96_employees" data-field="x_Username" name="x_Username" id="x_Username" size="30" maxlength="20" placeholder="<?php echo ew_HtmlEncode($t96_employees->Username->getPlaceHolder()) ?>" value="<?php echo $t96_employees->Username->EditValue ?>"<?php echo $t96_employees->Username->EditAttributes() ?>>
+<input type="text" data-table="t96_employees" data-field="x_Username" data-page="1" name="x_Username" id="x_Username" size="30" maxlength="20" placeholder="<?php echo ew_HtmlEncode($t96_employees->Username->getPlaceHolder()) ?>" value="<?php echo $t96_employees->Username->EditValue ?>"<?php echo $t96_employees->Username->EditAttributes() ?>>
 </span>
 <?php echo $t96_employees->Username->CustomMsg ?></div></div>
 	</div>
@@ -2017,12 +1839,208 @@ $t96_employees_edit->ShowMessage();
 		<label id="elh_t96_employees_Activated" class="col-sm-2 control-label ewLabel"><?php echo $t96_employees->Activated->FldCaption() ?><?php echo $Language->Phrase("FieldRequiredIndicator") ?></label>
 		<div class="col-sm-10"><div<?php echo $t96_employees->Activated->CellAttributes() ?>>
 <span id="el_t96_employees_Activated">
-<div id="tp_x_Activated" class="ewTemplate"><input type="radio" data-table="t96_employees" data-field="x_Activated" data-value-separator="<?php echo $t96_employees->Activated->DisplayValueSeparatorAttribute() ?>" name="x_Activated" id="x_Activated" value="{value}"<?php echo $t96_employees->Activated->EditAttributes() ?>></div>
+<div id="tp_x_Activated" class="ewTemplate"><input type="radio" data-table="t96_employees" data-field="x_Activated" data-page="1" data-value-separator="<?php echo $t96_employees->Activated->DisplayValueSeparatorAttribute() ?>" name="x_Activated" id="x_Activated" value="{value}"<?php echo $t96_employees->Activated->EditAttributes() ?>></div>
 <div id="dsl_x_Activated" data-repeatcolumn="5" class="ewItemList" style="display: none;"><div>
-<?php echo $t96_employees->Activated->RadioButtonListHtml(FALSE, "x_Activated") ?>
+<?php echo $t96_employees->Activated->RadioButtonListHtml(FALSE, "x_Activated", 1) ?>
 </div></div>
 </span>
 <?php echo $t96_employees->Activated->CustomMsg ?></div></div>
+	</div>
+<?php } ?>
+</div>
+			</div>
+		</div>
+	</div>
+	<div class="panel panel-default<?php echo $t96_employees_edit->MultiPages->PageStyle("2") ?>">
+		<div class="panel-heading">
+			<h4 class="panel-title">
+				<a class="panel-toggle" data-toggle="collapse" data-parent="#t96_employees_edit" href="#tab_t96_employees2"><?php echo $t96_employees->PageCaption(2) ?></a>
+			</h4>
+		</div>
+		<div class="panel-collapse collapse<?php echo $t96_employees_edit->MultiPages->PageStyle("2") ?>" id="tab_t96_employees2">
+			<div class="panel-body">
+<div>
+<?php if ($t96_employees->LastName->Visible) { // LastName ?>
+	<div id="r_LastName" class="form-group">
+		<label id="elh_t96_employees_LastName" for="x_LastName" class="col-sm-2 control-label ewLabel"><?php echo $t96_employees->LastName->FldCaption() ?></label>
+		<div class="col-sm-10"><div<?php echo $t96_employees->LastName->CellAttributes() ?>>
+<span id="el_t96_employees_LastName">
+<input type="text" data-table="t96_employees" data-field="x_LastName" data-page="2" name="x_LastName" id="x_LastName" size="30" maxlength="20" placeholder="<?php echo ew_HtmlEncode($t96_employees->LastName->getPlaceHolder()) ?>" value="<?php echo $t96_employees->LastName->EditValue ?>"<?php echo $t96_employees->LastName->EditAttributes() ?>>
+</span>
+<?php echo $t96_employees->LastName->CustomMsg ?></div></div>
+	</div>
+<?php } ?>
+<?php if ($t96_employees->FirstName->Visible) { // FirstName ?>
+	<div id="r_FirstName" class="form-group">
+		<label id="elh_t96_employees_FirstName" for="x_FirstName" class="col-sm-2 control-label ewLabel"><?php echo $t96_employees->FirstName->FldCaption() ?></label>
+		<div class="col-sm-10"><div<?php echo $t96_employees->FirstName->CellAttributes() ?>>
+<span id="el_t96_employees_FirstName">
+<input type="text" data-table="t96_employees" data-field="x_FirstName" data-page="2" name="x_FirstName" id="x_FirstName" size="30" maxlength="10" placeholder="<?php echo ew_HtmlEncode($t96_employees->FirstName->getPlaceHolder()) ?>" value="<?php echo $t96_employees->FirstName->EditValue ?>"<?php echo $t96_employees->FirstName->EditAttributes() ?>>
+</span>
+<?php echo $t96_employees->FirstName->CustomMsg ?></div></div>
+	</div>
+<?php } ?>
+<?php if ($t96_employees->Title->Visible) { // Title ?>
+	<div id="r_Title" class="form-group">
+		<label id="elh_t96_employees_Title" for="x_Title" class="col-sm-2 control-label ewLabel"><?php echo $t96_employees->Title->FldCaption() ?></label>
+		<div class="col-sm-10"><div<?php echo $t96_employees->Title->CellAttributes() ?>>
+<span id="el_t96_employees_Title">
+<input type="text" data-table="t96_employees" data-field="x_Title" data-page="2" name="x_Title" id="x_Title" size="30" maxlength="30" placeholder="<?php echo ew_HtmlEncode($t96_employees->Title->getPlaceHolder()) ?>" value="<?php echo $t96_employees->Title->EditValue ?>"<?php echo $t96_employees->Title->EditAttributes() ?>>
+</span>
+<?php echo $t96_employees->Title->CustomMsg ?></div></div>
+	</div>
+<?php } ?>
+<?php if ($t96_employees->TitleOfCourtesy->Visible) { // TitleOfCourtesy ?>
+	<div id="r_TitleOfCourtesy" class="form-group">
+		<label id="elh_t96_employees_TitleOfCourtesy" for="x_TitleOfCourtesy" class="col-sm-2 control-label ewLabel"><?php echo $t96_employees->TitleOfCourtesy->FldCaption() ?></label>
+		<div class="col-sm-10"><div<?php echo $t96_employees->TitleOfCourtesy->CellAttributes() ?>>
+<span id="el_t96_employees_TitleOfCourtesy">
+<input type="text" data-table="t96_employees" data-field="x_TitleOfCourtesy" data-page="2" name="x_TitleOfCourtesy" id="x_TitleOfCourtesy" size="30" maxlength="25" placeholder="<?php echo ew_HtmlEncode($t96_employees->TitleOfCourtesy->getPlaceHolder()) ?>" value="<?php echo $t96_employees->TitleOfCourtesy->EditValue ?>"<?php echo $t96_employees->TitleOfCourtesy->EditAttributes() ?>>
+</span>
+<?php echo $t96_employees->TitleOfCourtesy->CustomMsg ?></div></div>
+	</div>
+<?php } ?>
+<?php if ($t96_employees->BirthDate->Visible) { // BirthDate ?>
+	<div id="r_BirthDate" class="form-group">
+		<label id="elh_t96_employees_BirthDate" for="x_BirthDate" class="col-sm-2 control-label ewLabel"><?php echo $t96_employees->BirthDate->FldCaption() ?></label>
+		<div class="col-sm-10"><div<?php echo $t96_employees->BirthDate->CellAttributes() ?>>
+<span id="el_t96_employees_BirthDate">
+<input type="text" data-table="t96_employees" data-field="x_BirthDate" data-page="2" name="x_BirthDate" id="x_BirthDate" placeholder="<?php echo ew_HtmlEncode($t96_employees->BirthDate->getPlaceHolder()) ?>" value="<?php echo $t96_employees->BirthDate->EditValue ?>"<?php echo $t96_employees->BirthDate->EditAttributes() ?>>
+</span>
+<?php echo $t96_employees->BirthDate->CustomMsg ?></div></div>
+	</div>
+<?php } ?>
+<?php if ($t96_employees->Address->Visible) { // Address ?>
+	<div id="r_Address" class="form-group">
+		<label id="elh_t96_employees_Address" for="x_Address" class="col-sm-2 control-label ewLabel"><?php echo $t96_employees->Address->FldCaption() ?></label>
+		<div class="col-sm-10"><div<?php echo $t96_employees->Address->CellAttributes() ?>>
+<span id="el_t96_employees_Address">
+<input type="text" data-table="t96_employees" data-field="x_Address" data-page="2" name="x_Address" id="x_Address" size="30" maxlength="60" placeholder="<?php echo ew_HtmlEncode($t96_employees->Address->getPlaceHolder()) ?>" value="<?php echo $t96_employees->Address->EditValue ?>"<?php echo $t96_employees->Address->EditAttributes() ?>>
+</span>
+<?php echo $t96_employees->Address->CustomMsg ?></div></div>
+	</div>
+<?php } ?>
+<?php if ($t96_employees->City->Visible) { // City ?>
+	<div id="r_City" class="form-group">
+		<label id="elh_t96_employees_City" for="x_City" class="col-sm-2 control-label ewLabel"><?php echo $t96_employees->City->FldCaption() ?></label>
+		<div class="col-sm-10"><div<?php echo $t96_employees->City->CellAttributes() ?>>
+<span id="el_t96_employees_City">
+<input type="text" data-table="t96_employees" data-field="x_City" data-page="2" name="x_City" id="x_City" size="30" maxlength="15" placeholder="<?php echo ew_HtmlEncode($t96_employees->City->getPlaceHolder()) ?>" value="<?php echo $t96_employees->City->EditValue ?>"<?php echo $t96_employees->City->EditAttributes() ?>>
+</span>
+<?php echo $t96_employees->City->CustomMsg ?></div></div>
+	</div>
+<?php } ?>
+<?php if ($t96_employees->Region->Visible) { // Region ?>
+	<div id="r_Region" class="form-group">
+		<label id="elh_t96_employees_Region" for="x_Region" class="col-sm-2 control-label ewLabel"><?php echo $t96_employees->Region->FldCaption() ?></label>
+		<div class="col-sm-10"><div<?php echo $t96_employees->Region->CellAttributes() ?>>
+<span id="el_t96_employees_Region">
+<input type="text" data-table="t96_employees" data-field="x_Region" data-page="2" name="x_Region" id="x_Region" size="30" maxlength="15" placeholder="<?php echo ew_HtmlEncode($t96_employees->Region->getPlaceHolder()) ?>" value="<?php echo $t96_employees->Region->EditValue ?>"<?php echo $t96_employees->Region->EditAttributes() ?>>
+</span>
+<?php echo $t96_employees->Region->CustomMsg ?></div></div>
+	</div>
+<?php } ?>
+<?php if ($t96_employees->PostalCode->Visible) { // PostalCode ?>
+	<div id="r_PostalCode" class="form-group">
+		<label id="elh_t96_employees_PostalCode" for="x_PostalCode" class="col-sm-2 control-label ewLabel"><?php echo $t96_employees->PostalCode->FldCaption() ?></label>
+		<div class="col-sm-10"><div<?php echo $t96_employees->PostalCode->CellAttributes() ?>>
+<span id="el_t96_employees_PostalCode">
+<input type="text" data-table="t96_employees" data-field="x_PostalCode" data-page="2" name="x_PostalCode" id="x_PostalCode" size="30" maxlength="10" placeholder="<?php echo ew_HtmlEncode($t96_employees->PostalCode->getPlaceHolder()) ?>" value="<?php echo $t96_employees->PostalCode->EditValue ?>"<?php echo $t96_employees->PostalCode->EditAttributes() ?>>
+</span>
+<?php echo $t96_employees->PostalCode->CustomMsg ?></div></div>
+	</div>
+<?php } ?>
+<?php if ($t96_employees->Country->Visible) { // Country ?>
+	<div id="r_Country" class="form-group">
+		<label id="elh_t96_employees_Country" for="x_Country" class="col-sm-2 control-label ewLabel"><?php echo $t96_employees->Country->FldCaption() ?></label>
+		<div class="col-sm-10"><div<?php echo $t96_employees->Country->CellAttributes() ?>>
+<span id="el_t96_employees_Country">
+<input type="text" data-table="t96_employees" data-field="x_Country" data-page="2" name="x_Country" id="x_Country" size="30" maxlength="15" placeholder="<?php echo ew_HtmlEncode($t96_employees->Country->getPlaceHolder()) ?>" value="<?php echo $t96_employees->Country->EditValue ?>"<?php echo $t96_employees->Country->EditAttributes() ?>>
+</span>
+<?php echo $t96_employees->Country->CustomMsg ?></div></div>
+	</div>
+<?php } ?>
+<?php if ($t96_employees->HomePhone->Visible) { // HomePhone ?>
+	<div id="r_HomePhone" class="form-group">
+		<label id="elh_t96_employees_HomePhone" for="x_HomePhone" class="col-sm-2 control-label ewLabel"><?php echo $t96_employees->HomePhone->FldCaption() ?></label>
+		<div class="col-sm-10"><div<?php echo $t96_employees->HomePhone->CellAttributes() ?>>
+<span id="el_t96_employees_HomePhone">
+<input type="text" data-table="t96_employees" data-field="x_HomePhone" data-page="2" name="x_HomePhone" id="x_HomePhone" size="30" maxlength="24" placeholder="<?php echo ew_HtmlEncode($t96_employees->HomePhone->getPlaceHolder()) ?>" value="<?php echo $t96_employees->HomePhone->EditValue ?>"<?php echo $t96_employees->HomePhone->EditAttributes() ?>>
+</span>
+<?php echo $t96_employees->HomePhone->CustomMsg ?></div></div>
+	</div>
+<?php } ?>
+<?php if ($t96_employees->_Email->Visible) { // Email ?>
+	<div id="r__Email" class="form-group">
+		<label id="elh_t96_employees__Email" for="x__Email" class="col-sm-2 control-label ewLabel"><?php echo $t96_employees->_Email->FldCaption() ?></label>
+		<div class="col-sm-10"><div<?php echo $t96_employees->_Email->CellAttributes() ?>>
+<span id="el_t96_employees__Email">
+<input type="text" data-table="t96_employees" data-field="x__Email" data-page="2" name="x__Email" id="x__Email" size="30" maxlength="30" placeholder="<?php echo ew_HtmlEncode($t96_employees->_Email->getPlaceHolder()) ?>" value="<?php echo $t96_employees->_Email->EditValue ?>"<?php echo $t96_employees->_Email->EditAttributes() ?>>
+</span>
+<?php echo $t96_employees->_Email->CustomMsg ?></div></div>
+	</div>
+<?php } ?>
+<?php if ($t96_employees->Photo->Visible) { // Photo ?>
+	<div id="r_Photo" class="form-group">
+		<label id="elh_t96_employees_Photo" for="x_Photo" class="col-sm-2 control-label ewLabel"><?php echo $t96_employees->Photo->FldCaption() ?></label>
+		<div class="col-sm-10"><div<?php echo $t96_employees->Photo->CellAttributes() ?>>
+<span id="el_t96_employees_Photo">
+<input type="text" data-table="t96_employees" data-field="x_Photo" data-page="2" name="x_Photo" id="x_Photo" size="30" maxlength="255" placeholder="<?php echo ew_HtmlEncode($t96_employees->Photo->getPlaceHolder()) ?>" value="<?php echo $t96_employees->Photo->EditValue ?>"<?php echo $t96_employees->Photo->EditAttributes() ?>>
+</span>
+<?php echo $t96_employees->Photo->CustomMsg ?></div></div>
+	</div>
+<?php } ?>
+<?php if ($t96_employees->Notes->Visible) { // Notes ?>
+	<div id="r_Notes" class="form-group">
+		<label id="elh_t96_employees_Notes" for="x_Notes" class="col-sm-2 control-label ewLabel"><?php echo $t96_employees->Notes->FldCaption() ?></label>
+		<div class="col-sm-10"><div<?php echo $t96_employees->Notes->CellAttributes() ?>>
+<span id="el_t96_employees_Notes">
+<textarea data-table="t96_employees" data-field="x_Notes" data-page="2" name="x_Notes" id="x_Notes" cols="35" rows="4" placeholder="<?php echo ew_HtmlEncode($t96_employees->Notes->getPlaceHolder()) ?>"<?php echo $t96_employees->Notes->EditAttributes() ?>><?php echo $t96_employees->Notes->EditValue ?></textarea>
+</span>
+<?php echo $t96_employees->Notes->CustomMsg ?></div></div>
+	</div>
+<?php } ?>
+</div>
+			</div>
+		</div>
+	</div>
+	<div class="panel panel-default<?php echo $t96_employees_edit->MultiPages->PageStyle("3") ?>">
+		<div class="panel-heading">
+			<h4 class="panel-title">
+				<a class="panel-toggle" data-toggle="collapse" data-parent="#t96_employees_edit" href="#tab_t96_employees3"><?php echo $t96_employees->PageCaption(3) ?></a>
+			</h4>
+		</div>
+		<div class="panel-collapse collapse<?php echo $t96_employees_edit->MultiPages->PageStyle("3") ?>" id="tab_t96_employees3">
+			<div class="panel-body">
+<div>
+<?php if ($t96_employees->HireDate->Visible) { // HireDate ?>
+	<div id="r_HireDate" class="form-group">
+		<label id="elh_t96_employees_HireDate" for="x_HireDate" class="col-sm-2 control-label ewLabel"><?php echo $t96_employees->HireDate->FldCaption() ?></label>
+		<div class="col-sm-10"><div<?php echo $t96_employees->HireDate->CellAttributes() ?>>
+<span id="el_t96_employees_HireDate">
+<input type="text" data-table="t96_employees" data-field="x_HireDate" data-page="3" name="x_HireDate" id="x_HireDate" placeholder="<?php echo ew_HtmlEncode($t96_employees->HireDate->getPlaceHolder()) ?>" value="<?php echo $t96_employees->HireDate->EditValue ?>"<?php echo $t96_employees->HireDate->EditAttributes() ?>>
+</span>
+<?php echo $t96_employees->HireDate->CustomMsg ?></div></div>
+	</div>
+<?php } ?>
+<?php if ($t96_employees->Extension->Visible) { // Extension ?>
+	<div id="r_Extension" class="form-group">
+		<label id="elh_t96_employees_Extension" for="x_Extension" class="col-sm-2 control-label ewLabel"><?php echo $t96_employees->Extension->FldCaption() ?></label>
+		<div class="col-sm-10"><div<?php echo $t96_employees->Extension->CellAttributes() ?>>
+<span id="el_t96_employees_Extension">
+<input type="text" data-table="t96_employees" data-field="x_Extension" data-page="3" name="x_Extension" id="x_Extension" size="30" maxlength="4" placeholder="<?php echo ew_HtmlEncode($t96_employees->Extension->getPlaceHolder()) ?>" value="<?php echo $t96_employees->Extension->EditValue ?>"<?php echo $t96_employees->Extension->EditAttributes() ?>>
+</span>
+<?php echo $t96_employees->Extension->CustomMsg ?></div></div>
+	</div>
+<?php } ?>
+<?php if ($t96_employees->ReportsTo->Visible) { // ReportsTo ?>
+	<div id="r_ReportsTo" class="form-group">
+		<label id="elh_t96_employees_ReportsTo" for="x_ReportsTo" class="col-sm-2 control-label ewLabel"><?php echo $t96_employees->ReportsTo->FldCaption() ?></label>
+		<div class="col-sm-10"><div<?php echo $t96_employees->ReportsTo->CellAttributes() ?>>
+<span id="el_t96_employees_ReportsTo">
+<input type="text" data-table="t96_employees" data-field="x_ReportsTo" data-page="3" name="x_ReportsTo" id="x_ReportsTo" size="30" placeholder="<?php echo ew_HtmlEncode($t96_employees->ReportsTo->getPlaceHolder()) ?>" value="<?php echo $t96_employees->ReportsTo->EditValue ?>"<?php echo $t96_employees->ReportsTo->EditAttributes() ?>>
+</span>
+<?php echo $t96_employees->ReportsTo->CustomMsg ?></div></div>
 	</div>
 <?php } ?>
 <?php if ($t96_employees->Profile->Visible) { // Profile ?>
@@ -2030,12 +2048,18 @@ $t96_employees_edit->ShowMessage();
 		<label id="elh_t96_employees_Profile" for="x_Profile" class="col-sm-2 control-label ewLabel"><?php echo $t96_employees->Profile->FldCaption() ?></label>
 		<div class="col-sm-10"><div<?php echo $t96_employees->Profile->CellAttributes() ?>>
 <span id="el_t96_employees_Profile">
-<textarea data-table="t96_employees" data-field="x_Profile" name="x_Profile" id="x_Profile" cols="35" rows="4" placeholder="<?php echo ew_HtmlEncode($t96_employees->Profile->getPlaceHolder()) ?>"<?php echo $t96_employees->Profile->EditAttributes() ?>><?php echo $t96_employees->Profile->EditValue ?></textarea>
+<textarea data-table="t96_employees" data-field="x_Profile" data-page="3" name="x_Profile" id="x_Profile" cols="35" rows="4" placeholder="<?php echo ew_HtmlEncode($t96_employees->Profile->getPlaceHolder()) ?>"<?php echo $t96_employees->Profile->EditAttributes() ?>><?php echo $t96_employees->Profile->EditValue ?></textarea>
 </span>
 <?php echo $t96_employees->Profile->CustomMsg ?></div></div>
 	</div>
 <?php } ?>
 </div>
+			</div>
+		</div>
+	</div>
+</div>
+</div>
+<input type="hidden" data-table="t96_employees" data-field="x_EmployeeID" name="x_EmployeeID" id="x_EmployeeID" value="<?php echo ew_HtmlEncode($t96_employees->EmployeeID->CurrentValue) ?>">
 <?php if (!$t96_employees_edit->IsModal) { ?>
 <div class="form-group">
 	<div class="col-sm-offset-2 col-sm-10">

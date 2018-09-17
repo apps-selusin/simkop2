@@ -383,8 +383,6 @@ class ct96_employees_view extends ct96_employees {
 
 		// Setup export options
 		$this->SetupExportOptions();
-		$this->EmployeeID->SetVisibility();
-		$this->EmployeeID->Visible = !$this->IsAdd() && !$this->IsCopy() && !$this->IsGridAdd();
 		$this->LastName->SetVisibility();
 		$this->FirstName->SetVisibility();
 		$this->Title->SetVisibility();
@@ -407,6 +405,9 @@ class ct96_employees_view extends ct96_employees {
 		$this->Username->SetVisibility();
 		$this->Activated->SetVisibility();
 		$this->Profile->SetVisibility();
+
+		// Set up multi page object
+		$this->SetupMultiPages();
 
 		// Global Page Loading event (in userfn*.php)
 		Page_Loading();
@@ -489,6 +490,7 @@ class ct96_employees_view extends ct96_employees {
 	var $RecKey = array();
 	var $IsModal = FALSE;
 	var $Recordset;
+	var $MultiPages; // Multi pages object
 
 	//
 	// Page main
@@ -940,11 +942,6 @@ class ct96_employees_view extends ct96_employees {
 		$this->Profile->ViewValue = $this->Profile->CurrentValue;
 		$this->Profile->ViewCustomAttributes = "";
 
-			// EmployeeID
-			$this->EmployeeID->LinkCustomAttributes = "";
-			$this->EmployeeID->HrefValue = "";
-			$this->EmployeeID->TooltipValue = "";
-
 			// LastName
 			$this->LastName->LinkCustomAttributes = "";
 			$this->LastName->HrefValue = "";
@@ -1326,6 +1323,16 @@ class ct96_employees_view extends ct96_employees {
 		$Breadcrumb->Add("view", $PageId, $url);
 	}
 
+	// Set up multi pages
+	function SetupMultiPages() {
+		$pages = new cSubPages();
+		$pages->Add(0);
+		$pages->Add(1);
+		$pages->Add(2);
+		$pages->Add(3);
+		$this->MultiPages = $pages;
+	}
+
 	// Setup lookup filters of a field
 	function SetupLookupFilters($fld, $pageId = null) {
 		global $gsLanguage;
@@ -1470,6 +1477,9 @@ ft96_employeesview.ValidateRequired = true;
 ft96_employeesview.ValidateRequired = false; 
 <?php } ?>
 
+// Multi-Page
+ft96_employeesview.MultiPage = new ew_MultiPage("ft96_employeesview");
+
 // Dynamic selection lists
 ft96_employeesview.Lists["x_UserLevel"] = {"LinkField":"x_userlevelid","Ajax":true,"AutoFill":false,"DisplayFields":["x_userlevelname","","",""],"ParentFields":[],"ChildFields":[],"FilterFields":[],"Options":[],"Template":"","LinkTable":"t97_userlevels"};
 ft96_employeesview.Lists["x_Activated"] = {"LinkField":"","Ajax":null,"AutoFill":false,"DisplayFields":["","","",""],"ParentFields":[],"ChildFields":[],"FilterFields":[],"Options":[],"Template":""};
@@ -1561,210 +1571,26 @@ $t96_employees_view->ShowMessage();
 <?php if ($t96_employees_view->IsModal) { ?>
 <input type="hidden" name="modal" value="1">
 <?php } ?>
+<?php if ($t96_employees->Export == "") { ?>
+<div class="ewMultiPage">
+<div class="panel-group" id="t96_employees_view">
+<?php } ?>
+<?php if ($t96_employees->Export == "") { ?>
+	<div class="panel panel-default<?php echo $t96_employees_view->MultiPages->PageStyle("1") ?>">
+		<div class="panel-heading">
+			<h4 class="panel-title">
+				<a class="panel-toggle" data-toggle="collapse" data-parent="#t96_employees_view" href="#tab_t96_employees1"><?php echo $t96_employees->PageCaption(1) ?></a>
+			</h4>
+		</div>
+		<div class="panel-collapse collapse<?php echo $t96_employees_view->MultiPages->PageStyle("1") ?>" id="tab_t96_employees1">
+			<div class="panel-body">
+<?php } ?>
 <table class="table table-bordered table-striped ewViewTable">
-<?php if ($t96_employees->EmployeeID->Visible) { // EmployeeID ?>
-	<tr id="r_EmployeeID">
-		<td><span id="elh_t96_employees_EmployeeID"><?php echo $t96_employees->EmployeeID->FldCaption() ?></span></td>
-		<td data-name="EmployeeID"<?php echo $t96_employees->EmployeeID->CellAttributes() ?>>
-<span id="el_t96_employees_EmployeeID">
-<span<?php echo $t96_employees->EmployeeID->ViewAttributes() ?>>
-<?php echo $t96_employees->EmployeeID->ViewValue ?></span>
-</span>
-</td>
-	</tr>
-<?php } ?>
-<?php if ($t96_employees->LastName->Visible) { // LastName ?>
-	<tr id="r_LastName">
-		<td><span id="elh_t96_employees_LastName"><?php echo $t96_employees->LastName->FldCaption() ?></span></td>
-		<td data-name="LastName"<?php echo $t96_employees->LastName->CellAttributes() ?>>
-<span id="el_t96_employees_LastName">
-<span<?php echo $t96_employees->LastName->ViewAttributes() ?>>
-<?php echo $t96_employees->LastName->ViewValue ?></span>
-</span>
-</td>
-	</tr>
-<?php } ?>
-<?php if ($t96_employees->FirstName->Visible) { // FirstName ?>
-	<tr id="r_FirstName">
-		<td><span id="elh_t96_employees_FirstName"><?php echo $t96_employees->FirstName->FldCaption() ?></span></td>
-		<td data-name="FirstName"<?php echo $t96_employees->FirstName->CellAttributes() ?>>
-<span id="el_t96_employees_FirstName">
-<span<?php echo $t96_employees->FirstName->ViewAttributes() ?>>
-<?php echo $t96_employees->FirstName->ViewValue ?></span>
-</span>
-</td>
-	</tr>
-<?php } ?>
-<?php if ($t96_employees->Title->Visible) { // Title ?>
-	<tr id="r_Title">
-		<td><span id="elh_t96_employees_Title"><?php echo $t96_employees->Title->FldCaption() ?></span></td>
-		<td data-name="Title"<?php echo $t96_employees->Title->CellAttributes() ?>>
-<span id="el_t96_employees_Title">
-<span<?php echo $t96_employees->Title->ViewAttributes() ?>>
-<?php echo $t96_employees->Title->ViewValue ?></span>
-</span>
-</td>
-	</tr>
-<?php } ?>
-<?php if ($t96_employees->TitleOfCourtesy->Visible) { // TitleOfCourtesy ?>
-	<tr id="r_TitleOfCourtesy">
-		<td><span id="elh_t96_employees_TitleOfCourtesy"><?php echo $t96_employees->TitleOfCourtesy->FldCaption() ?></span></td>
-		<td data-name="TitleOfCourtesy"<?php echo $t96_employees->TitleOfCourtesy->CellAttributes() ?>>
-<span id="el_t96_employees_TitleOfCourtesy">
-<span<?php echo $t96_employees->TitleOfCourtesy->ViewAttributes() ?>>
-<?php echo $t96_employees->TitleOfCourtesy->ViewValue ?></span>
-</span>
-</td>
-	</tr>
-<?php } ?>
-<?php if ($t96_employees->BirthDate->Visible) { // BirthDate ?>
-	<tr id="r_BirthDate">
-		<td><span id="elh_t96_employees_BirthDate"><?php echo $t96_employees->BirthDate->FldCaption() ?></span></td>
-		<td data-name="BirthDate"<?php echo $t96_employees->BirthDate->CellAttributes() ?>>
-<span id="el_t96_employees_BirthDate">
-<span<?php echo $t96_employees->BirthDate->ViewAttributes() ?>>
-<?php echo $t96_employees->BirthDate->ViewValue ?></span>
-</span>
-</td>
-	</tr>
-<?php } ?>
-<?php if ($t96_employees->HireDate->Visible) { // HireDate ?>
-	<tr id="r_HireDate">
-		<td><span id="elh_t96_employees_HireDate"><?php echo $t96_employees->HireDate->FldCaption() ?></span></td>
-		<td data-name="HireDate"<?php echo $t96_employees->HireDate->CellAttributes() ?>>
-<span id="el_t96_employees_HireDate">
-<span<?php echo $t96_employees->HireDate->ViewAttributes() ?>>
-<?php echo $t96_employees->HireDate->ViewValue ?></span>
-</span>
-</td>
-	</tr>
-<?php } ?>
-<?php if ($t96_employees->Address->Visible) { // Address ?>
-	<tr id="r_Address">
-		<td><span id="elh_t96_employees_Address"><?php echo $t96_employees->Address->FldCaption() ?></span></td>
-		<td data-name="Address"<?php echo $t96_employees->Address->CellAttributes() ?>>
-<span id="el_t96_employees_Address">
-<span<?php echo $t96_employees->Address->ViewAttributes() ?>>
-<?php echo $t96_employees->Address->ViewValue ?></span>
-</span>
-</td>
-	</tr>
-<?php } ?>
-<?php if ($t96_employees->City->Visible) { // City ?>
-	<tr id="r_City">
-		<td><span id="elh_t96_employees_City"><?php echo $t96_employees->City->FldCaption() ?></span></td>
-		<td data-name="City"<?php echo $t96_employees->City->CellAttributes() ?>>
-<span id="el_t96_employees_City">
-<span<?php echo $t96_employees->City->ViewAttributes() ?>>
-<?php echo $t96_employees->City->ViewValue ?></span>
-</span>
-</td>
-	</tr>
-<?php } ?>
-<?php if ($t96_employees->Region->Visible) { // Region ?>
-	<tr id="r_Region">
-		<td><span id="elh_t96_employees_Region"><?php echo $t96_employees->Region->FldCaption() ?></span></td>
-		<td data-name="Region"<?php echo $t96_employees->Region->CellAttributes() ?>>
-<span id="el_t96_employees_Region">
-<span<?php echo $t96_employees->Region->ViewAttributes() ?>>
-<?php echo $t96_employees->Region->ViewValue ?></span>
-</span>
-</td>
-	</tr>
-<?php } ?>
-<?php if ($t96_employees->PostalCode->Visible) { // PostalCode ?>
-	<tr id="r_PostalCode">
-		<td><span id="elh_t96_employees_PostalCode"><?php echo $t96_employees->PostalCode->FldCaption() ?></span></td>
-		<td data-name="PostalCode"<?php echo $t96_employees->PostalCode->CellAttributes() ?>>
-<span id="el_t96_employees_PostalCode">
-<span<?php echo $t96_employees->PostalCode->ViewAttributes() ?>>
-<?php echo $t96_employees->PostalCode->ViewValue ?></span>
-</span>
-</td>
-	</tr>
-<?php } ?>
-<?php if ($t96_employees->Country->Visible) { // Country ?>
-	<tr id="r_Country">
-		<td><span id="elh_t96_employees_Country"><?php echo $t96_employees->Country->FldCaption() ?></span></td>
-		<td data-name="Country"<?php echo $t96_employees->Country->CellAttributes() ?>>
-<span id="el_t96_employees_Country">
-<span<?php echo $t96_employees->Country->ViewAttributes() ?>>
-<?php echo $t96_employees->Country->ViewValue ?></span>
-</span>
-</td>
-	</tr>
-<?php } ?>
-<?php if ($t96_employees->HomePhone->Visible) { // HomePhone ?>
-	<tr id="r_HomePhone">
-		<td><span id="elh_t96_employees_HomePhone"><?php echo $t96_employees->HomePhone->FldCaption() ?></span></td>
-		<td data-name="HomePhone"<?php echo $t96_employees->HomePhone->CellAttributes() ?>>
-<span id="el_t96_employees_HomePhone">
-<span<?php echo $t96_employees->HomePhone->ViewAttributes() ?>>
-<?php echo $t96_employees->HomePhone->ViewValue ?></span>
-</span>
-</td>
-	</tr>
-<?php } ?>
-<?php if ($t96_employees->Extension->Visible) { // Extension ?>
-	<tr id="r_Extension">
-		<td><span id="elh_t96_employees_Extension"><?php echo $t96_employees->Extension->FldCaption() ?></span></td>
-		<td data-name="Extension"<?php echo $t96_employees->Extension->CellAttributes() ?>>
-<span id="el_t96_employees_Extension">
-<span<?php echo $t96_employees->Extension->ViewAttributes() ?>>
-<?php echo $t96_employees->Extension->ViewValue ?></span>
-</span>
-</td>
-	</tr>
-<?php } ?>
-<?php if ($t96_employees->_Email->Visible) { // Email ?>
-	<tr id="r__Email">
-		<td><span id="elh_t96_employees__Email"><?php echo $t96_employees->_Email->FldCaption() ?></span></td>
-		<td data-name="_Email"<?php echo $t96_employees->_Email->CellAttributes() ?>>
-<span id="el_t96_employees__Email">
-<span<?php echo $t96_employees->_Email->ViewAttributes() ?>>
-<?php echo $t96_employees->_Email->ViewValue ?></span>
-</span>
-</td>
-	</tr>
-<?php } ?>
-<?php if ($t96_employees->Photo->Visible) { // Photo ?>
-	<tr id="r_Photo">
-		<td><span id="elh_t96_employees_Photo"><?php echo $t96_employees->Photo->FldCaption() ?></span></td>
-		<td data-name="Photo"<?php echo $t96_employees->Photo->CellAttributes() ?>>
-<span id="el_t96_employees_Photo">
-<span<?php echo $t96_employees->Photo->ViewAttributes() ?>>
-<?php echo $t96_employees->Photo->ViewValue ?></span>
-</span>
-</td>
-	</tr>
-<?php } ?>
-<?php if ($t96_employees->Notes->Visible) { // Notes ?>
-	<tr id="r_Notes">
-		<td><span id="elh_t96_employees_Notes"><?php echo $t96_employees->Notes->FldCaption() ?></span></td>
-		<td data-name="Notes"<?php echo $t96_employees->Notes->CellAttributes() ?>>
-<span id="el_t96_employees_Notes">
-<span<?php echo $t96_employees->Notes->ViewAttributes() ?>>
-<?php echo $t96_employees->Notes->ViewValue ?></span>
-</span>
-</td>
-	</tr>
-<?php } ?>
-<?php if ($t96_employees->ReportsTo->Visible) { // ReportsTo ?>
-	<tr id="r_ReportsTo">
-		<td><span id="elh_t96_employees_ReportsTo"><?php echo $t96_employees->ReportsTo->FldCaption() ?></span></td>
-		<td data-name="ReportsTo"<?php echo $t96_employees->ReportsTo->CellAttributes() ?>>
-<span id="el_t96_employees_ReportsTo">
-<span<?php echo $t96_employees->ReportsTo->ViewAttributes() ?>>
-<?php echo $t96_employees->ReportsTo->ViewValue ?></span>
-</span>
-</td>
-	</tr>
-<?php } ?>
 <?php if ($t96_employees->Password->Visible) { // Password ?>
 	<tr id="r_Password">
 		<td><span id="elh_t96_employees_Password"><?php echo $t96_employees->Password->FldCaption() ?></span></td>
 		<td data-name="Password"<?php echo $t96_employees->Password->CellAttributes() ?>>
-<span id="el_t96_employees_Password">
+<span id="el_t96_employees_Password" data-page="1">
 <span<?php echo $t96_employees->Password->ViewAttributes() ?>>
 <?php echo $t96_employees->Password->ViewValue ?></span>
 </span>
@@ -1775,7 +1601,7 @@ $t96_employees_view->ShowMessage();
 	<tr id="r_UserLevel">
 		<td><span id="elh_t96_employees_UserLevel"><?php echo $t96_employees->UserLevel->FldCaption() ?></span></td>
 		<td data-name="UserLevel"<?php echo $t96_employees->UserLevel->CellAttributes() ?>>
-<span id="el_t96_employees_UserLevel">
+<span id="el_t96_employees_UserLevel" data-page="1">
 <span<?php echo $t96_employees->UserLevel->ViewAttributes() ?>>
 <?php echo $t96_employees->UserLevel->ViewValue ?></span>
 </span>
@@ -1786,7 +1612,7 @@ $t96_employees_view->ShowMessage();
 	<tr id="r_Username">
 		<td><span id="elh_t96_employees_Username"><?php echo $t96_employees->Username->FldCaption() ?></span></td>
 		<td data-name="Username"<?php echo $t96_employees->Username->CellAttributes() ?>>
-<span id="el_t96_employees_Username">
+<span id="el_t96_employees_Username" data-page="1">
 <span<?php echo $t96_employees->Username->ViewAttributes() ?>>
 <?php echo $t96_employees->Username->ViewValue ?></span>
 </span>
@@ -1797,9 +1623,230 @@ $t96_employees_view->ShowMessage();
 	<tr id="r_Activated">
 		<td><span id="elh_t96_employees_Activated"><?php echo $t96_employees->Activated->FldCaption() ?></span></td>
 		<td data-name="Activated"<?php echo $t96_employees->Activated->CellAttributes() ?>>
-<span id="el_t96_employees_Activated">
+<span id="el_t96_employees_Activated" data-page="1">
 <span<?php echo $t96_employees->Activated->ViewAttributes() ?>>
 <?php echo $t96_employees->Activated->ViewValue ?></span>
+</span>
+</td>
+	</tr>
+<?php } ?>
+</table>
+<?php if ($t96_employees->Export == "") { ?>
+			</div>
+		</div>
+	</div>
+<?php } ?>
+<?php if ($t96_employees->Export == "") { ?>
+	<div class="panel panel-default<?php echo $t96_employees_view->MultiPages->PageStyle("2") ?>">
+		<div class="panel-heading">
+			<h4 class="panel-title">
+				<a class="panel-toggle" data-toggle="collapse" data-parent="#t96_employees_view" href="#tab_t96_employees2"><?php echo $t96_employees->PageCaption(2) ?></a>
+			</h4>
+		</div>
+		<div class="panel-collapse collapse<?php echo $t96_employees_view->MultiPages->PageStyle("2") ?>" id="tab_t96_employees2">
+			<div class="panel-body">
+<?php } ?>
+<table class="table table-bordered table-striped ewViewTable">
+<?php if ($t96_employees->LastName->Visible) { // LastName ?>
+	<tr id="r_LastName">
+		<td><span id="elh_t96_employees_LastName"><?php echo $t96_employees->LastName->FldCaption() ?></span></td>
+		<td data-name="LastName"<?php echo $t96_employees->LastName->CellAttributes() ?>>
+<span id="el_t96_employees_LastName" data-page="2">
+<span<?php echo $t96_employees->LastName->ViewAttributes() ?>>
+<?php echo $t96_employees->LastName->ViewValue ?></span>
+</span>
+</td>
+	</tr>
+<?php } ?>
+<?php if ($t96_employees->FirstName->Visible) { // FirstName ?>
+	<tr id="r_FirstName">
+		<td><span id="elh_t96_employees_FirstName"><?php echo $t96_employees->FirstName->FldCaption() ?></span></td>
+		<td data-name="FirstName"<?php echo $t96_employees->FirstName->CellAttributes() ?>>
+<span id="el_t96_employees_FirstName" data-page="2">
+<span<?php echo $t96_employees->FirstName->ViewAttributes() ?>>
+<?php echo $t96_employees->FirstName->ViewValue ?></span>
+</span>
+</td>
+	</tr>
+<?php } ?>
+<?php if ($t96_employees->Title->Visible) { // Title ?>
+	<tr id="r_Title">
+		<td><span id="elh_t96_employees_Title"><?php echo $t96_employees->Title->FldCaption() ?></span></td>
+		<td data-name="Title"<?php echo $t96_employees->Title->CellAttributes() ?>>
+<span id="el_t96_employees_Title" data-page="2">
+<span<?php echo $t96_employees->Title->ViewAttributes() ?>>
+<?php echo $t96_employees->Title->ViewValue ?></span>
+</span>
+</td>
+	</tr>
+<?php } ?>
+<?php if ($t96_employees->TitleOfCourtesy->Visible) { // TitleOfCourtesy ?>
+	<tr id="r_TitleOfCourtesy">
+		<td><span id="elh_t96_employees_TitleOfCourtesy"><?php echo $t96_employees->TitleOfCourtesy->FldCaption() ?></span></td>
+		<td data-name="TitleOfCourtesy"<?php echo $t96_employees->TitleOfCourtesy->CellAttributes() ?>>
+<span id="el_t96_employees_TitleOfCourtesy" data-page="2">
+<span<?php echo $t96_employees->TitleOfCourtesy->ViewAttributes() ?>>
+<?php echo $t96_employees->TitleOfCourtesy->ViewValue ?></span>
+</span>
+</td>
+	</tr>
+<?php } ?>
+<?php if ($t96_employees->BirthDate->Visible) { // BirthDate ?>
+	<tr id="r_BirthDate">
+		<td><span id="elh_t96_employees_BirthDate"><?php echo $t96_employees->BirthDate->FldCaption() ?></span></td>
+		<td data-name="BirthDate"<?php echo $t96_employees->BirthDate->CellAttributes() ?>>
+<span id="el_t96_employees_BirthDate" data-page="2">
+<span<?php echo $t96_employees->BirthDate->ViewAttributes() ?>>
+<?php echo $t96_employees->BirthDate->ViewValue ?></span>
+</span>
+</td>
+	</tr>
+<?php } ?>
+<?php if ($t96_employees->Address->Visible) { // Address ?>
+	<tr id="r_Address">
+		<td><span id="elh_t96_employees_Address"><?php echo $t96_employees->Address->FldCaption() ?></span></td>
+		<td data-name="Address"<?php echo $t96_employees->Address->CellAttributes() ?>>
+<span id="el_t96_employees_Address" data-page="2">
+<span<?php echo $t96_employees->Address->ViewAttributes() ?>>
+<?php echo $t96_employees->Address->ViewValue ?></span>
+</span>
+</td>
+	</tr>
+<?php } ?>
+<?php if ($t96_employees->City->Visible) { // City ?>
+	<tr id="r_City">
+		<td><span id="elh_t96_employees_City"><?php echo $t96_employees->City->FldCaption() ?></span></td>
+		<td data-name="City"<?php echo $t96_employees->City->CellAttributes() ?>>
+<span id="el_t96_employees_City" data-page="2">
+<span<?php echo $t96_employees->City->ViewAttributes() ?>>
+<?php echo $t96_employees->City->ViewValue ?></span>
+</span>
+</td>
+	</tr>
+<?php } ?>
+<?php if ($t96_employees->Region->Visible) { // Region ?>
+	<tr id="r_Region">
+		<td><span id="elh_t96_employees_Region"><?php echo $t96_employees->Region->FldCaption() ?></span></td>
+		<td data-name="Region"<?php echo $t96_employees->Region->CellAttributes() ?>>
+<span id="el_t96_employees_Region" data-page="2">
+<span<?php echo $t96_employees->Region->ViewAttributes() ?>>
+<?php echo $t96_employees->Region->ViewValue ?></span>
+</span>
+</td>
+	</tr>
+<?php } ?>
+<?php if ($t96_employees->PostalCode->Visible) { // PostalCode ?>
+	<tr id="r_PostalCode">
+		<td><span id="elh_t96_employees_PostalCode"><?php echo $t96_employees->PostalCode->FldCaption() ?></span></td>
+		<td data-name="PostalCode"<?php echo $t96_employees->PostalCode->CellAttributes() ?>>
+<span id="el_t96_employees_PostalCode" data-page="2">
+<span<?php echo $t96_employees->PostalCode->ViewAttributes() ?>>
+<?php echo $t96_employees->PostalCode->ViewValue ?></span>
+</span>
+</td>
+	</tr>
+<?php } ?>
+<?php if ($t96_employees->Country->Visible) { // Country ?>
+	<tr id="r_Country">
+		<td><span id="elh_t96_employees_Country"><?php echo $t96_employees->Country->FldCaption() ?></span></td>
+		<td data-name="Country"<?php echo $t96_employees->Country->CellAttributes() ?>>
+<span id="el_t96_employees_Country" data-page="2">
+<span<?php echo $t96_employees->Country->ViewAttributes() ?>>
+<?php echo $t96_employees->Country->ViewValue ?></span>
+</span>
+</td>
+	</tr>
+<?php } ?>
+<?php if ($t96_employees->HomePhone->Visible) { // HomePhone ?>
+	<tr id="r_HomePhone">
+		<td><span id="elh_t96_employees_HomePhone"><?php echo $t96_employees->HomePhone->FldCaption() ?></span></td>
+		<td data-name="HomePhone"<?php echo $t96_employees->HomePhone->CellAttributes() ?>>
+<span id="el_t96_employees_HomePhone" data-page="2">
+<span<?php echo $t96_employees->HomePhone->ViewAttributes() ?>>
+<?php echo $t96_employees->HomePhone->ViewValue ?></span>
+</span>
+</td>
+	</tr>
+<?php } ?>
+<?php if ($t96_employees->_Email->Visible) { // Email ?>
+	<tr id="r__Email">
+		<td><span id="elh_t96_employees__Email"><?php echo $t96_employees->_Email->FldCaption() ?></span></td>
+		<td data-name="_Email"<?php echo $t96_employees->_Email->CellAttributes() ?>>
+<span id="el_t96_employees__Email" data-page="2">
+<span<?php echo $t96_employees->_Email->ViewAttributes() ?>>
+<?php echo $t96_employees->_Email->ViewValue ?></span>
+</span>
+</td>
+	</tr>
+<?php } ?>
+<?php if ($t96_employees->Photo->Visible) { // Photo ?>
+	<tr id="r_Photo">
+		<td><span id="elh_t96_employees_Photo"><?php echo $t96_employees->Photo->FldCaption() ?></span></td>
+		<td data-name="Photo"<?php echo $t96_employees->Photo->CellAttributes() ?>>
+<span id="el_t96_employees_Photo" data-page="2">
+<span<?php echo $t96_employees->Photo->ViewAttributes() ?>>
+<?php echo $t96_employees->Photo->ViewValue ?></span>
+</span>
+</td>
+	</tr>
+<?php } ?>
+<?php if ($t96_employees->Notes->Visible) { // Notes ?>
+	<tr id="r_Notes">
+		<td><span id="elh_t96_employees_Notes"><?php echo $t96_employees->Notes->FldCaption() ?></span></td>
+		<td data-name="Notes"<?php echo $t96_employees->Notes->CellAttributes() ?>>
+<span id="el_t96_employees_Notes" data-page="2">
+<span<?php echo $t96_employees->Notes->ViewAttributes() ?>>
+<?php echo $t96_employees->Notes->ViewValue ?></span>
+</span>
+</td>
+	</tr>
+<?php } ?>
+</table>
+<?php if ($t96_employees->Export == "") { ?>
+			</div>
+		</div>
+	</div>
+<?php } ?>
+<?php if ($t96_employees->Export == "") { ?>
+	<div class="panel panel-default<?php echo $t96_employees_view->MultiPages->PageStyle("3") ?>">
+		<div class="panel-heading">
+			<h4 class="panel-title">
+				<a class="panel-toggle" data-toggle="collapse" data-parent="#t96_employees_view" href="#tab_t96_employees3"><?php echo $t96_employees->PageCaption(3) ?></a>
+			</h4>
+		</div>
+		<div class="panel-collapse collapse<?php echo $t96_employees_view->MultiPages->PageStyle("3") ?>" id="tab_t96_employees3">
+			<div class="panel-body">
+<?php } ?>
+<table class="table table-bordered table-striped ewViewTable">
+<?php if ($t96_employees->HireDate->Visible) { // HireDate ?>
+	<tr id="r_HireDate">
+		<td><span id="elh_t96_employees_HireDate"><?php echo $t96_employees->HireDate->FldCaption() ?></span></td>
+		<td data-name="HireDate"<?php echo $t96_employees->HireDate->CellAttributes() ?>>
+<span id="el_t96_employees_HireDate" data-page="3">
+<span<?php echo $t96_employees->HireDate->ViewAttributes() ?>>
+<?php echo $t96_employees->HireDate->ViewValue ?></span>
+</span>
+</td>
+	</tr>
+<?php } ?>
+<?php if ($t96_employees->Extension->Visible) { // Extension ?>
+	<tr id="r_Extension">
+		<td><span id="elh_t96_employees_Extension"><?php echo $t96_employees->Extension->FldCaption() ?></span></td>
+		<td data-name="Extension"<?php echo $t96_employees->Extension->CellAttributes() ?>>
+<span id="el_t96_employees_Extension" data-page="3">
+<span<?php echo $t96_employees->Extension->ViewAttributes() ?>>
+<?php echo $t96_employees->Extension->ViewValue ?></span>
+</span>
+</td>
+	</tr>
+<?php } ?>
+<?php if ($t96_employees->ReportsTo->Visible) { // ReportsTo ?>
+	<tr id="r_ReportsTo">
+		<td><span id="elh_t96_employees_ReportsTo"><?php echo $t96_employees->ReportsTo->FldCaption() ?></span></td>
+		<td data-name="ReportsTo"<?php echo $t96_employees->ReportsTo->CellAttributes() ?>>
+<span id="el_t96_employees_ReportsTo" data-page="3">
+<span<?php echo $t96_employees->ReportsTo->ViewAttributes() ?>>
+<?php echo $t96_employees->ReportsTo->ViewValue ?></span>
 </span>
 </td>
 	</tr>
@@ -1808,7 +1855,7 @@ $t96_employees_view->ShowMessage();
 	<tr id="r_Profile">
 		<td><span id="elh_t96_employees_Profile"><?php echo $t96_employees->Profile->FldCaption() ?></span></td>
 		<td data-name="Profile"<?php echo $t96_employees->Profile->CellAttributes() ?>>
-<span id="el_t96_employees_Profile">
+<span id="el_t96_employees_Profile" data-page="3">
 <span<?php echo $t96_employees->Profile->ViewAttributes() ?>>
 <?php echo $t96_employees->Profile->ViewValue ?></span>
 </span>
@@ -1816,6 +1863,15 @@ $t96_employees_view->ShowMessage();
 	</tr>
 <?php } ?>
 </table>
+<?php if ($t96_employees->Export == "") { ?>
+			</div>
+		</div>
+	</div>
+<?php } ?>
+<?php if ($t96_employees->Export == "") { ?>
+</div>
+</div>
+<?php } ?>
 <?php if (!$t96_employees_view->IsModal) { ?>
 <?php if ($t96_employees->Export == "") { ?>
 <?php if (!isset($t96_employees_view->Pager)) $t96_employees_view->Pager = new cPrevNextPager($t96_employees_view->StartRec, $t96_employees_view->DisplayRecs, $t96_employees_view->TotalRecs) ?>
