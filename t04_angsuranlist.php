@@ -414,8 +414,6 @@ class ct04_angsuran_list extends ct04_angsuran {
 
 		// Setup export options
 		$this->SetupExportOptions();
-		$this->id->SetVisibility();
-		$this->id->Visible = !$this->IsAdd() && !$this->IsCopy() && !$this->IsGridAdd();
 		$this->pinjaman_id->SetVisibility();
 		$this->AngsuranKe->SetVisibility();
 		$this->AngsuranTanggal->SetVisibility();
@@ -726,7 +724,6 @@ class ct04_angsuran_list extends ct04_angsuran {
 		if (@$_GET["order"] <> "") {
 			$this->CurrentOrder = ew_StripSlashes(@$_GET["order"]);
 			$this->CurrentOrderType = @$_GET["ordertype"];
-			$this->UpdateSort($this->id, $bCtrl); // id
 			$this->UpdateSort($this->pinjaman_id, $bCtrl); // pinjaman_id
 			$this->UpdateSort($this->AngsuranKe, $bCtrl); // AngsuranKe
 			$this->UpdateSort($this->AngsuranTanggal, $bCtrl); // AngsuranTanggal
@@ -773,7 +770,6 @@ class ct04_angsuran_list extends ct04_angsuran {
 			if ($this->Command == "resetsort") {
 				$sOrderBy = "";
 				$this->setSessionOrderBy($sOrderBy);
-				$this->id->setSort("");
 				$this->pinjaman_id->setSort("");
 				$this->AngsuranKe->setSort("");
 				$this->AngsuranTanggal->setSort("");
@@ -1280,7 +1276,7 @@ class ct04_angsuran_list extends ct04_angsuran {
 
 		// AngsuranTanggal
 		$this->AngsuranTanggal->ViewValue = $this->AngsuranTanggal->CurrentValue;
-		$this->AngsuranTanggal->ViewValue = ew_FormatDateTime($this->AngsuranTanggal->ViewValue, 0);
+		$this->AngsuranTanggal->ViewValue = ew_FormatDateTime($this->AngsuranTanggal->ViewValue, 7);
 		$this->AngsuranTanggal->ViewCustomAttributes = "";
 
 		// AngsuranPokok
@@ -1301,7 +1297,7 @@ class ct04_angsuran_list extends ct04_angsuran {
 
 		// TanggalBayar
 		$this->TanggalBayar->ViewValue = $this->TanggalBayar->CurrentValue;
-		$this->TanggalBayar->ViewValue = ew_FormatDateTime($this->TanggalBayar->ViewValue, 0);
+		$this->TanggalBayar->ViewValue = ew_FormatDateTime($this->TanggalBayar->ViewValue, 7);
 		$this->TanggalBayar->ViewCustomAttributes = "";
 
 		// TotalDenda
@@ -1311,11 +1307,6 @@ class ct04_angsuran_list extends ct04_angsuran {
 		// Terlambat
 		$this->Terlambat->ViewValue = $this->Terlambat->CurrentValue;
 		$this->Terlambat->ViewCustomAttributes = "";
-
-			// id
-			$this->id->LinkCustomAttributes = "";
-			$this->id->HrefValue = "";
-			$this->id->TooltipValue = "";
 
 			// pinjaman_id
 			$this->pinjaman_id->LinkCustomAttributes = "";
@@ -2068,15 +2059,6 @@ $t04_angsuran_list->RenderListOptions();
 // Render list options (header, left)
 $t04_angsuran_list->ListOptions->Render("header", "left");
 ?>
-<?php if ($t04_angsuran->id->Visible) { // id ?>
-	<?php if ($t04_angsuran->SortUrl($t04_angsuran->id) == "") { ?>
-		<th data-name="id"><div id="elh_t04_angsuran_id" class="t04_angsuran_id"><div class="ewTableHeaderCaption"><?php echo $t04_angsuran->id->FldCaption() ?></div></div></th>
-	<?php } else { ?>
-		<th data-name="id"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t04_angsuran->SortUrl($t04_angsuran->id) ?>',2);"><div id="elh_t04_angsuran_id" class="t04_angsuran_id">
-			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t04_angsuran->id->FldCaption() ?></span><span class="ewTableHeaderSort"><?php if ($t04_angsuran->id->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t04_angsuran->id->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
-        </div></div></th>
-	<?php } ?>
-<?php } ?>		
 <?php if ($t04_angsuran->pinjaman_id->Visible) { // pinjaman_id ?>
 	<?php if ($t04_angsuran->SortUrl($t04_angsuran->pinjaman_id) == "") { ?>
 		<th data-name="pinjaman_id"><div id="elh_t04_angsuran_pinjaman_id" class="t04_angsuran_pinjaman_id"><div class="ewTableHeaderCaption"><?php echo $t04_angsuran->pinjaman_id->FldCaption() ?></div></div></th>
@@ -2232,21 +2214,13 @@ while ($t04_angsuran_list->RecCnt < $t04_angsuran_list->StopRec) {
 // Render list options (body, left)
 $t04_angsuran_list->ListOptions->Render("body", "left", $t04_angsuran_list->RowCnt);
 ?>
-	<?php if ($t04_angsuran->id->Visible) { // id ?>
-		<td data-name="id"<?php echo $t04_angsuran->id->CellAttributes() ?>>
-<span id="el<?php echo $t04_angsuran_list->RowCnt ?>_t04_angsuran_id" class="t04_angsuran_id">
-<span<?php echo $t04_angsuran->id->ViewAttributes() ?>>
-<?php echo $t04_angsuran->id->ListViewValue() ?></span>
-</span>
-<a id="<?php echo $t04_angsuran_list->PageObjName . "_row_" . $t04_angsuran_list->RowCnt ?>"></a></td>
-	<?php } ?>
 	<?php if ($t04_angsuran->pinjaman_id->Visible) { // pinjaman_id ?>
 		<td data-name="pinjaman_id"<?php echo $t04_angsuran->pinjaman_id->CellAttributes() ?>>
 <span id="el<?php echo $t04_angsuran_list->RowCnt ?>_t04_angsuran_pinjaman_id" class="t04_angsuran_pinjaman_id">
 <span<?php echo $t04_angsuran->pinjaman_id->ViewAttributes() ?>>
 <?php echo $t04_angsuran->pinjaman_id->ListViewValue() ?></span>
 </span>
-</td>
+<a id="<?php echo $t04_angsuran_list->PageObjName . "_row_" . $t04_angsuran_list->RowCnt ?>"></a></td>
 	<?php } ?>
 	<?php if ($t04_angsuran->AngsuranKe->Visible) { // AngsuranKe ?>
 		<td data-name="AngsuranKe"<?php echo $t04_angsuran->AngsuranKe->CellAttributes() ?>>

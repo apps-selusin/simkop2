@@ -75,9 +75,9 @@ class ct04_angsuran extends cTable {
 		$this->fields['AngsuranKe'] = &$this->AngsuranKe;
 
 		// AngsuranTanggal
-		$this->AngsuranTanggal = new cField('t04_angsuran', 't04_angsuran', 'x_AngsuranTanggal', 'AngsuranTanggal', '`AngsuranTanggal`', ew_CastDateFieldForLike('`AngsuranTanggal`', 0, "DB"), 133, 0, FALSE, '`AngsuranTanggal`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXT');
+		$this->AngsuranTanggal = new cField('t04_angsuran', 't04_angsuran', 'x_AngsuranTanggal', 'AngsuranTanggal', '`AngsuranTanggal`', ew_CastDateFieldForLike('`AngsuranTanggal`', 7, "DB"), 133, 7, FALSE, '`AngsuranTanggal`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXT');
 		$this->AngsuranTanggal->Sortable = TRUE; // Allow sort
-		$this->AngsuranTanggal->FldDefaultErrMsg = str_replace("%s", $GLOBALS["EW_DATE_FORMAT"], $Language->Phrase("IncorrectDate"));
+		$this->AngsuranTanggal->FldDefaultErrMsg = str_replace("%s", $GLOBALS["EW_DATE_SEPARATOR"], $Language->Phrase("IncorrectDateDMY"));
 		$this->fields['AngsuranTanggal'] = &$this->AngsuranTanggal;
 
 		// AngsuranPokok
@@ -105,9 +105,9 @@ class ct04_angsuran extends cTable {
 		$this->fields['SisaHutang'] = &$this->SisaHutang;
 
 		// TanggalBayar
-		$this->TanggalBayar = new cField('t04_angsuran', 't04_angsuran', 'x_TanggalBayar', 'TanggalBayar', '`TanggalBayar`', ew_CastDateFieldForLike('`TanggalBayar`', 0, "DB"), 133, 0, FALSE, '`TanggalBayar`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXT');
+		$this->TanggalBayar = new cField('t04_angsuran', 't04_angsuran', 'x_TanggalBayar', 'TanggalBayar', '`TanggalBayar`', ew_CastDateFieldForLike('`TanggalBayar`', 7, "DB"), 133, 7, FALSE, '`TanggalBayar`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXT');
 		$this->TanggalBayar->Sortable = TRUE; // Allow sort
-		$this->TanggalBayar->FldDefaultErrMsg = str_replace("%s", $GLOBALS["EW_DATE_FORMAT"], $Language->Phrase("IncorrectDate"));
+		$this->TanggalBayar->FldDefaultErrMsg = str_replace("%s", $GLOBALS["EW_DATE_SEPARATOR"], $Language->Phrase("IncorrectDateDMY"));
 		$this->fields['TanggalBayar'] = &$this->TanggalBayar;
 
 		// TotalDenda
@@ -738,7 +738,7 @@ class ct04_angsuran extends cTable {
 
 		// AngsuranTanggal
 		$this->AngsuranTanggal->ViewValue = $this->AngsuranTanggal->CurrentValue;
-		$this->AngsuranTanggal->ViewValue = ew_FormatDateTime($this->AngsuranTanggal->ViewValue, 0);
+		$this->AngsuranTanggal->ViewValue = ew_FormatDateTime($this->AngsuranTanggal->ViewValue, 7);
 		$this->AngsuranTanggal->ViewCustomAttributes = "";
 
 		// AngsuranPokok
@@ -759,7 +759,7 @@ class ct04_angsuran extends cTable {
 
 		// TanggalBayar
 		$this->TanggalBayar->ViewValue = $this->TanggalBayar->CurrentValue;
-		$this->TanggalBayar->ViewValue = ew_FormatDateTime($this->TanggalBayar->ViewValue, 0);
+		$this->TanggalBayar->ViewValue = ew_FormatDateTime($this->TanggalBayar->ViewValue, 7);
 		$this->TanggalBayar->ViewCustomAttributes = "";
 
 		// TotalDenda
@@ -867,46 +867,43 @@ class ct04_angsuran extends cTable {
 		$this->AngsuranKe->EditAttrs["class"] = "form-control";
 		$this->AngsuranKe->EditCustomAttributes = "";
 		$this->AngsuranKe->EditValue = $this->AngsuranKe->CurrentValue;
-		$this->AngsuranKe->PlaceHolder = ew_RemoveHtml($this->AngsuranKe->FldCaption());
+		$this->AngsuranKe->ViewCustomAttributes = "";
 
 		// AngsuranTanggal
 		$this->AngsuranTanggal->EditAttrs["class"] = "form-control";
 		$this->AngsuranTanggal->EditCustomAttributes = "";
-		$this->AngsuranTanggal->EditValue = ew_FormatDateTime($this->AngsuranTanggal->CurrentValue, 8);
-		$this->AngsuranTanggal->PlaceHolder = ew_RemoveHtml($this->AngsuranTanggal->FldCaption());
+		$this->AngsuranTanggal->EditValue = $this->AngsuranTanggal->CurrentValue;
+		$this->AngsuranTanggal->EditValue = ew_FormatDateTime($this->AngsuranTanggal->EditValue, 7);
+		$this->AngsuranTanggal->ViewCustomAttributes = "";
 
 		// AngsuranPokok
 		$this->AngsuranPokok->EditAttrs["class"] = "form-control";
 		$this->AngsuranPokok->EditCustomAttributes = "";
 		$this->AngsuranPokok->EditValue = $this->AngsuranPokok->CurrentValue;
-		$this->AngsuranPokok->PlaceHolder = ew_RemoveHtml($this->AngsuranPokok->FldCaption());
-		if (strval($this->AngsuranPokok->EditValue) <> "" && is_numeric($this->AngsuranPokok->EditValue)) $this->AngsuranPokok->EditValue = ew_FormatNumber($this->AngsuranPokok->EditValue, -2, -1, -2, 0);
+		$this->AngsuranPokok->ViewCustomAttributes = "";
 
 		// AngsuranBunga
 		$this->AngsuranBunga->EditAttrs["class"] = "form-control";
 		$this->AngsuranBunga->EditCustomAttributes = "";
 		$this->AngsuranBunga->EditValue = $this->AngsuranBunga->CurrentValue;
-		$this->AngsuranBunga->PlaceHolder = ew_RemoveHtml($this->AngsuranBunga->FldCaption());
-		if (strval($this->AngsuranBunga->EditValue) <> "" && is_numeric($this->AngsuranBunga->EditValue)) $this->AngsuranBunga->EditValue = ew_FormatNumber($this->AngsuranBunga->EditValue, -2, -1, -2, 0);
+		$this->AngsuranBunga->ViewCustomAttributes = "";
 
 		// AngsuranTotal
 		$this->AngsuranTotal->EditAttrs["class"] = "form-control";
 		$this->AngsuranTotal->EditCustomAttributes = "";
 		$this->AngsuranTotal->EditValue = $this->AngsuranTotal->CurrentValue;
-		$this->AngsuranTotal->PlaceHolder = ew_RemoveHtml($this->AngsuranTotal->FldCaption());
-		if (strval($this->AngsuranTotal->EditValue) <> "" && is_numeric($this->AngsuranTotal->EditValue)) $this->AngsuranTotal->EditValue = ew_FormatNumber($this->AngsuranTotal->EditValue, -2, -1, -2, 0);
+		$this->AngsuranTotal->ViewCustomAttributes = "";
 
 		// SisaHutang
 		$this->SisaHutang->EditAttrs["class"] = "form-control";
 		$this->SisaHutang->EditCustomAttributes = "";
 		$this->SisaHutang->EditValue = $this->SisaHutang->CurrentValue;
-		$this->SisaHutang->PlaceHolder = ew_RemoveHtml($this->SisaHutang->FldCaption());
-		if (strval($this->SisaHutang->EditValue) <> "" && is_numeric($this->SisaHutang->EditValue)) $this->SisaHutang->EditValue = ew_FormatNumber($this->SisaHutang->EditValue, -2, -1, -2, 0);
+		$this->SisaHutang->ViewCustomAttributes = "";
 
 		// TanggalBayar
 		$this->TanggalBayar->EditAttrs["class"] = "form-control";
 		$this->TanggalBayar->EditCustomAttributes = "";
-		$this->TanggalBayar->EditValue = ew_FormatDateTime($this->TanggalBayar->CurrentValue, 8);
+		$this->TanggalBayar->EditValue = ew_FormatDateTime($this->TanggalBayar->CurrentValue, 7);
 		$this->TanggalBayar->PlaceHolder = ew_RemoveHtml($this->TanggalBayar->FldCaption());
 
 		// TotalDenda
@@ -955,7 +952,6 @@ class ct04_angsuran extends cTable {
 			if ($Doc->Horizontal) { // Horizontal format, write header
 				$Doc->BeginExportRow();
 				if ($ExportPageType == "view") {
-					if ($this->id->Exportable) $Doc->ExportCaption($this->id);
 					if ($this->pinjaman_id->Exportable) $Doc->ExportCaption($this->pinjaman_id);
 					if ($this->AngsuranKe->Exportable) $Doc->ExportCaption($this->AngsuranKe);
 					if ($this->AngsuranTanggal->Exportable) $Doc->ExportCaption($this->AngsuranTanggal);
@@ -1010,7 +1006,6 @@ class ct04_angsuran extends cTable {
 				if (!$Doc->ExportCustom) {
 					$Doc->BeginExportRow($RowCnt); // Allow CSS styles if enabled
 					if ($ExportPageType == "view") {
-						if ($this->id->Exportable) $Doc->ExportField($this->id);
 						if ($this->pinjaman_id->Exportable) $Doc->ExportField($this->pinjaman_id);
 						if ($this->AngsuranKe->Exportable) $Doc->ExportField($this->AngsuranKe);
 						if ($this->AngsuranTanggal->Exportable) $Doc->ExportField($this->AngsuranTanggal);
