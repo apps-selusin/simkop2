@@ -602,7 +602,7 @@
       <phrase id="menutext" value="User" />
     </menu>
     <menu id="8">
-      <phrase id="menutext" value="t 97 userlevels" />
+      <phrase id="menutext" value="Level Akses" />
     </menu>
     <menu id="9">
       <phrase id="menutext" value="t 98 userlevelpermissions" />
@@ -864,12 +864,12 @@
       </field>
     </table>
     <table id="t97_userlevels">
-      <phrase id="tblcaption" value="t 97 userlevels" />
+      <phrase id="tblcaption" value="Level Akses" />
       <field id="userlevelid">
-        <phrase id="fldcaption" value="userlevelid" />
+        <phrase id="fldcaption" value="Level ID" />
       </field>
       <field id="userlevelname">
-        <phrase id="fldcaption" value="userlevelname" />
+        <phrase id="fldcaption" value="Level Name" />
       </field>
     </table>
     <table id="t98_userlevelpermissions">
