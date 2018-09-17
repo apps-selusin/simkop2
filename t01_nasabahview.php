@@ -704,6 +704,7 @@ class ct01_nasabah_view extends ct01_nasabah {
 		// Call Row Selected event
 		$row = &$rs->fields;
 		$this->Row_Selected($row);
+		if ($this->AuditTrailOnView) $this->WriteAuditTrailOnView($row);
 		$this->id->setDbValue($rs->fields('id'));
 		$this->Customer->setDbValue($rs->fields('Customer'));
 		$this->Pekerjaan->setDbValue($rs->fields('Pekerjaan'));

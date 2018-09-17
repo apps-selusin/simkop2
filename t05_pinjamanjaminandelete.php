@@ -286,9 +286,6 @@ class ct05_pinjamanjaminan_delete extends ct05_pinjamanjaminan {
 			$Security->UserID_Loaded();
 		}
 		$this->CurrentAction = (@$_GET["a"] <> "") ? $_GET["a"] : @$_POST["a_list"]; // Set up current action
-		$this->id->SetVisibility();
-		$this->id->Visible = !$this->IsAdd() && !$this->IsCopy() && !$this->IsGridAdd();
-		$this->pinjaman_id->SetVisibility();
 		$this->jaminan_id->SetVisibility();
 
 		// Global Page Loading event (in userfn*.php)
@@ -424,7 +421,7 @@ class ct05_pinjamanjaminan_delete extends ct05_pinjamanjaminan {
 		if ($this->UseSelectLimit) {
 			$conn->raiseErrorFn = $GLOBALS["EW_ERROR_FN"];
 			if ($dbtype == "MSSQL") {
-				$rs = $conn->SelectLimit($sSql, $rowcnt, $offset, array("_hasOrderBy" => trim($this->getOrderBy()) || trim($this->getSessionOrderBy())));
+				$rs = $conn->SelectLimit($sSql, $rowcnt, $offset, array("_hasOrderBy" => trim($this->getOrderBy()) || trim($this->getSessionOrderByList())));
 			} else {
 				$rs = $conn->SelectLimit($sSql, $rowcnt, $offset);
 			}
@@ -470,6 +467,11 @@ class ct05_pinjamanjaminan_delete extends ct05_pinjamanjaminan {
 		$this->id->setDbValue($rs->fields('id'));
 		$this->pinjaman_id->setDbValue($rs->fields('pinjaman_id'));
 		$this->jaminan_id->setDbValue($rs->fields('jaminan_id'));
+		if (array_key_exists('EV__jaminan_id', $rs->fields)) {
+			$this->jaminan_id->VirtualValue = $rs->fields('EV__jaminan_id'); // Set up virtual field value
+		} else {
+			$this->jaminan_id->VirtualValue = ""; // Clear value
+		}
 	}
 
 	// Load DbValue from recordset
@@ -506,18 +508,32 @@ class ct05_pinjamanjaminan_delete extends ct05_pinjamanjaminan {
 		$this->pinjaman_id->ViewCustomAttributes = "";
 
 		// jaminan_id
-		$this->jaminan_id->ViewValue = $this->jaminan_id->CurrentValue;
+		if ($this->jaminan_id->VirtualValue <> "") {
+			$this->jaminan_id->ViewValue = $this->jaminan_id->VirtualValue;
+		} else {
+		if (strval($this->jaminan_id->CurrentValue) <> "") {
+			$sFilterWrk = "`id`" . ew_SearchString("=", $this->jaminan_id->CurrentValue, EW_DATATYPE_NUMBER, "");
+		$sSqlWrk = "SELECT `id`, `MerkType` AS `DispFld`, '' AS `Disp2Fld`, '' AS `Disp3Fld`, '' AS `Disp4Fld` FROM `t02_jaminan`";
+		$sWhereWrk = "";
+		$this->jaminan_id->LookupFilters = array("dx1" => '`MerkType`');
+		ew_AddFilter($sWhereWrk, $sFilterWrk);
+		$this->Lookup_Selecting($this->jaminan_id, $sWhereWrk); // Call Lookup selecting
+		if ($sWhereWrk <> "") $sSqlWrk .= " WHERE " . $sWhereWrk;
+		$sSqlWrk .= " ORDER BY `MerkType` ASC";
+			$rswrk = Conn()->Execute($sSqlWrk);
+			if ($rswrk && !$rswrk->EOF) { // Lookup values found
+				$arwrk = array();
+				$arwrk[1] = $rswrk->fields('DispFld');
+				$this->jaminan_id->ViewValue = $this->jaminan_id->DisplayValue($arwrk);
+				$rswrk->Close();
+			} else {
+				$this->jaminan_id->ViewValue = $this->jaminan_id->CurrentValue;
+			}
+		} else {
+			$this->jaminan_id->ViewValue = NULL;
+		}
+		}
 		$this->jaminan_id->ViewCustomAttributes = "";
-
-			// id
-			$this->id->LinkCustomAttributes = "";
-			$this->id->HrefValue = "";
-			$this->id->TooltipValue = "";
-
-			// pinjaman_id
-			$this->pinjaman_id->LinkCustomAttributes = "";
-			$this->pinjaman_id->HrefValue = "";
-			$this->pinjaman_id->TooltipValue = "";
 
 			// jaminan_id
 			$this->jaminan_id->LinkCustomAttributes = "";
@@ -804,8 +820,9 @@ ft05_pinjamanjaminandelete.ValidateRequired = false;
 <?php } ?>
 
 // Dynamic selection lists
-// Form object for search
+ft05_pinjamanjaminandelete.Lists["x_jaminan_id"] = {"LinkField":"x_id","Ajax":true,"AutoFill":false,"DisplayFields":["x_MerkType","","",""],"ParentFields":[],"ChildFields":[],"FilterFields":[],"Options":[],"Template":"","LinkTable":"t02_jaminan"};
 
+// Form object for search
 </script>
 <script type="text/javascript">
 
@@ -836,12 +853,6 @@ $t05_pinjamanjaminan_delete->ShowMessage();
 <?php echo $t05_pinjamanjaminan->TableCustomInnerHtml ?>
 	<thead>
 	<tr class="ewTableHeader">
-<?php if ($t05_pinjamanjaminan->id->Visible) { // id ?>
-		<th><span id="elh_t05_pinjamanjaminan_id" class="t05_pinjamanjaminan_id"><?php echo $t05_pinjamanjaminan->id->FldCaption() ?></span></th>
-<?php } ?>
-<?php if ($t05_pinjamanjaminan->pinjaman_id->Visible) { // pinjaman_id ?>
-		<th><span id="elh_t05_pinjamanjaminan_pinjaman_id" class="t05_pinjamanjaminan_pinjaman_id"><?php echo $t05_pinjamanjaminan->pinjaman_id->FldCaption() ?></span></th>
-<?php } ?>
 <?php if ($t05_pinjamanjaminan->jaminan_id->Visible) { // jaminan_id ?>
 		<th><span id="elh_t05_pinjamanjaminan_jaminan_id" class="t05_pinjamanjaminan_jaminan_id"><?php echo $t05_pinjamanjaminan->jaminan_id->FldCaption() ?></span></th>
 <?php } ?>
@@ -866,22 +877,6 @@ while (!$t05_pinjamanjaminan_delete->Recordset->EOF) {
 	$t05_pinjamanjaminan_delete->RenderRow();
 ?>
 	<tr<?php echo $t05_pinjamanjaminan->RowAttributes() ?>>
-<?php if ($t05_pinjamanjaminan->id->Visible) { // id ?>
-		<td<?php echo $t05_pinjamanjaminan->id->CellAttributes() ?>>
-<span id="el<?php echo $t05_pinjamanjaminan_delete->RowCnt ?>_t05_pinjamanjaminan_id" class="t05_pinjamanjaminan_id">
-<span<?php echo $t05_pinjamanjaminan->id->ViewAttributes() ?>>
-<?php echo $t05_pinjamanjaminan->id->ListViewValue() ?></span>
-</span>
-</td>
-<?php } ?>
-<?php if ($t05_pinjamanjaminan->pinjaman_id->Visible) { // pinjaman_id ?>
-		<td<?php echo $t05_pinjamanjaminan->pinjaman_id->CellAttributes() ?>>
-<span id="el<?php echo $t05_pinjamanjaminan_delete->RowCnt ?>_t05_pinjamanjaminan_pinjaman_id" class="t05_pinjamanjaminan_pinjaman_id">
-<span<?php echo $t05_pinjamanjaminan->pinjaman_id->ViewAttributes() ?>>
-<?php echo $t05_pinjamanjaminan->pinjaman_id->ListViewValue() ?></span>
-</span>
-</td>
-<?php } ?>
 <?php if ($t05_pinjamanjaminan->jaminan_id->Visible) { // jaminan_id ?>
 		<td<?php echo $t05_pinjamanjaminan->jaminan_id->CellAttributes() ?>>
 <span id="el<?php echo $t05_pinjamanjaminan_delete->RowCnt ?>_t05_pinjamanjaminan_jaminan_id" class="t05_pinjamanjaminan_jaminan_id">

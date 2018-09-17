@@ -3195,6 +3195,13 @@ ft96_employeeslistsrch.Lists["x_Activated"].Options = <?php echo json_encode($t9
 		else
 			$t96_employees_list->setWarningMessage($Language->Phrase("NoRecord"));
 	}
+
+	// Audit trail on search
+	if ($t96_employees_list->AuditTrailOnSearch && $t96_employees_list->Command == "search" && !$t96_employees_list->RestoreSearch) {
+		$searchparm = ew_ServerVar("QUERY_STRING");
+		$searchsql = $t96_employees_list->getSessionWhere();
+		$t96_employees_list->WriteAuditTrailOnSearch($searchparm, $searchsql);
+	}
 $t96_employees_list->RenderOtherOptions();
 ?>
 <?php if ($Security->CanSearch()) { ?>

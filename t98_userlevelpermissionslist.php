@@ -2074,6 +2074,13 @@ var CurrentSearchForm = ft98_userlevelpermissionslistsrch = new ew_Form("ft98_us
 		else
 			$t98_userlevelpermissions_list->setWarningMessage($Language->Phrase("NoRecord"));
 	}
+
+	// Audit trail on search
+	if ($t98_userlevelpermissions_list->AuditTrailOnSearch && $t98_userlevelpermissions_list->Command == "search" && !$t98_userlevelpermissions_list->RestoreSearch) {
+		$searchparm = ew_ServerVar("QUERY_STRING");
+		$searchsql = $t98_userlevelpermissions_list->getSessionWhere();
+		$t98_userlevelpermissions_list->WriteAuditTrailOnSearch($searchparm, $searchsql);
+	}
 $t98_userlevelpermissions_list->RenderOtherOptions();
 ?>
 <?php if ($Security->CanSearch()) { ?>

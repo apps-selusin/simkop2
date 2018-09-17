@@ -706,6 +706,7 @@ class ct06_pinjamantitipan_view extends ct06_pinjamantitipan {
 		// Call Row Selected event
 		$row = &$rs->fields;
 		$this->Row_Selected($row);
+		if ($this->AuditTrailOnView) $this->WriteAuditTrailOnView($row);
 		$this->id->setDbValue($rs->fields('id'));
 		$this->pinjaman_id->setDbValue($rs->fields('pinjaman_id'));
 		$this->Tanggal->setDbValue($rs->fields('Tanggal'));

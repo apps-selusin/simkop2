@@ -41,18 +41,9 @@ ft05_pinjamanjaminangrid.Validate = function() {
 		var checkrow = (gridinsert) ? !this.EmptyRow(infix) : true;
 		if (checkrow) {
 			addcnt++;
-			elm = this.GetElements("x" + infix + "_pinjaman_id");
-			if (elm && !ew_IsHidden(elm) && !ew_HasValue(elm))
-				return this.OnError(elm, "<?php echo ew_JsEncode2(str_replace("%s", $t05_pinjamanjaminan->pinjaman_id->FldCaption(), $t05_pinjamanjaminan->pinjaman_id->ReqErrMsg)) ?>");
-			elm = this.GetElements("x" + infix + "_pinjaman_id");
-			if (elm && !ew_CheckInteger(elm.value))
-				return this.OnError(elm, "<?php echo ew_JsEncode2($t05_pinjamanjaminan->pinjaman_id->FldErrMsg()) ?>");
 			elm = this.GetElements("x" + infix + "_jaminan_id");
 			if (elm && !ew_IsHidden(elm) && !ew_HasValue(elm))
 				return this.OnError(elm, "<?php echo ew_JsEncode2(str_replace("%s", $t05_pinjamanjaminan->jaminan_id->FldCaption(), $t05_pinjamanjaminan->jaminan_id->ReqErrMsg)) ?>");
-			elm = this.GetElements("x" + infix + "_jaminan_id");
-			if (elm && !ew_CheckInteger(elm.value))
-				return this.OnError(elm, "<?php echo ew_JsEncode2($t05_pinjamanjaminan->jaminan_id->FldErrMsg()) ?>");
 
 			// Fire Form_CustomValidate event
 			if (!this.Form_CustomValidate(fobj))
@@ -65,7 +56,6 @@ ft05_pinjamanjaminangrid.Validate = function() {
 // Check empty row
 ft05_pinjamanjaminangrid.EmptyRow = function(infix) {
 	var fobj = this.Form;
-	if (ew_ValueChanged(fobj, infix, "pinjaman_id", false)) return false;
 	if (ew_ValueChanged(fobj, infix, "jaminan_id", false)) return false;
 	return true;
 }
@@ -86,8 +76,9 @@ ft05_pinjamanjaminangrid.ValidateRequired = false;
 <?php } ?>
 
 // Dynamic selection lists
-// Form object for search
+ft05_pinjamanjaminangrid.Lists["x_jaminan_id"] = {"LinkField":"x_id","Ajax":true,"AutoFill":false,"DisplayFields":["x_MerkType","","",""],"ParentFields":["t03_pinjaman x_nasabah_id"],"ChildFields":[],"FilterFields":["x_nasabah_id"],"Options":[],"Template":"","LinkTable":"t02_jaminan"};
 
+// Form object for search
 </script>
 <?php } ?>
 <?php
@@ -168,24 +159,6 @@ $t05_pinjamanjaminan_grid->RenderListOptions();
 // Render list options (header, left)
 $t05_pinjamanjaminan_grid->ListOptions->Render("header", "left");
 ?>
-<?php if ($t05_pinjamanjaminan->id->Visible) { // id ?>
-	<?php if ($t05_pinjamanjaminan->SortUrl($t05_pinjamanjaminan->id) == "") { ?>
-		<th data-name="id"><div id="elh_t05_pinjamanjaminan_id" class="t05_pinjamanjaminan_id"><div class="ewTableHeaderCaption"><?php echo $t05_pinjamanjaminan->id->FldCaption() ?></div></div></th>
-	<?php } else { ?>
-		<th data-name="id"><div><div id="elh_t05_pinjamanjaminan_id" class="t05_pinjamanjaminan_id">
-			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t05_pinjamanjaminan->id->FldCaption() ?></span><span class="ewTableHeaderSort"><?php if ($t05_pinjamanjaminan->id->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t05_pinjamanjaminan->id->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
-        </div></div></th>
-	<?php } ?>
-<?php } ?>		
-<?php if ($t05_pinjamanjaminan->pinjaman_id->Visible) { // pinjaman_id ?>
-	<?php if ($t05_pinjamanjaminan->SortUrl($t05_pinjamanjaminan->pinjaman_id) == "") { ?>
-		<th data-name="pinjaman_id"><div id="elh_t05_pinjamanjaminan_pinjaman_id" class="t05_pinjamanjaminan_pinjaman_id"><div class="ewTableHeaderCaption"><?php echo $t05_pinjamanjaminan->pinjaman_id->FldCaption() ?></div></div></th>
-	<?php } else { ?>
-		<th data-name="pinjaman_id"><div><div id="elh_t05_pinjamanjaminan_pinjaman_id" class="t05_pinjamanjaminan_pinjaman_id">
-			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t05_pinjamanjaminan->pinjaman_id->FldCaption() ?></span><span class="ewTableHeaderSort"><?php if ($t05_pinjamanjaminan->pinjaman_id->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t05_pinjamanjaminan->pinjaman_id->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
-        </div></div></th>
-	<?php } ?>
-<?php } ?>		
 <?php if ($t05_pinjamanjaminan->jaminan_id->Visible) { // jaminan_id ?>
 	<?php if ($t05_pinjamanjaminan->SortUrl($t05_pinjamanjaminan->jaminan_id) == "") { ?>
 		<th data-name="jaminan_id"><div id="elh_t05_pinjamanjaminan_jaminan_id" class="t05_pinjamanjaminan_jaminan_id"><div class="ewTableHeaderCaption"><?php echo $t05_pinjamanjaminan->jaminan_id->FldCaption() ?></div></div></th>
@@ -304,88 +277,33 @@ while ($t05_pinjamanjaminan_grid->RecCnt < $t05_pinjamanjaminan_grid->StopRec) {
 // Render list options (body, left)
 $t05_pinjamanjaminan_grid->ListOptions->Render("body", "left", $t05_pinjamanjaminan_grid->RowCnt);
 ?>
-	<?php if ($t05_pinjamanjaminan->id->Visible) { // id ?>
-		<td data-name="id"<?php echo $t05_pinjamanjaminan->id->CellAttributes() ?>>
-<?php if ($t05_pinjamanjaminan->RowType == EW_ROWTYPE_ADD) { // Add record ?>
-<input type="hidden" data-table="t05_pinjamanjaminan" data-field="x_id" name="o<?php echo $t05_pinjamanjaminan_grid->RowIndex ?>_id" id="o<?php echo $t05_pinjamanjaminan_grid->RowIndex ?>_id" value="<?php echo ew_HtmlEncode($t05_pinjamanjaminan->id->OldValue) ?>">
-<?php } ?>
-<?php if ($t05_pinjamanjaminan->RowType == EW_ROWTYPE_EDIT) { // Edit record ?>
-<span id="el<?php echo $t05_pinjamanjaminan_grid->RowCnt ?>_t05_pinjamanjaminan_id" class="form-group t05_pinjamanjaminan_id">
-<span<?php echo $t05_pinjamanjaminan->id->ViewAttributes() ?>>
-<p class="form-control-static"><?php echo $t05_pinjamanjaminan->id->EditValue ?></p></span>
-</span>
-<input type="hidden" data-table="t05_pinjamanjaminan" data-field="x_id" name="x<?php echo $t05_pinjamanjaminan_grid->RowIndex ?>_id" id="x<?php echo $t05_pinjamanjaminan_grid->RowIndex ?>_id" value="<?php echo ew_HtmlEncode($t05_pinjamanjaminan->id->CurrentValue) ?>">
-<?php } ?>
-<?php if ($t05_pinjamanjaminan->RowType == EW_ROWTYPE_VIEW) { // View record ?>
-<span id="el<?php echo $t05_pinjamanjaminan_grid->RowCnt ?>_t05_pinjamanjaminan_id" class="t05_pinjamanjaminan_id">
-<span<?php echo $t05_pinjamanjaminan->id->ViewAttributes() ?>>
-<?php echo $t05_pinjamanjaminan->id->ListViewValue() ?></span>
-</span>
-<?php if ($t05_pinjamanjaminan->CurrentAction <> "F") { ?>
-<input type="hidden" data-table="t05_pinjamanjaminan" data-field="x_id" name="x<?php echo $t05_pinjamanjaminan_grid->RowIndex ?>_id" id="x<?php echo $t05_pinjamanjaminan_grid->RowIndex ?>_id" value="<?php echo ew_HtmlEncode($t05_pinjamanjaminan->id->FormValue) ?>">
-<input type="hidden" data-table="t05_pinjamanjaminan" data-field="x_id" name="o<?php echo $t05_pinjamanjaminan_grid->RowIndex ?>_id" id="o<?php echo $t05_pinjamanjaminan_grid->RowIndex ?>_id" value="<?php echo ew_HtmlEncode($t05_pinjamanjaminan->id->OldValue) ?>">
-<?php } else { ?>
-<input type="hidden" data-table="t05_pinjamanjaminan" data-field="x_id" name="ft05_pinjamanjaminangrid$x<?php echo $t05_pinjamanjaminan_grid->RowIndex ?>_id" id="ft05_pinjamanjaminangrid$x<?php echo $t05_pinjamanjaminan_grid->RowIndex ?>_id" value="<?php echo ew_HtmlEncode($t05_pinjamanjaminan->id->FormValue) ?>">
-<input type="hidden" data-table="t05_pinjamanjaminan" data-field="x_id" name="ft05_pinjamanjaminangrid$o<?php echo $t05_pinjamanjaminan_grid->RowIndex ?>_id" id="ft05_pinjamanjaminangrid$o<?php echo $t05_pinjamanjaminan_grid->RowIndex ?>_id" value="<?php echo ew_HtmlEncode($t05_pinjamanjaminan->id->OldValue) ?>">
-<?php } ?>
-<?php } ?>
-<a id="<?php echo $t05_pinjamanjaminan_grid->PageObjName . "_row_" . $t05_pinjamanjaminan_grid->RowCnt ?>"></a></td>
-	<?php } ?>
-	<?php if ($t05_pinjamanjaminan->pinjaman_id->Visible) { // pinjaman_id ?>
-		<td data-name="pinjaman_id"<?php echo $t05_pinjamanjaminan->pinjaman_id->CellAttributes() ?>>
-<?php if ($t05_pinjamanjaminan->RowType == EW_ROWTYPE_ADD) { // Add record ?>
-<?php if ($t05_pinjamanjaminan->pinjaman_id->getSessionValue() <> "") { ?>
-<span id="el<?php echo $t05_pinjamanjaminan_grid->RowCnt ?>_t05_pinjamanjaminan_pinjaman_id" class="form-group t05_pinjamanjaminan_pinjaman_id">
-<span<?php echo $t05_pinjamanjaminan->pinjaman_id->ViewAttributes() ?>>
-<p class="form-control-static"><?php echo $t05_pinjamanjaminan->pinjaman_id->ViewValue ?></p></span>
-</span>
-<input type="hidden" id="x<?php echo $t05_pinjamanjaminan_grid->RowIndex ?>_pinjaman_id" name="x<?php echo $t05_pinjamanjaminan_grid->RowIndex ?>_pinjaman_id" value="<?php echo ew_HtmlEncode($t05_pinjamanjaminan->pinjaman_id->CurrentValue) ?>">
-<?php } else { ?>
-<span id="el<?php echo $t05_pinjamanjaminan_grid->RowCnt ?>_t05_pinjamanjaminan_pinjaman_id" class="form-group t05_pinjamanjaminan_pinjaman_id">
-<input type="text" data-table="t05_pinjamanjaminan" data-field="x_pinjaman_id" name="x<?php echo $t05_pinjamanjaminan_grid->RowIndex ?>_pinjaman_id" id="x<?php echo $t05_pinjamanjaminan_grid->RowIndex ?>_pinjaman_id" size="30" placeholder="<?php echo ew_HtmlEncode($t05_pinjamanjaminan->pinjaman_id->getPlaceHolder()) ?>" value="<?php echo $t05_pinjamanjaminan->pinjaman_id->EditValue ?>"<?php echo $t05_pinjamanjaminan->pinjaman_id->EditAttributes() ?>>
-</span>
-<?php } ?>
-<input type="hidden" data-table="t05_pinjamanjaminan" data-field="x_pinjaman_id" name="o<?php echo $t05_pinjamanjaminan_grid->RowIndex ?>_pinjaman_id" id="o<?php echo $t05_pinjamanjaminan_grid->RowIndex ?>_pinjaman_id" value="<?php echo ew_HtmlEncode($t05_pinjamanjaminan->pinjaman_id->OldValue) ?>">
-<?php } ?>
-<?php if ($t05_pinjamanjaminan->RowType == EW_ROWTYPE_EDIT) { // Edit record ?>
-<?php if ($t05_pinjamanjaminan->pinjaman_id->getSessionValue() <> "") { ?>
-<span id="el<?php echo $t05_pinjamanjaminan_grid->RowCnt ?>_t05_pinjamanjaminan_pinjaman_id" class="form-group t05_pinjamanjaminan_pinjaman_id">
-<span<?php echo $t05_pinjamanjaminan->pinjaman_id->ViewAttributes() ?>>
-<p class="form-control-static"><?php echo $t05_pinjamanjaminan->pinjaman_id->ViewValue ?></p></span>
-</span>
-<input type="hidden" id="x<?php echo $t05_pinjamanjaminan_grid->RowIndex ?>_pinjaman_id" name="x<?php echo $t05_pinjamanjaminan_grid->RowIndex ?>_pinjaman_id" value="<?php echo ew_HtmlEncode($t05_pinjamanjaminan->pinjaman_id->CurrentValue) ?>">
-<?php } else { ?>
-<span id="el<?php echo $t05_pinjamanjaminan_grid->RowCnt ?>_t05_pinjamanjaminan_pinjaman_id" class="form-group t05_pinjamanjaminan_pinjaman_id">
-<input type="text" data-table="t05_pinjamanjaminan" data-field="x_pinjaman_id" name="x<?php echo $t05_pinjamanjaminan_grid->RowIndex ?>_pinjaman_id" id="x<?php echo $t05_pinjamanjaminan_grid->RowIndex ?>_pinjaman_id" size="30" placeholder="<?php echo ew_HtmlEncode($t05_pinjamanjaminan->pinjaman_id->getPlaceHolder()) ?>" value="<?php echo $t05_pinjamanjaminan->pinjaman_id->EditValue ?>"<?php echo $t05_pinjamanjaminan->pinjaman_id->EditAttributes() ?>>
-</span>
-<?php } ?>
-<?php } ?>
-<?php if ($t05_pinjamanjaminan->RowType == EW_ROWTYPE_VIEW) { // View record ?>
-<span id="el<?php echo $t05_pinjamanjaminan_grid->RowCnt ?>_t05_pinjamanjaminan_pinjaman_id" class="t05_pinjamanjaminan_pinjaman_id">
-<span<?php echo $t05_pinjamanjaminan->pinjaman_id->ViewAttributes() ?>>
-<?php echo $t05_pinjamanjaminan->pinjaman_id->ListViewValue() ?></span>
-</span>
-<?php if ($t05_pinjamanjaminan->CurrentAction <> "F") { ?>
-<input type="hidden" data-table="t05_pinjamanjaminan" data-field="x_pinjaman_id" name="x<?php echo $t05_pinjamanjaminan_grid->RowIndex ?>_pinjaman_id" id="x<?php echo $t05_pinjamanjaminan_grid->RowIndex ?>_pinjaman_id" value="<?php echo ew_HtmlEncode($t05_pinjamanjaminan->pinjaman_id->FormValue) ?>">
-<input type="hidden" data-table="t05_pinjamanjaminan" data-field="x_pinjaman_id" name="o<?php echo $t05_pinjamanjaminan_grid->RowIndex ?>_pinjaman_id" id="o<?php echo $t05_pinjamanjaminan_grid->RowIndex ?>_pinjaman_id" value="<?php echo ew_HtmlEncode($t05_pinjamanjaminan->pinjaman_id->OldValue) ?>">
-<?php } else { ?>
-<input type="hidden" data-table="t05_pinjamanjaminan" data-field="x_pinjaman_id" name="ft05_pinjamanjaminangrid$x<?php echo $t05_pinjamanjaminan_grid->RowIndex ?>_pinjaman_id" id="ft05_pinjamanjaminangrid$x<?php echo $t05_pinjamanjaminan_grid->RowIndex ?>_pinjaman_id" value="<?php echo ew_HtmlEncode($t05_pinjamanjaminan->pinjaman_id->FormValue) ?>">
-<input type="hidden" data-table="t05_pinjamanjaminan" data-field="x_pinjaman_id" name="ft05_pinjamanjaminangrid$o<?php echo $t05_pinjamanjaminan_grid->RowIndex ?>_pinjaman_id" id="ft05_pinjamanjaminangrid$o<?php echo $t05_pinjamanjaminan_grid->RowIndex ?>_pinjaman_id" value="<?php echo ew_HtmlEncode($t05_pinjamanjaminan->pinjaman_id->OldValue) ?>">
-<?php } ?>
-<?php } ?>
-</td>
-	<?php } ?>
 	<?php if ($t05_pinjamanjaminan->jaminan_id->Visible) { // jaminan_id ?>
 		<td data-name="jaminan_id"<?php echo $t05_pinjamanjaminan->jaminan_id->CellAttributes() ?>>
 <?php if ($t05_pinjamanjaminan->RowType == EW_ROWTYPE_ADD) { // Add record ?>
 <span id="el<?php echo $t05_pinjamanjaminan_grid->RowCnt ?>_t05_pinjamanjaminan_jaminan_id" class="form-group t05_pinjamanjaminan_jaminan_id">
-<input type="text" data-table="t05_pinjamanjaminan" data-field="x_jaminan_id" name="x<?php echo $t05_pinjamanjaminan_grid->RowIndex ?>_jaminan_id" id="x<?php echo $t05_pinjamanjaminan_grid->RowIndex ?>_jaminan_id" size="30" placeholder="<?php echo ew_HtmlEncode($t05_pinjamanjaminan->jaminan_id->getPlaceHolder()) ?>" value="<?php echo $t05_pinjamanjaminan->jaminan_id->EditValue ?>"<?php echo $t05_pinjamanjaminan->jaminan_id->EditAttributes() ?>>
+<span class="ewLookupList">
+	<span onclick="jQuery(this).parent().next().click();" tabindex="-1" class="form-control ewLookupText" id="lu_x<?php echo $t05_pinjamanjaminan_grid->RowIndex ?>_jaminan_id"><?php echo (strval($t05_pinjamanjaminan->jaminan_id->ViewValue) == "" ? $Language->Phrase("PleaseSelect") : $t05_pinjamanjaminan->jaminan_id->ViewValue); ?></span>
+</span>
+<button type="button" title="<?php echo ew_HtmlEncode(str_replace("%s", ew_RemoveHtml($t05_pinjamanjaminan->jaminan_id->FldCaption()), $Language->Phrase("LookupLink", TRUE))) ?>" onclick="ew_ModalLookupShow({lnk:this,el:'x<?php echo $t05_pinjamanjaminan_grid->RowIndex ?>_jaminan_id',m:0,n:10});" class="ewLookupBtn btn btn-default btn-sm"><span class="glyphicon glyphicon-search ewIcon"></span></button>
+<input type="hidden" data-table="t05_pinjamanjaminan" data-field="x_jaminan_id" data-multiple="0" data-lookup="1" data-value-separator="<?php echo $t05_pinjamanjaminan->jaminan_id->DisplayValueSeparatorAttribute() ?>" name="x<?php echo $t05_pinjamanjaminan_grid->RowIndex ?>_jaminan_id" id="x<?php echo $t05_pinjamanjaminan_grid->RowIndex ?>_jaminan_id" value="<?php echo $t05_pinjamanjaminan->jaminan_id->CurrentValue ?>"<?php echo $t05_pinjamanjaminan->jaminan_id->EditAttributes() ?>>
+<?php if (AllowAdd(CurrentProjectID() . "t02_jaminan")) { ?>
+<button type="button" title="<?php echo ew_HtmlTitle($Language->Phrase("AddLink")) . "&nbsp;" . $t05_pinjamanjaminan->jaminan_id->FldCaption() ?>" onclick="ew_AddOptDialogShow({lnk:this,el:'x<?php echo $t05_pinjamanjaminan_grid->RowIndex ?>_jaminan_id',url:'t02_jaminanaddopt.php'});" class="ewAddOptBtn btn btn-default btn-sm" id="aol_x<?php echo $t05_pinjamanjaminan_grid->RowIndex ?>_jaminan_id"><span class="glyphicon glyphicon-plus ewIcon"></span><span class="hide"><?php echo $Language->Phrase("AddLink") ?>&nbsp;<?php echo $t05_pinjamanjaminan->jaminan_id->FldCaption() ?></span></button>
+<?php } ?>
+<input type="hidden" name="s_x<?php echo $t05_pinjamanjaminan_grid->RowIndex ?>_jaminan_id" id="s_x<?php echo $t05_pinjamanjaminan_grid->RowIndex ?>_jaminan_id" value="<?php echo $t05_pinjamanjaminan->jaminan_id->LookupFilterQuery() ?>">
 </span>
 <input type="hidden" data-table="t05_pinjamanjaminan" data-field="x_jaminan_id" name="o<?php echo $t05_pinjamanjaminan_grid->RowIndex ?>_jaminan_id" id="o<?php echo $t05_pinjamanjaminan_grid->RowIndex ?>_jaminan_id" value="<?php echo ew_HtmlEncode($t05_pinjamanjaminan->jaminan_id->OldValue) ?>">
 <?php } ?>
 <?php if ($t05_pinjamanjaminan->RowType == EW_ROWTYPE_EDIT) { // Edit record ?>
 <span id="el<?php echo $t05_pinjamanjaminan_grid->RowCnt ?>_t05_pinjamanjaminan_jaminan_id" class="form-group t05_pinjamanjaminan_jaminan_id">
-<input type="text" data-table="t05_pinjamanjaminan" data-field="x_jaminan_id" name="x<?php echo $t05_pinjamanjaminan_grid->RowIndex ?>_jaminan_id" id="x<?php echo $t05_pinjamanjaminan_grid->RowIndex ?>_jaminan_id" size="30" placeholder="<?php echo ew_HtmlEncode($t05_pinjamanjaminan->jaminan_id->getPlaceHolder()) ?>" value="<?php echo $t05_pinjamanjaminan->jaminan_id->EditValue ?>"<?php echo $t05_pinjamanjaminan->jaminan_id->EditAttributes() ?>>
+<span class="ewLookupList">
+	<span onclick="jQuery(this).parent().next().click();" tabindex="-1" class="form-control ewLookupText" id="lu_x<?php echo $t05_pinjamanjaminan_grid->RowIndex ?>_jaminan_id"><?php echo (strval($t05_pinjamanjaminan->jaminan_id->ViewValue) == "" ? $Language->Phrase("PleaseSelect") : $t05_pinjamanjaminan->jaminan_id->ViewValue); ?></span>
+</span>
+<button type="button" title="<?php echo ew_HtmlEncode(str_replace("%s", ew_RemoveHtml($t05_pinjamanjaminan->jaminan_id->FldCaption()), $Language->Phrase("LookupLink", TRUE))) ?>" onclick="ew_ModalLookupShow({lnk:this,el:'x<?php echo $t05_pinjamanjaminan_grid->RowIndex ?>_jaminan_id',m:0,n:10});" class="ewLookupBtn btn btn-default btn-sm"><span class="glyphicon glyphicon-search ewIcon"></span></button>
+<input type="hidden" data-table="t05_pinjamanjaminan" data-field="x_jaminan_id" data-multiple="0" data-lookup="1" data-value-separator="<?php echo $t05_pinjamanjaminan->jaminan_id->DisplayValueSeparatorAttribute() ?>" name="x<?php echo $t05_pinjamanjaminan_grid->RowIndex ?>_jaminan_id" id="x<?php echo $t05_pinjamanjaminan_grid->RowIndex ?>_jaminan_id" value="<?php echo $t05_pinjamanjaminan->jaminan_id->CurrentValue ?>"<?php echo $t05_pinjamanjaminan->jaminan_id->EditAttributes() ?>>
+<?php if (AllowAdd(CurrentProjectID() . "t02_jaminan")) { ?>
+<button type="button" title="<?php echo ew_HtmlTitle($Language->Phrase("AddLink")) . "&nbsp;" . $t05_pinjamanjaminan->jaminan_id->FldCaption() ?>" onclick="ew_AddOptDialogShow({lnk:this,el:'x<?php echo $t05_pinjamanjaminan_grid->RowIndex ?>_jaminan_id',url:'t02_jaminanaddopt.php'});" class="ewAddOptBtn btn btn-default btn-sm" id="aol_x<?php echo $t05_pinjamanjaminan_grid->RowIndex ?>_jaminan_id"><span class="glyphicon glyphicon-plus ewIcon"></span><span class="hide"><?php echo $Language->Phrase("AddLink") ?>&nbsp;<?php echo $t05_pinjamanjaminan->jaminan_id->FldCaption() ?></span></button>
+<?php } ?>
+<input type="hidden" name="s_x<?php echo $t05_pinjamanjaminan_grid->RowIndex ?>_jaminan_id" id="s_x<?php echo $t05_pinjamanjaminan_grid->RowIndex ?>_jaminan_id" value="<?php echo $t05_pinjamanjaminan->jaminan_id->LookupFilterQuery() ?>">
 </span>
 <?php } ?>
 <?php if ($t05_pinjamanjaminan->RowType == EW_ROWTYPE_VIEW) { // View record ?>
@@ -401,8 +319,15 @@ $t05_pinjamanjaminan_grid->ListOptions->Render("body", "left", $t05_pinjamanjami
 <input type="hidden" data-table="t05_pinjamanjaminan" data-field="x_jaminan_id" name="ft05_pinjamanjaminangrid$o<?php echo $t05_pinjamanjaminan_grid->RowIndex ?>_jaminan_id" id="ft05_pinjamanjaminangrid$o<?php echo $t05_pinjamanjaminan_grid->RowIndex ?>_jaminan_id" value="<?php echo ew_HtmlEncode($t05_pinjamanjaminan->jaminan_id->OldValue) ?>">
 <?php } ?>
 <?php } ?>
-</td>
+<a id="<?php echo $t05_pinjamanjaminan_grid->PageObjName . "_row_" . $t05_pinjamanjaminan_grid->RowCnt ?>"></a></td>
 	<?php } ?>
+<?php if ($t05_pinjamanjaminan->RowType == EW_ROWTYPE_ADD) { // Add record ?>
+<input type="hidden" data-table="t05_pinjamanjaminan" data-field="x_id" name="x<?php echo $t05_pinjamanjaminan_grid->RowIndex ?>_id" id="x<?php echo $t05_pinjamanjaminan_grid->RowIndex ?>_id" value="<?php echo ew_HtmlEncode($t05_pinjamanjaminan->id->CurrentValue) ?>">
+<input type="hidden" data-table="t05_pinjamanjaminan" data-field="x_id" name="o<?php echo $t05_pinjamanjaminan_grid->RowIndex ?>_id" id="o<?php echo $t05_pinjamanjaminan_grid->RowIndex ?>_id" value="<?php echo ew_HtmlEncode($t05_pinjamanjaminan->id->OldValue) ?>">
+<?php } ?>
+<?php if ($t05_pinjamanjaminan->RowType == EW_ROWTYPE_EDIT || $t05_pinjamanjaminan->CurrentMode == "edit") { ?>
+<input type="hidden" data-table="t05_pinjamanjaminan" data-field="x_id" name="x<?php echo $t05_pinjamanjaminan_grid->RowIndex ?>_id" id="x<?php echo $t05_pinjamanjaminan_grid->RowIndex ?>_id" value="<?php echo ew_HtmlEncode($t05_pinjamanjaminan->id->CurrentValue) ?>">
+<?php } ?>
 <?php
 
 // Render list options (body, right)
@@ -445,48 +370,19 @@ ft05_pinjamanjaminangrid.UpdateOpts(<?php echo $t05_pinjamanjaminan_grid->RowInd
 // Render list options (body, left)
 $t05_pinjamanjaminan_grid->ListOptions->Render("body", "left", $t05_pinjamanjaminan_grid->RowIndex);
 ?>
-	<?php if ($t05_pinjamanjaminan->id->Visible) { // id ?>
-		<td data-name="id">
-<?php if ($t05_pinjamanjaminan->CurrentAction <> "F") { ?>
-<?php } else { ?>
-<span id="el$rowindex$_t05_pinjamanjaminan_id" class="form-group t05_pinjamanjaminan_id">
-<span<?php echo $t05_pinjamanjaminan->id->ViewAttributes() ?>>
-<p class="form-control-static"><?php echo $t05_pinjamanjaminan->id->ViewValue ?></p></span>
-</span>
-<input type="hidden" data-table="t05_pinjamanjaminan" data-field="x_id" name="x<?php echo $t05_pinjamanjaminan_grid->RowIndex ?>_id" id="x<?php echo $t05_pinjamanjaminan_grid->RowIndex ?>_id" value="<?php echo ew_HtmlEncode($t05_pinjamanjaminan->id->FormValue) ?>">
-<?php } ?>
-<input type="hidden" data-table="t05_pinjamanjaminan" data-field="x_id" name="o<?php echo $t05_pinjamanjaminan_grid->RowIndex ?>_id" id="o<?php echo $t05_pinjamanjaminan_grid->RowIndex ?>_id" value="<?php echo ew_HtmlEncode($t05_pinjamanjaminan->id->OldValue) ?>">
-</td>
-	<?php } ?>
-	<?php if ($t05_pinjamanjaminan->pinjaman_id->Visible) { // pinjaman_id ?>
-		<td data-name="pinjaman_id">
-<?php if ($t05_pinjamanjaminan->CurrentAction <> "F") { ?>
-<?php if ($t05_pinjamanjaminan->pinjaman_id->getSessionValue() <> "") { ?>
-<span id="el$rowindex$_t05_pinjamanjaminan_pinjaman_id" class="form-group t05_pinjamanjaminan_pinjaman_id">
-<span<?php echo $t05_pinjamanjaminan->pinjaman_id->ViewAttributes() ?>>
-<p class="form-control-static"><?php echo $t05_pinjamanjaminan->pinjaman_id->ViewValue ?></p></span>
-</span>
-<input type="hidden" id="x<?php echo $t05_pinjamanjaminan_grid->RowIndex ?>_pinjaman_id" name="x<?php echo $t05_pinjamanjaminan_grid->RowIndex ?>_pinjaman_id" value="<?php echo ew_HtmlEncode($t05_pinjamanjaminan->pinjaman_id->CurrentValue) ?>">
-<?php } else { ?>
-<span id="el$rowindex$_t05_pinjamanjaminan_pinjaman_id" class="form-group t05_pinjamanjaminan_pinjaman_id">
-<input type="text" data-table="t05_pinjamanjaminan" data-field="x_pinjaman_id" name="x<?php echo $t05_pinjamanjaminan_grid->RowIndex ?>_pinjaman_id" id="x<?php echo $t05_pinjamanjaminan_grid->RowIndex ?>_pinjaman_id" size="30" placeholder="<?php echo ew_HtmlEncode($t05_pinjamanjaminan->pinjaman_id->getPlaceHolder()) ?>" value="<?php echo $t05_pinjamanjaminan->pinjaman_id->EditValue ?>"<?php echo $t05_pinjamanjaminan->pinjaman_id->EditAttributes() ?>>
-</span>
-<?php } ?>
-<?php } else { ?>
-<span id="el$rowindex$_t05_pinjamanjaminan_pinjaman_id" class="form-group t05_pinjamanjaminan_pinjaman_id">
-<span<?php echo $t05_pinjamanjaminan->pinjaman_id->ViewAttributes() ?>>
-<p class="form-control-static"><?php echo $t05_pinjamanjaminan->pinjaman_id->ViewValue ?></p></span>
-</span>
-<input type="hidden" data-table="t05_pinjamanjaminan" data-field="x_pinjaman_id" name="x<?php echo $t05_pinjamanjaminan_grid->RowIndex ?>_pinjaman_id" id="x<?php echo $t05_pinjamanjaminan_grid->RowIndex ?>_pinjaman_id" value="<?php echo ew_HtmlEncode($t05_pinjamanjaminan->pinjaman_id->FormValue) ?>">
-<?php } ?>
-<input type="hidden" data-table="t05_pinjamanjaminan" data-field="x_pinjaman_id" name="o<?php echo $t05_pinjamanjaminan_grid->RowIndex ?>_pinjaman_id" id="o<?php echo $t05_pinjamanjaminan_grid->RowIndex ?>_pinjaman_id" value="<?php echo ew_HtmlEncode($t05_pinjamanjaminan->pinjaman_id->OldValue) ?>">
-</td>
-	<?php } ?>
 	<?php if ($t05_pinjamanjaminan->jaminan_id->Visible) { // jaminan_id ?>
 		<td data-name="jaminan_id">
 <?php if ($t05_pinjamanjaminan->CurrentAction <> "F") { ?>
 <span id="el$rowindex$_t05_pinjamanjaminan_jaminan_id" class="form-group t05_pinjamanjaminan_jaminan_id">
-<input type="text" data-table="t05_pinjamanjaminan" data-field="x_jaminan_id" name="x<?php echo $t05_pinjamanjaminan_grid->RowIndex ?>_jaminan_id" id="x<?php echo $t05_pinjamanjaminan_grid->RowIndex ?>_jaminan_id" size="30" placeholder="<?php echo ew_HtmlEncode($t05_pinjamanjaminan->jaminan_id->getPlaceHolder()) ?>" value="<?php echo $t05_pinjamanjaminan->jaminan_id->EditValue ?>"<?php echo $t05_pinjamanjaminan->jaminan_id->EditAttributes() ?>>
+<span class="ewLookupList">
+	<span onclick="jQuery(this).parent().next().click();" tabindex="-1" class="form-control ewLookupText" id="lu_x<?php echo $t05_pinjamanjaminan_grid->RowIndex ?>_jaminan_id"><?php echo (strval($t05_pinjamanjaminan->jaminan_id->ViewValue) == "" ? $Language->Phrase("PleaseSelect") : $t05_pinjamanjaminan->jaminan_id->ViewValue); ?></span>
+</span>
+<button type="button" title="<?php echo ew_HtmlEncode(str_replace("%s", ew_RemoveHtml($t05_pinjamanjaminan->jaminan_id->FldCaption()), $Language->Phrase("LookupLink", TRUE))) ?>" onclick="ew_ModalLookupShow({lnk:this,el:'x<?php echo $t05_pinjamanjaminan_grid->RowIndex ?>_jaminan_id',m:0,n:10});" class="ewLookupBtn btn btn-default btn-sm"><span class="glyphicon glyphicon-search ewIcon"></span></button>
+<input type="hidden" data-table="t05_pinjamanjaminan" data-field="x_jaminan_id" data-multiple="0" data-lookup="1" data-value-separator="<?php echo $t05_pinjamanjaminan->jaminan_id->DisplayValueSeparatorAttribute() ?>" name="x<?php echo $t05_pinjamanjaminan_grid->RowIndex ?>_jaminan_id" id="x<?php echo $t05_pinjamanjaminan_grid->RowIndex ?>_jaminan_id" value="<?php echo $t05_pinjamanjaminan->jaminan_id->CurrentValue ?>"<?php echo $t05_pinjamanjaminan->jaminan_id->EditAttributes() ?>>
+<?php if (AllowAdd(CurrentProjectID() . "t02_jaminan")) { ?>
+<button type="button" title="<?php echo ew_HtmlTitle($Language->Phrase("AddLink")) . "&nbsp;" . $t05_pinjamanjaminan->jaminan_id->FldCaption() ?>" onclick="ew_AddOptDialogShow({lnk:this,el:'x<?php echo $t05_pinjamanjaminan_grid->RowIndex ?>_jaminan_id',url:'t02_jaminanaddopt.php'});" class="ewAddOptBtn btn btn-default btn-sm" id="aol_x<?php echo $t05_pinjamanjaminan_grid->RowIndex ?>_jaminan_id"><span class="glyphicon glyphicon-plus ewIcon"></span><span class="hide"><?php echo $Language->Phrase("AddLink") ?>&nbsp;<?php echo $t05_pinjamanjaminan->jaminan_id->FldCaption() ?></span></button>
+<?php } ?>
+<input type="hidden" name="s_x<?php echo $t05_pinjamanjaminan_grid->RowIndex ?>_jaminan_id" id="s_x<?php echo $t05_pinjamanjaminan_grid->RowIndex ?>_jaminan_id" value="<?php echo $t05_pinjamanjaminan->jaminan_id->LookupFilterQuery() ?>">
 </span>
 <?php } else { ?>
 <span id="el$rowindex$_t05_pinjamanjaminan_jaminan_id" class="form-group t05_pinjamanjaminan_jaminan_id">

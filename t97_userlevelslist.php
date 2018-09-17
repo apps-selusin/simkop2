@@ -2066,6 +2066,13 @@ var CurrentSearchForm = ft97_userlevelslistsrch = new ew_Form("ft97_userlevelsli
 		else
 			$t97_userlevels_list->setWarningMessage($Language->Phrase("NoRecord"));
 	}
+
+	// Audit trail on search
+	if ($t97_userlevels_list->AuditTrailOnSearch && $t97_userlevels_list->Command == "search" && !$t97_userlevels_list->RestoreSearch) {
+		$searchparm = ew_ServerVar("QUERY_STRING");
+		$searchsql = $t97_userlevels_list->getSessionWhere();
+		$t97_userlevels_list->WriteAuditTrailOnSearch($searchparm, $searchsql);
+	}
 $t97_userlevels_list->RenderOtherOptions();
 ?>
 <?php if ($Security->CanSearch()) { ?>

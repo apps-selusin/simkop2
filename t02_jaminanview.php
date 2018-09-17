@@ -708,6 +708,7 @@ class ct02_jaminan_view extends ct02_jaminan {
 		// Call Row Selected event
 		$row = &$rs->fields;
 		$this->Row_Selected($row);
+		if ($this->AuditTrailOnView) $this->WriteAuditTrailOnView($row);
 		$this->id->setDbValue($rs->fields('id'));
 		$this->nasabah_id->setDbValue($rs->fields('nasabah_id'));
 		$this->MerkType->setDbValue($rs->fields('MerkType'));

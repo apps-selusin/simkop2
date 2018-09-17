@@ -2110,6 +2110,13 @@ var CurrentSearchForm = ft01_nasabahlistsrch = new ew_Form("ft01_nasabahlistsrch
 		else
 			$t01_nasabah_list->setWarningMessage($Language->Phrase("NoRecord"));
 	}
+
+	// Audit trail on search
+	if ($t01_nasabah_list->AuditTrailOnSearch && $t01_nasabah_list->Command == "search" && !$t01_nasabah_list->RestoreSearch) {
+		$searchparm = ew_ServerVar("QUERY_STRING");
+		$searchsql = $t01_nasabah_list->getSessionWhere();
+		$t01_nasabah_list->WriteAuditTrailOnSearch($searchparm, $searchsql);
+	}
 $t01_nasabah_list->RenderOtherOptions();
 ?>
 <?php if ($Security->CanSearch()) { ?>

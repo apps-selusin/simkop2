@@ -2209,6 +2209,13 @@ var CurrentSearchForm = ft02_jaminanlistsrch = new ew_Form("ft02_jaminanlistsrch
 		else
 			$t02_jaminan_list->setWarningMessage($Language->Phrase("NoRecord"));
 	}
+
+	// Audit trail on search
+	if ($t02_jaminan_list->AuditTrailOnSearch && $t02_jaminan_list->Command == "search" && !$t02_jaminan_list->RestoreSearch) {
+		$searchparm = ew_ServerVar("QUERY_STRING");
+		$searchsql = $t02_jaminan_list->getSessionWhere();
+		$t02_jaminan_list->WriteAuditTrailOnSearch($searchparm, $searchsql);
+	}
 $t02_jaminan_list->RenderOtherOptions();
 ?>
 <?php if ($Security->CanSearch()) { ?>

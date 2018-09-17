@@ -757,7 +757,7 @@
         <phrase id="fldcaption" value="pinjaman id" />
       </field>
       <field id="jaminan_id">
-        <phrase id="fldcaption" value="jaminan id" />
+        <phrase id="fldcaption" value="Jaminan" />
       </field>
     </table>
     <table id="t06_pinjamantitipan">

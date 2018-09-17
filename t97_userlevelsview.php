@@ -696,6 +696,7 @@ class ct97_userlevels_view extends ct97_userlevels {
 		// Call Row Selected event
 		$row = &$rs->fields;
 		$this->Row_Selected($row);
+		if ($this->AuditTrailOnView) $this->WriteAuditTrailOnView($row);
 		$this->userlevelid->setDbValue($rs->fields('userlevelid'));
 		if (is_null($this->userlevelid->CurrentValue)) {
 			$this->userlevelid->CurrentValue = 0;

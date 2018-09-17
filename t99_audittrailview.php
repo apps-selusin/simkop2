@@ -709,6 +709,7 @@ class ct99_audittrail_view extends ct99_audittrail {
 		// Call Row Selected event
 		$row = &$rs->fields;
 		$this->Row_Selected($row);
+		if ($this->AuditTrailOnView) $this->WriteAuditTrailOnView($row);
 		$this->id->setDbValue($rs->fields('id'));
 		$this->datetime->setDbValue($rs->fields('datetime'));
 		$this->script->setDbValue($rs->fields('script'));

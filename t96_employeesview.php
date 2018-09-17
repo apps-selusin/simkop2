@@ -722,6 +722,7 @@ class ct96_employees_view extends ct96_employees {
 		// Call Row Selected event
 		$row = &$rs->fields;
 		$this->Row_Selected($row);
+		if ($this->AuditTrailOnView) $this->WriteAuditTrailOnView($row);
 		$this->EmployeeID->setDbValue($rs->fields('EmployeeID'));
 		$this->LastName->setDbValue($rs->fields('LastName'));
 		$this->FirstName->setDbValue($rs->fields('FirstName'));

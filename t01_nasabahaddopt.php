@@ -14,12 +14,12 @@ ob_start(); // Turn on output buffering
 // Page class
 //
 
-$t01_nasabah_delete = NULL; // Initialize page object first
+$t01_nasabah_addopt = NULL; // Initialize page object first
 
-class ct01_nasabah_delete extends ct01_nasabah {
+class ct01_nasabah_addopt extends ct01_nasabah {
 
 	// Page ID
-	var $PageID = 'delete';
+	var $PageID = 'addopt';
 
 	// Project ID
 	var $ProjectID = "{51CA4EA8-8F8C-4E6D-9D3C-6714DAAEE6FC}";
@@ -28,7 +28,7 @@ class ct01_nasabah_delete extends ct01_nasabah {
 	var $TableName = 't01_nasabah';
 
 	// Page object name
-	var $PageObjName = 't01_nasabah_delete';
+	var $PageObjName = 't01_nasabah_addopt';
 
 	// Page name
 	function PageName() {
@@ -237,7 +237,7 @@ class ct01_nasabah_delete extends ct01_nasabah {
 
 		// Page ID
 		if (!defined("EW_PAGE_ID"))
-			define("EW_PAGE_ID", 'delete', TRUE);
+			define("EW_PAGE_ID", 'addopt', TRUE);
 
 		// Table name (for backward compatibility)
 		if (!defined("EW_TABLE_NAME"))
@@ -268,7 +268,7 @@ class ct01_nasabah_delete extends ct01_nasabah {
 		if ($Security->IsLoggedIn()) $Security->TablePermission_Loading();
 		$Security->LoadCurrentUserLevel($this->ProjectID . $this->TableName);
 		if ($Security->IsLoggedIn()) $Security->TablePermission_Loaded();
-		if (!$Security->CanDelete()) {
+		if (!$Security->CanAdd()) {
 			$Security->SaveLastUrl();
 			$this->setFailureMessage(ew_DeniedMsg()); // Set no permission
 			if ($Security->CanList())
@@ -281,11 +281,13 @@ class ct01_nasabah_delete extends ct01_nasabah {
 			$Security->LoadUserID();
 			$Security->UserID_Loaded();
 		}
+
+		// Create form object
+		$objForm = new cFormObj();
 		$this->CurrentAction = (@$_GET["a"] <> "") ? $_GET["a"] : @$_POST["a_list"]; // Set up current action
-		$this->id->SetVisibility();
-		$this->id->Visible = !$this->IsAdd() && !$this->IsCopy() && !$this->IsGridAdd();
 		$this->Customer->SetVisibility();
 		$this->Pekerjaan->SetVisibility();
+		$this->Alamat->SetVisibility();
 		$this->NoTelpHp->SetVisibility();
 
 		// Global Page Loading event (in userfn*.php)
@@ -299,6 +301,20 @@ class ct01_nasabah_delete extends ct01_nasabah {
 			echo $Language->Phrase("InvalidPostRequest");
 			$this->Page_Terminate();
 			exit();
+		}
+
+		// Process auto fill
+		if (@$_POST["ajax"] == "autofill") {
+			$results = $this->GetAutoFill(@$_POST["name"], @$_POST["q"]);
+			if ($results) {
+
+				// Clean output buffer
+				if (!EW_DEBUG_ENABLED && ob_get_length())
+					ob_end_clean();
+				echo $results;
+				$this->Page_Terminate();
+				exit();
+			}
 		}
 
 		// Create Token
@@ -347,89 +363,106 @@ class ct01_nasabah_delete extends ct01_nasabah {
 		}
 		exit();
 	}
-	var $DbMasterFilter = "";
-	var $DbDetailFilter = "";
-	var $StartRec;
-	var $TotalRecs = 0;
-	var $RecCnt;
-	var $RecKeys = array();
-	var $Recordset;
-	var $StartRowCnt = 1;
-	var $RowCnt = 0;
 
 	//
 	// Page main
 	//
 	function Page_Main() {
-		global $Language;
+		global $objForm, $Language, $gsFormError;
+		set_error_handler("ew_ErrorHandler");
 
 		// Set up Breadcrumb
-		$this->SetupBreadcrumb();
+		//$this->SetupBreadcrumb(); // Not used
+		// Process form if post back
 
-		// Load key parameters
-		$this->RecKeys = $this->GetRecordKeys(); // Load record keys
-		$sFilter = $this->GetKeyFilter();
-		if ($sFilter == "")
-			$this->Page_Terminate("t01_nasabahlist.php"); // Prevent SQL injection, return to list
+		if ($objForm->GetValue("a_addopt") <> "") {
+			$this->CurrentAction = $objForm->GetValue("a_addopt"); // Get form action
+			$this->LoadFormValues(); // Load form values
 
-		// Set up filter (SQL WHHERE clause) and get return SQL
-		// SQL constructor in t01_nasabah class, t01_nasabahinfo.php
-
-		$this->CurrentFilter = $sFilter;
-
-		// Get action
-		if (@$_POST["a_delete"] <> "") {
-			$this->CurrentAction = $_POST["a_delete"];
-		} elseif (@$_GET["a_delete"] == "1") {
-			$this->CurrentAction = "D"; // Delete record directly
-		} else {
-			$this->CurrentAction = "I"; // Display record
-		}
-		if ($this->CurrentAction == "D") {
-			$this->SendEmail = TRUE; // Send email on delete success
-			if ($this->DeleteRows()) { // Delete rows
-				if ($this->getSuccessMessage() == "")
-					$this->setSuccessMessage($Language->Phrase("DeleteSuccess")); // Set up success message
-				$this->Page_Terminate($this->getReturnUrl()); // Return to caller
-			} else { // Delete failed
-				$this->CurrentAction = "I"; // Display record
+			// Validate form
+			if (!$this->ValidateForm()) {
+				$this->CurrentAction = "I"; // Form error, reset action
+				$this->setFailureMessage($gsFormError);
 			}
+		} else { // Not post back
+			$this->CurrentAction = "I"; // Display blank record
+			$this->LoadDefaultValues(); // Load default values
 		}
-		if ($this->CurrentAction == "I") { // Load records for display
-			if ($this->Recordset = $this->LoadRecordset())
-				$this->TotalRecs = $this->Recordset->RecordCount(); // Get record count
-			if ($this->TotalRecs <= 0) { // No record found, exit
-				if ($this->Recordset)
-					$this->Recordset->Close();
-				$this->Page_Terminate("t01_nasabahlist.php"); // Return to list
-			}
+
+		// Perform action based on action code
+		switch ($this->CurrentAction) {
+			case "I": // Blank record, no action required
+				break;
+			case "A": // Add new record
+				$this->SendEmail = TRUE; // Send email on add success
+				if ($this->AddRow()) { // Add successful
+					$row = array();
+					$row["x_id"] = $this->id->DbValue;
+					$row["x_Customer"] = $this->Customer->DbValue;
+					$row["x_Pekerjaan"] = $this->Pekerjaan->DbValue;
+					$row["x_Alamat"] = $this->Alamat->DbValue;
+					$row["x_NoTelpHp"] = $this->NoTelpHp->DbValue;
+					if (!EW_DEBUG_ENABLED && ob_get_length())
+						ob_end_clean();
+					echo ew_ArrayToJson(array($row));
+				} else {
+					$this->ShowMessage();
+				}
+				$this->Page_Terminate();
+				exit();
+		}
+
+		// Render row
+		$this->RowType = EW_ROWTYPE_ADD; // Render add type
+		$this->ResetAttrs();
+		$this->RenderRow();
+	}
+
+	// Get upload files
+	function GetUploadFiles() {
+		global $objForm, $Language;
+
+		// Get upload data
+	}
+
+	// Load default values
+	function LoadDefaultValues() {
+		$this->Customer->CurrentValue = NULL;
+		$this->Customer->OldValue = $this->Customer->CurrentValue;
+		$this->Pekerjaan->CurrentValue = NULL;
+		$this->Pekerjaan->OldValue = $this->Pekerjaan->CurrentValue;
+		$this->Alamat->CurrentValue = NULL;
+		$this->Alamat->OldValue = $this->Alamat->CurrentValue;
+		$this->NoTelpHp->CurrentValue = NULL;
+		$this->NoTelpHp->OldValue = $this->NoTelpHp->CurrentValue;
+	}
+
+	// Load form values
+	function LoadFormValues() {
+
+		// Load from form
+		global $objForm;
+		if (!$this->Customer->FldIsDetailKey) {
+			$this->Customer->setFormValue(ew_ConvertFromUtf8($objForm->GetValue("x_Customer")));
+		}
+		if (!$this->Pekerjaan->FldIsDetailKey) {
+			$this->Pekerjaan->setFormValue(ew_ConvertFromUtf8($objForm->GetValue("x_Pekerjaan")));
+		}
+		if (!$this->Alamat->FldIsDetailKey) {
+			$this->Alamat->setFormValue(ew_ConvertFromUtf8($objForm->GetValue("x_Alamat")));
+		}
+		if (!$this->NoTelpHp->FldIsDetailKey) {
+			$this->NoTelpHp->setFormValue(ew_ConvertFromUtf8($objForm->GetValue("x_NoTelpHp")));
 		}
 	}
 
-	// Load recordset
-	function LoadRecordset($offset = -1, $rowcnt = -1) {
-
-		// Load List page SQL
-		$sSql = $this->SelectSQL();
-		$conn = &$this->Connection();
-
-		// Load recordset
-		$dbtype = ew_GetConnectionType($this->DBID);
-		if ($this->UseSelectLimit) {
-			$conn->raiseErrorFn = $GLOBALS["EW_ERROR_FN"];
-			if ($dbtype == "MSSQL") {
-				$rs = $conn->SelectLimit($sSql, $rowcnt, $offset, array("_hasOrderBy" => trim($this->getOrderBy()) || trim($this->getSessionOrderBy())));
-			} else {
-				$rs = $conn->SelectLimit($sSql, $rowcnt, $offset);
-			}
-			$conn->raiseErrorFn = '';
-		} else {
-			$rs = ew_LoadRecordset($sSql, $conn);
-		}
-
-		// Call Recordset Selected event
-		$this->Recordset_Selected($rs);
-		return $rs;
+	// Restore form values
+	function RestoreFormValues() {
+		global $objForm;
+		$this->Customer->CurrentValue = ew_ConvertToUtf8($this->Customer->FormValue);
+		$this->Pekerjaan->CurrentValue = ew_ConvertToUtf8($this->Pekerjaan->FormValue);
+		$this->Alamat->CurrentValue = ew_ConvertToUtf8($this->Alamat->FormValue);
+		$this->NoTelpHp->CurrentValue = ew_ConvertToUtf8($this->NoTelpHp->FormValue);
 	}
 
 	// Load row based on key values
@@ -509,14 +542,13 @@ class ct01_nasabah_delete extends ct01_nasabah {
 		$this->Pekerjaan->ViewValue = $this->Pekerjaan->CurrentValue;
 		$this->Pekerjaan->ViewCustomAttributes = "";
 
+		// Alamat
+		$this->Alamat->ViewValue = $this->Alamat->CurrentValue;
+		$this->Alamat->ViewCustomAttributes = "";
+
 		// NoTelpHp
 		$this->NoTelpHp->ViewValue = $this->NoTelpHp->CurrentValue;
 		$this->NoTelpHp->ViewCustomAttributes = "";
-
-			// id
-			$this->id->LinkCustomAttributes = "";
-			$this->id->HrefValue = "";
-			$this->id->TooltipValue = "";
 
 			// Customer
 			$this->Customer->LinkCustomAttributes = "";
@@ -528,10 +560,63 @@ class ct01_nasabah_delete extends ct01_nasabah {
 			$this->Pekerjaan->HrefValue = "";
 			$this->Pekerjaan->TooltipValue = "";
 
+			// Alamat
+			$this->Alamat->LinkCustomAttributes = "";
+			$this->Alamat->HrefValue = "";
+			$this->Alamat->TooltipValue = "";
+
 			// NoTelpHp
 			$this->NoTelpHp->LinkCustomAttributes = "";
 			$this->NoTelpHp->HrefValue = "";
 			$this->NoTelpHp->TooltipValue = "";
+		} elseif ($this->RowType == EW_ROWTYPE_ADD) { // Add row
+
+			// Customer
+			$this->Customer->EditAttrs["class"] = "form-control";
+			$this->Customer->EditCustomAttributes = "";
+			$this->Customer->EditValue = ew_HtmlEncode($this->Customer->CurrentValue);
+			$this->Customer->PlaceHolder = ew_RemoveHtml($this->Customer->FldCaption());
+
+			// Pekerjaan
+			$this->Pekerjaan->EditAttrs["class"] = "form-control";
+			$this->Pekerjaan->EditCustomAttributes = "";
+			$this->Pekerjaan->EditValue = ew_HtmlEncode($this->Pekerjaan->CurrentValue);
+			$this->Pekerjaan->PlaceHolder = ew_RemoveHtml($this->Pekerjaan->FldCaption());
+
+			// Alamat
+			$this->Alamat->EditAttrs["class"] = "form-control";
+			$this->Alamat->EditCustomAttributes = "";
+			$this->Alamat->EditValue = ew_HtmlEncode($this->Alamat->CurrentValue);
+			$this->Alamat->PlaceHolder = ew_RemoveHtml($this->Alamat->FldCaption());
+
+			// NoTelpHp
+			$this->NoTelpHp->EditAttrs["class"] = "form-control";
+			$this->NoTelpHp->EditCustomAttributes = "";
+			$this->NoTelpHp->EditValue = ew_HtmlEncode($this->NoTelpHp->CurrentValue);
+			$this->NoTelpHp->PlaceHolder = ew_RemoveHtml($this->NoTelpHp->FldCaption());
+
+			// Add refer script
+			// Customer
+
+			$this->Customer->LinkCustomAttributes = "";
+			$this->Customer->HrefValue = "";
+
+			// Pekerjaan
+			$this->Pekerjaan->LinkCustomAttributes = "";
+			$this->Pekerjaan->HrefValue = "";
+
+			// Alamat
+			$this->Alamat->LinkCustomAttributes = "";
+			$this->Alamat->HrefValue = "";
+
+			// NoTelpHp
+			$this->NoTelpHp->LinkCustomAttributes = "";
+			$this->NoTelpHp->HrefValue = "";
+		}
+		if ($this->RowType == EW_ROWTYPE_ADD ||
+			$this->RowType == EW_ROWTYPE_EDIT ||
+			$this->RowType == EW_ROWTYPE_SEARCH) { // Add / Edit / Search row
+			$this->SetupFieldTitles();
 		}
 
 		// Call Row Rendered event
@@ -539,65 +624,65 @@ class ct01_nasabah_delete extends ct01_nasabah {
 			$this->Row_Rendered();
 	}
 
-	//
-	// Delete records based on current filter
-	//
-	function DeleteRows() {
+	// Validate form
+	function ValidateForm() {
+		global $Language, $gsFormError;
+
+		// Initialize form error message
+		$gsFormError = "";
+
+		// Check if validation required
+		if (!EW_SERVER_VALIDATE)
+			return ($gsFormError == "");
+		if (!$this->Customer->FldIsDetailKey && !is_null($this->Customer->FormValue) && $this->Customer->FormValue == "") {
+			ew_AddMessage($gsFormError, str_replace("%s", $this->Customer->FldCaption(), $this->Customer->ReqErrMsg));
+		}
+
+		// Return validate result
+		$ValidateForm = ($gsFormError == "");
+
+		// Call Form_CustomValidate event
+		$sFormCustomError = "";
+		$ValidateForm = $ValidateForm && $this->Form_CustomValidate($sFormCustomError);
+		if ($sFormCustomError <> "") {
+			ew_AddMessage($gsFormError, $sFormCustomError);
+		}
+		return $ValidateForm;
+	}
+
+	// Add record
+	function AddRow($rsold = NULL) {
 		global $Language, $Security;
-		if (!$Security->CanDelete()) {
-			$this->setFailureMessage($Language->Phrase("NoDeletePermission")); // No delete permission
-			return FALSE;
-		}
-		$DeleteRows = TRUE;
-		$sSql = $this->SQL();
 		$conn = &$this->Connection();
-		$conn->raiseErrorFn = $GLOBALS["EW_ERROR_FN"];
-		$rs = $conn->Execute($sSql);
-		$conn->raiseErrorFn = '';
-		if ($rs === FALSE) {
-			return FALSE;
-		} elseif ($rs->EOF) {
-			$this->setFailureMessage($Language->Phrase("NoRecord")); // No record found
-			$rs->Close();
-			return FALSE;
 
-		//} else {
-		//	$this->LoadRowValues($rs); // Load row values
-
+		// Load db values from rsold
+		if ($rsold) {
+			$this->LoadDbValues($rsold);
 		}
-		$rows = ($rs) ? $rs->GetRows() : array();
-		$conn->BeginTrans();
-		if ($this->AuditTrailOnDelete) $this->WriteAuditTrailDummy($Language->Phrase("BatchDeleteBegin")); // Batch delete begin
+		$rsnew = array();
 
-		// Clone old rows
-		$rsold = $rows;
-		if ($rs)
-			$rs->Close();
+		// Customer
+		$this->Customer->SetDbValueDef($rsnew, $this->Customer->CurrentValue, "", FALSE);
 
-		// Call row deleting event
-		if ($DeleteRows) {
-			foreach ($rsold as $row) {
-				$DeleteRows = $this->Row_Deleting($row);
-				if (!$DeleteRows) break;
-			}
-		}
-		if ($DeleteRows) {
-			$sKey = "";
-			foreach ($rsold as $row) {
-				$sThisKey = "";
-				if ($sThisKey <> "") $sThisKey .= $GLOBALS["EW_COMPOSITE_KEY_SEPARATOR"];
-				$sThisKey .= $row['id'];
-				$conn->raiseErrorFn = $GLOBALS["EW_ERROR_FN"];
-				$DeleteRows = $this->Delete($row); // Delete
-				$conn->raiseErrorFn = '';
-				if ($DeleteRows === FALSE)
-					break;
-				if ($sKey <> "") $sKey .= ", ";
-				$sKey .= $sThisKey;
+		// Pekerjaan
+		$this->Pekerjaan->SetDbValueDef($rsnew, $this->Pekerjaan->CurrentValue, NULL, FALSE);
+
+		// Alamat
+		$this->Alamat->SetDbValueDef($rsnew, $this->Alamat->CurrentValue, NULL, FALSE);
+
+		// NoTelpHp
+		$this->NoTelpHp->SetDbValueDef($rsnew, $this->NoTelpHp->CurrentValue, NULL, FALSE);
+
+		// Call Row Inserting event
+		$rs = ($rsold == NULL) ? NULL : $rsold->fields;
+		$bInsertRow = $this->Row_Inserting($rs, $rsnew);
+		if ($bInsertRow) {
+			$conn->raiseErrorFn = $GLOBALS["EW_ERROR_FN"];
+			$AddRow = $this->Insert($rsnew);
+			$conn->raiseErrorFn = '';
+			if ($AddRow) {
 			}
 		} else {
-
-			// Set up error message
 			if ($this->getSuccessMessage() <> "" || $this->getFailureMessage() <> "") {
 
 				// Use the message, do nothing
@@ -605,24 +690,17 @@ class ct01_nasabah_delete extends ct01_nasabah {
 				$this->setFailureMessage($this->CancelMessage);
 				$this->CancelMessage = "";
 			} else {
-				$this->setFailureMessage($Language->Phrase("DeleteCancelled"));
+				$this->setFailureMessage($Language->Phrase("InsertCancelled"));
 			}
+			$AddRow = FALSE;
 		}
-		if ($DeleteRows) {
-			$conn->CommitTrans(); // Commit the changes
-			if ($this->AuditTrailOnDelete) $this->WriteAuditTrailDummy($Language->Phrase("BatchDeleteSuccess")); // Batch delete success
-		} else {
-			$conn->RollbackTrans(); // Rollback changes
-			if ($this->AuditTrailOnDelete) $this->WriteAuditTrailDummy($Language->Phrase("BatchDeleteRollback")); // Batch delete rollback
-		}
+		if ($AddRow) {
 
-		// Call Row Deleted event
-		if ($DeleteRows) {
-			foreach ($rsold as $row) {
-				$this->Row_Deleted($row);
-			}
+			// Call Row Inserted event
+			$rs = ($rsold == NULL) ? NULL : $rsold->fields;
+			$this->Row_Inserted($rs, $rsnew);
 		}
-		return $DeleteRows;
+		return $AddRow;
 	}
 
 	// Set up Breadcrumb
@@ -631,8 +709,8 @@ class ct01_nasabah_delete extends ct01_nasabah {
 		$Breadcrumb = new cBreadcrumb();
 		$url = substr(ew_CurrentUrl(), strrpos(ew_CurrentUrl(), "/")+1);
 		$Breadcrumb->Add("list", $this->TableVar, $this->AddMasterUrl("t01_nasabahlist.php"), "", $this->TableVar, TRUE);
-		$PageId = "delete";
-		$Breadcrumb->Add("delete", $PageId, $url);
+		$PageId = "addopt";
+		$Breadcrumb->Add("addopt", $PageId, $url);
 	}
 
 	// Setup lookup filters of a field
@@ -710,35 +788,68 @@ class ct01_nasabah_delete extends ct01_nasabah {
 		//$footer = "your footer";
 
 	}
+
+	// Custom validate event
+	// Form Custom Validate event
+	function Form_CustomValidate(&$CustomError) {
+
+		// Return error message in CustomError
+		return TRUE;
+	}
 }
 ?>
 <?php ew_Header(FALSE) ?>
 <?php
 
 // Create page object
-if (!isset($t01_nasabah_delete)) $t01_nasabah_delete = new ct01_nasabah_delete();
+if (!isset($t01_nasabah_addopt)) $t01_nasabah_addopt = new ct01_nasabah_addopt();
 
 // Page init
-$t01_nasabah_delete->Page_Init();
+$t01_nasabah_addopt->Page_Init();
 
 // Page main
-$t01_nasabah_delete->Page_Main();
+$t01_nasabah_addopt->Page_Main();
 
 // Global Page Rendering event (in userfn*.php)
 Page_Rendering();
 
 // Page Rendering event
-$t01_nasabah_delete->Page_Render();
+$t01_nasabah_addopt->Page_Render();
 ?>
-<?php include_once "header.php" ?>
 <script type="text/javascript">
 
 // Form object
-var CurrentPageID = EW_PAGE_ID = "delete";
-var CurrentForm = ft01_nasabahdelete = new ew_Form("ft01_nasabahdelete", "delete");
+var CurrentPageID = EW_PAGE_ID = "addopt";
+var CurrentForm = ft01_nasabahaddopt = new ew_Form("ft01_nasabahaddopt", "addopt");
+
+// Validate form
+ft01_nasabahaddopt.Validate = function() {
+	if (!this.ValidateRequired)
+		return true; // Ignore validation
+	var $ = jQuery, fobj = this.GetForm(), $fobj = $(fobj);
+	if ($fobj.find("#a_confirm").val() == "F")
+		return true;
+	var elm, felm, uelm, addcnt = 0;
+	var $k = $fobj.find("#" + this.FormKeyCountName); // Get key_count
+	var rowcnt = ($k[0]) ? parseInt($k.val(), 10) : 1;
+	var startcnt = (rowcnt == 0) ? 0 : 1; // Check rowcnt == 0 => Inline-Add
+	var gridinsert = $fobj.find("#a_list").val() == "gridinsert";
+	for (var i = startcnt; i <= rowcnt; i++) {
+		var infix = ($k[0]) ? String(i) : "";
+		$fobj.data("rowindex", infix);
+			elm = this.GetElements("x" + infix + "_Customer");
+			if (elm && !ew_IsHidden(elm) && !ew_HasValue(elm))
+				return this.OnError(elm, "<?php echo ew_JsEncode2(str_replace("%s", $t01_nasabah->Customer->FldCaption(), $t01_nasabah->Customer->ReqErrMsg)) ?>");
+
+			// Fire Form_CustomValidate event
+			if (!this.Form_CustomValidate(fobj))
+				return false;
+	}
+	return true;
+}
 
 // Form_CustomValidate event
-ft01_nasabahdelete.Form_CustomValidate = 
+ft01_nasabahaddopt.Form_CustomValidate = 
  function(fobj) { // DO NOT CHANGE THIS LINE!
 
  	// Your custom validation code here, return false if invalid. 
@@ -747,9 +858,9 @@ ft01_nasabahdelete.Form_CustomValidate =
 
 // Use JavaScript validation or not
 <?php if (EW_CLIENT_VALIDATE) { ?>
-ft01_nasabahdelete.ValidateRequired = true;
+ft01_nasabahaddopt.ValidateRequired = true;
 <?php } else { ?>
-ft01_nasabahdelete.ValidateRequired = false; 
+ft01_nasabahaddopt.ValidateRequired = false; 
 <?php } ?>
 
 // Dynamic selection lists
@@ -760,126 +871,57 @@ ft01_nasabahdelete.ValidateRequired = false;
 
 // Write your client script here, no need to add script tags.
 </script>
-<div class="ewToolbar">
-<?php $Breadcrumb->Render(); ?>
-<?php echo $Language->SelectionForm(); ?>
-<div class="clearfix"></div>
-</div>
-<?php $t01_nasabah_delete->ShowPageHeader(); ?>
 <?php
-$t01_nasabah_delete->ShowMessage();
+$t01_nasabah_addopt->ShowMessage();
 ?>
-<form name="ft01_nasabahdelete" id="ft01_nasabahdelete" class="form-inline ewForm ewDeleteForm" action="<?php echo ew_CurrentPage() ?>" method="post">
-<?php if ($t01_nasabah_delete->CheckToken) { ?>
-<input type="hidden" name="<?php echo EW_TOKEN_NAME ?>" value="<?php echo $t01_nasabah_delete->Token ?>">
+<form name="ft01_nasabahaddopt" id="ft01_nasabahaddopt" class="ewForm form-horizontal" action="t01_nasabahaddopt.php" method="post">
+<?php if ($t01_nasabah_addopt->CheckToken) { ?>
+<input type="hidden" name="<?php echo EW_TOKEN_NAME ?>" value="<?php echo $t01_nasabah_addopt->Token ?>">
 <?php } ?>
 <input type="hidden" name="t" value="t01_nasabah">
-<input type="hidden" name="a_delete" id="a_delete" value="D">
-<?php foreach ($t01_nasabah_delete->RecKeys as $key) { ?>
-<?php $keyvalue = is_array($key) ? implode($EW_COMPOSITE_KEY_SEPARATOR, $key) : $key; ?>
-<input type="hidden" name="key_m[]" value="<?php echo ew_HtmlEncode($keyvalue) ?>">
-<?php } ?>
-<div class="ewGrid">
-<div class="<?php if (ew_IsResponsiveLayout()) { echo "table-responsive "; } ?>ewGridMiddlePanel">
-<table class="table ewTable">
-<?php echo $t01_nasabah->TableCustomInnerHtml ?>
-	<thead>
-	<tr class="ewTableHeader">
-<?php if ($t01_nasabah->id->Visible) { // id ?>
-		<th><span id="elh_t01_nasabah_id" class="t01_nasabah_id"><?php echo $t01_nasabah->id->FldCaption() ?></span></th>
-<?php } ?>
+<input type="hidden" name="a_addopt" id="a_addopt" value="A">
 <?php if ($t01_nasabah->Customer->Visible) { // Customer ?>
-		<th><span id="elh_t01_nasabah_Customer" class="t01_nasabah_Customer"><?php echo $t01_nasabah->Customer->FldCaption() ?></span></th>
-<?php } ?>
+	<div class="form-group">
+		<label class="col-sm-3 control-label ewLabel" for="x_Customer"><?php echo $t01_nasabah->Customer->FldCaption() ?><?php echo $Language->Phrase("FieldRequiredIndicator") ?></label>
+		<div class="col-sm-9">
+<input type="text" data-table="t01_nasabah" data-field="x_Customer" name="x_Customer" id="x_Customer" size="30" maxlength="25" placeholder="<?php echo ew_HtmlEncode($t01_nasabah->Customer->getPlaceHolder()) ?>" value="<?php echo $t01_nasabah->Customer->EditValue ?>"<?php echo $t01_nasabah->Customer->EditAttributes() ?>>
+</div>
+	</div>
+<?php } ?>	
 <?php if ($t01_nasabah->Pekerjaan->Visible) { // Pekerjaan ?>
-		<th><span id="elh_t01_nasabah_Pekerjaan" class="t01_nasabah_Pekerjaan"><?php echo $t01_nasabah->Pekerjaan->FldCaption() ?></span></th>
-<?php } ?>
+	<div class="form-group">
+		<label class="col-sm-3 control-label ewLabel" for="x_Pekerjaan"><?php echo $t01_nasabah->Pekerjaan->FldCaption() ?></label>
+		<div class="col-sm-9">
+<input type="text" data-table="t01_nasabah" data-field="x_Pekerjaan" name="x_Pekerjaan" id="x_Pekerjaan" size="30" maxlength="25" placeholder="<?php echo ew_HtmlEncode($t01_nasabah->Pekerjaan->getPlaceHolder()) ?>" value="<?php echo $t01_nasabah->Pekerjaan->EditValue ?>"<?php echo $t01_nasabah->Pekerjaan->EditAttributes() ?>>
+</div>
+	</div>
+<?php } ?>	
+<?php if ($t01_nasabah->Alamat->Visible) { // Alamat ?>
+	<div class="form-group">
+		<label class="col-sm-3 control-label ewLabel" for="x_Alamat"><?php echo $t01_nasabah->Alamat->FldCaption() ?></label>
+		<div class="col-sm-9">
+<textarea data-table="t01_nasabah" data-field="x_Alamat" name="x_Alamat" id="x_Alamat" cols="35" rows="4" placeholder="<?php echo ew_HtmlEncode($t01_nasabah->Alamat->getPlaceHolder()) ?>"<?php echo $t01_nasabah->Alamat->EditAttributes() ?>><?php echo $t01_nasabah->Alamat->EditValue ?></textarea>
+</div>
+	</div>
+<?php } ?>	
 <?php if ($t01_nasabah->NoTelpHp->Visible) { // NoTelpHp ?>
-		<th><span id="elh_t01_nasabah_NoTelpHp" class="t01_nasabah_NoTelpHp"><?php echo $t01_nasabah->NoTelpHp->FldCaption() ?></span></th>
-<?php } ?>
-	</tr>
-	</thead>
-	<tbody>
-<?php
-$t01_nasabah_delete->RecCnt = 0;
-$i = 0;
-while (!$t01_nasabah_delete->Recordset->EOF) {
-	$t01_nasabah_delete->RecCnt++;
-	$t01_nasabah_delete->RowCnt++;
-
-	// Set row properties
-	$t01_nasabah->ResetAttrs();
-	$t01_nasabah->RowType = EW_ROWTYPE_VIEW; // View
-
-	// Get the field contents
-	$t01_nasabah_delete->LoadRowValues($t01_nasabah_delete->Recordset);
-
-	// Render row
-	$t01_nasabah_delete->RenderRow();
-?>
-	<tr<?php echo $t01_nasabah->RowAttributes() ?>>
-<?php if ($t01_nasabah->id->Visible) { // id ?>
-		<td<?php echo $t01_nasabah->id->CellAttributes() ?>>
-<span id="el<?php echo $t01_nasabah_delete->RowCnt ?>_t01_nasabah_id" class="t01_nasabah_id">
-<span<?php echo $t01_nasabah->id->ViewAttributes() ?>>
-<?php echo $t01_nasabah->id->ListViewValue() ?></span>
-</span>
-</td>
-<?php } ?>
-<?php if ($t01_nasabah->Customer->Visible) { // Customer ?>
-		<td<?php echo $t01_nasabah->Customer->CellAttributes() ?>>
-<span id="el<?php echo $t01_nasabah_delete->RowCnt ?>_t01_nasabah_Customer" class="t01_nasabah_Customer">
-<span<?php echo $t01_nasabah->Customer->ViewAttributes() ?>>
-<?php echo $t01_nasabah->Customer->ListViewValue() ?></span>
-</span>
-</td>
-<?php } ?>
-<?php if ($t01_nasabah->Pekerjaan->Visible) { // Pekerjaan ?>
-		<td<?php echo $t01_nasabah->Pekerjaan->CellAttributes() ?>>
-<span id="el<?php echo $t01_nasabah_delete->RowCnt ?>_t01_nasabah_Pekerjaan" class="t01_nasabah_Pekerjaan">
-<span<?php echo $t01_nasabah->Pekerjaan->ViewAttributes() ?>>
-<?php echo $t01_nasabah->Pekerjaan->ListViewValue() ?></span>
-</span>
-</td>
-<?php } ?>
-<?php if ($t01_nasabah->NoTelpHp->Visible) { // NoTelpHp ?>
-		<td<?php echo $t01_nasabah->NoTelpHp->CellAttributes() ?>>
-<span id="el<?php echo $t01_nasabah_delete->RowCnt ?>_t01_nasabah_NoTelpHp" class="t01_nasabah_NoTelpHp">
-<span<?php echo $t01_nasabah->NoTelpHp->ViewAttributes() ?>>
-<?php echo $t01_nasabah->NoTelpHp->ListViewValue() ?></span>
-</span>
-</td>
-<?php } ?>
-	</tr>
-<?php
-	$t01_nasabah_delete->Recordset->MoveNext();
-}
-$t01_nasabah_delete->Recordset->Close();
-?>
-</tbody>
-</table>
+	<div class="form-group">
+		<label class="col-sm-3 control-label ewLabel" for="x_NoTelpHp"><?php echo $t01_nasabah->NoTelpHp->FldCaption() ?></label>
+		<div class="col-sm-9">
+<input type="text" data-table="t01_nasabah" data-field="x_NoTelpHp" name="x_NoTelpHp" id="x_NoTelpHp" size="30" maxlength="25" placeholder="<?php echo ew_HtmlEncode($t01_nasabah->NoTelpHp->getPlaceHolder()) ?>" value="<?php echo $t01_nasabah->NoTelpHp->EditValue ?>"<?php echo $t01_nasabah->NoTelpHp->EditAttributes() ?>>
 </div>
-</div>
-<div>
-<button class="btn btn-primary ewButton" name="btnAction" id="btnAction" type="submit"><?php echo $Language->Phrase("DeleteBtn") ?></button>
-<button class="btn btn-default ewButton" name="btnCancel" id="btnCancel" type="button" data-href="<?php echo $t01_nasabah_delete->getReturnUrl() ?>"><?php echo $Language->Phrase("CancelBtn") ?></button>
-</div>
+	</div>
+<?php } ?>	
 </form>
 <script type="text/javascript">
-ft01_nasabahdelete.Init();
+ft01_nasabahaddopt.Init();
 </script>
-<?php
-$t01_nasabah_delete->ShowPageFooter();
-if (EW_DEBUG_ENABLED)
-	echo ew_DebugMsg();
-?>
 <script type="text/javascript">
 
 // Write your table-specific startup script here
 // document.write("page loaded");
 
 </script>
-<?php include_once "footer.php" ?>
 <?php
-$t01_nasabah_delete->Page_Terminate();
+$t01_nasabah_addopt->Page_Terminate();
 ?>

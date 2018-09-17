@@ -714,6 +714,7 @@ class ct98_userlevelpermissions_view extends ct98_userlevelpermissions {
 		// Call Row Selected event
 		$row = &$rs->fields;
 		$this->Row_Selected($row);
+		if ($this->AuditTrailOnView) $this->WriteAuditTrailOnView($row);
 		$this->userlevelid->setDbValue($rs->fields('userlevelid'));
 		$this->_tablename->setDbValue($rs->fields('tablename'));
 		$this->permission->setDbValue($rs->fields('permission'));

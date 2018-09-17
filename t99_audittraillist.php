@@ -2211,6 +2211,13 @@ var CurrentSearchForm = ft99_audittraillistsrch = new ew_Form("ft99_audittrailli
 		else
 			$t99_audittrail_list->setWarningMessage($Language->Phrase("NoRecord"));
 	}
+
+	// Audit trail on search
+	if ($t99_audittrail_list->AuditTrailOnSearch && $t99_audittrail_list->Command == "search" && !$t99_audittrail_list->RestoreSearch) {
+		$searchparm = ew_ServerVar("QUERY_STRING");
+		$searchsql = $t99_audittrail_list->getSessionWhere();
+		$t99_audittrail_list->WriteAuditTrailOnSearch($searchparm, $searchsql);
+	}
 $t99_audittrail_list->RenderOtherOptions();
 ?>
 <?php if ($Security->CanSearch()) { ?>

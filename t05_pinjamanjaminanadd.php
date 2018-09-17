@@ -539,6 +539,11 @@ class ct05_pinjamanjaminan_add extends ct05_pinjamanjaminan {
 		$this->id->setDbValue($rs->fields('id'));
 		$this->pinjaman_id->setDbValue($rs->fields('pinjaman_id'));
 		$this->jaminan_id->setDbValue($rs->fields('jaminan_id'));
+		if (array_key_exists('EV__jaminan_id', $rs->fields)) {
+			$this->jaminan_id->VirtualValue = $rs->fields('EV__jaminan_id'); // Set up virtual field value
+		} else {
+			$this->jaminan_id->VirtualValue = ""; // Clear value
+		}
 	}
 
 	// Load DbValue from recordset
@@ -598,7 +603,31 @@ class ct05_pinjamanjaminan_add extends ct05_pinjamanjaminan {
 		$this->pinjaman_id->ViewCustomAttributes = "";
 
 		// jaminan_id
-		$this->jaminan_id->ViewValue = $this->jaminan_id->CurrentValue;
+		if ($this->jaminan_id->VirtualValue <> "") {
+			$this->jaminan_id->ViewValue = $this->jaminan_id->VirtualValue;
+		} else {
+		if (strval($this->jaminan_id->CurrentValue) <> "") {
+			$sFilterWrk = "`id`" . ew_SearchString("=", $this->jaminan_id->CurrentValue, EW_DATATYPE_NUMBER, "");
+		$sSqlWrk = "SELECT `id`, `MerkType` AS `DispFld`, '' AS `Disp2Fld`, '' AS `Disp3Fld`, '' AS `Disp4Fld` FROM `t02_jaminan`";
+		$sWhereWrk = "";
+		$this->jaminan_id->LookupFilters = array("dx1" => '`MerkType`');
+		ew_AddFilter($sWhereWrk, $sFilterWrk);
+		$this->Lookup_Selecting($this->jaminan_id, $sWhereWrk); // Call Lookup selecting
+		if ($sWhereWrk <> "") $sSqlWrk .= " WHERE " . $sWhereWrk;
+		$sSqlWrk .= " ORDER BY `MerkType` ASC";
+			$rswrk = Conn()->Execute($sSqlWrk);
+			if ($rswrk && !$rswrk->EOF) { // Lookup values found
+				$arwrk = array();
+				$arwrk[1] = $rswrk->fields('DispFld');
+				$this->jaminan_id->ViewValue = $this->jaminan_id->DisplayValue($arwrk);
+				$rswrk->Close();
+			} else {
+				$this->jaminan_id->ViewValue = $this->jaminan_id->CurrentValue;
+			}
+		} else {
+			$this->jaminan_id->ViewValue = NULL;
+		}
+		}
 		$this->jaminan_id->ViewCustomAttributes = "";
 
 			// pinjaman_id
@@ -625,10 +654,30 @@ class ct05_pinjamanjaminan_add extends ct05_pinjamanjaminan {
 			}
 
 			// jaminan_id
-			$this->jaminan_id->EditAttrs["class"] = "form-control";
 			$this->jaminan_id->EditCustomAttributes = "";
-			$this->jaminan_id->EditValue = ew_HtmlEncode($this->jaminan_id->CurrentValue);
-			$this->jaminan_id->PlaceHolder = ew_RemoveHtml($this->jaminan_id->FldCaption());
+			if (trim(strval($this->jaminan_id->CurrentValue)) == "") {
+				$sFilterWrk = "0=1";
+			} else {
+				$sFilterWrk = "`id`" . ew_SearchString("=", $this->jaminan_id->CurrentValue, EW_DATATYPE_NUMBER, "");
+			}
+			$sSqlWrk = "SELECT `id`, `MerkType` AS `DispFld`, '' AS `Disp2Fld`, '' AS `Disp3Fld`, '' AS `Disp4Fld`, `nasabah_id` AS `SelectFilterFld`, '' AS `SelectFilterFld2`, '' AS `SelectFilterFld3`, '' AS `SelectFilterFld4` FROM `t02_jaminan`";
+			$sWhereWrk = "";
+			$this->jaminan_id->LookupFilters = array("dx1" => '`MerkType`');
+			ew_AddFilter($sWhereWrk, $sFilterWrk);
+			$this->Lookup_Selecting($this->jaminan_id, $sWhereWrk); // Call Lookup selecting
+			if ($sWhereWrk <> "") $sSqlWrk .= " WHERE " . $sWhereWrk;
+			$sSqlWrk .= " ORDER BY `MerkType` ASC";
+			$rswrk = Conn()->Execute($sSqlWrk);
+			if ($rswrk && !$rswrk->EOF) { // Lookup values found
+				$arwrk = array();
+				$arwrk[1] = ew_HtmlEncode($rswrk->fields('DispFld'));
+				$this->jaminan_id->ViewValue = $this->jaminan_id->DisplayValue($arwrk);
+			} else {
+				$this->jaminan_id->ViewValue = $Language->Phrase("PleaseSelect");
+			}
+			$arwrk = ($rswrk) ? $rswrk->GetRows() : array();
+			if ($rswrk) $rswrk->Close();
+			$this->jaminan_id->EditValue = $arwrk;
 
 			// Add refer script
 			// pinjaman_id
@@ -669,9 +718,6 @@ class ct05_pinjamanjaminan_add extends ct05_pinjamanjaminan {
 		}
 		if (!$this->jaminan_id->FldIsDetailKey && !is_null($this->jaminan_id->FormValue) && $this->jaminan_id->FormValue == "") {
 			ew_AddMessage($gsFormError, str_replace("%s", $this->jaminan_id->FldCaption(), $this->jaminan_id->ReqErrMsg));
-		}
-		if (!ew_CheckInteger($this->jaminan_id->FormValue)) {
-			ew_AddMessage($gsFormError, $this->jaminan_id->FldErrMsg());
 		}
 
 		// Return validate result
@@ -808,6 +854,19 @@ class ct05_pinjamanjaminan_add extends ct05_pinjamanjaminan {
 		global $gsLanguage;
 		$pageId = $pageId ?: $this->PageID;
 		switch ($fld->FldVar) {
+		case "x_jaminan_id":
+			$sSqlWrk = "";
+			$sSqlWrk = "SELECT `id` AS `LinkFld`, `MerkType` AS `DispFld`, '' AS `Disp2Fld`, '' AS `Disp3Fld`, '' AS `Disp4Fld` FROM `t02_jaminan`";
+			$sWhereWrk = "{filter}";
+			$this->jaminan_id->LookupFilters = array("dx1" => '`MerkType`');
+			$fld->LookupFilters += array("s" => $sSqlWrk, "d" => "", "f0" => '`id` = {filter_value}', "t0" => "3", "fn0" => "");
+			$sSqlWrk = "";
+			$this->Lookup_Selecting($this->jaminan_id, $sWhereWrk); // Call Lookup selecting
+			if ($sWhereWrk <> "") $sSqlWrk .= " WHERE " . $sWhereWrk;
+			$sSqlWrk .= " ORDER BY `MerkType` ASC";
+			if ($sSqlWrk <> "")
+				$fld->LookupFilters["s"] .= $sSqlWrk;
+			break;
 		}
 	}
 
@@ -936,9 +995,6 @@ ft05_pinjamanjaminanadd.Validate = function() {
 			elm = this.GetElements("x" + infix + "_jaminan_id");
 			if (elm && !ew_IsHidden(elm) && !ew_HasValue(elm))
 				return this.OnError(elm, "<?php echo ew_JsEncode2(str_replace("%s", $t05_pinjamanjaminan->jaminan_id->FldCaption(), $t05_pinjamanjaminan->jaminan_id->ReqErrMsg)) ?>");
-			elm = this.GetElements("x" + infix + "_jaminan_id");
-			if (elm && !ew_CheckInteger(elm.value))
-				return this.OnError(elm, "<?php echo ew_JsEncode2($t05_pinjamanjaminan->jaminan_id->FldErrMsg()) ?>");
 
 			// Fire Form_CustomValidate event
 			if (!this.Form_CustomValidate(fobj))
@@ -972,8 +1028,9 @@ ft05_pinjamanjaminanadd.ValidateRequired = false;
 <?php } ?>
 
 // Dynamic selection lists
-// Form object for search
+ft05_pinjamanjaminanadd.Lists["x_jaminan_id"] = {"LinkField":"x_id","Ajax":true,"AutoFill":false,"DisplayFields":["x_MerkType","","",""],"ParentFields":[],"ChildFields":[],"FilterFields":[],"Options":[],"Template":"","LinkTable":"t02_jaminan"};
 
+// Form object for search
 </script>
 <script type="text/javascript">
 
@@ -1027,7 +1084,15 @@ $t05_pinjamanjaminan_add->ShowMessage();
 		<label id="elh_t05_pinjamanjaminan_jaminan_id" for="x_jaminan_id" class="col-sm-2 control-label ewLabel"><?php echo $t05_pinjamanjaminan->jaminan_id->FldCaption() ?><?php echo $Language->Phrase("FieldRequiredIndicator") ?></label>
 		<div class="col-sm-10"><div<?php echo $t05_pinjamanjaminan->jaminan_id->CellAttributes() ?>>
 <span id="el_t05_pinjamanjaminan_jaminan_id">
-<input type="text" data-table="t05_pinjamanjaminan" data-field="x_jaminan_id" name="x_jaminan_id" id="x_jaminan_id" size="30" placeholder="<?php echo ew_HtmlEncode($t05_pinjamanjaminan->jaminan_id->getPlaceHolder()) ?>" value="<?php echo $t05_pinjamanjaminan->jaminan_id->EditValue ?>"<?php echo $t05_pinjamanjaminan->jaminan_id->EditAttributes() ?>>
+<span class="ewLookupList">
+	<span onclick="jQuery(this).parent().next().click();" tabindex="-1" class="form-control ewLookupText" id="lu_x_jaminan_id"><?php echo (strval($t05_pinjamanjaminan->jaminan_id->ViewValue) == "" ? $Language->Phrase("PleaseSelect") : $t05_pinjamanjaminan->jaminan_id->ViewValue); ?></span>
+</span>
+<button type="button" title="<?php echo ew_HtmlEncode(str_replace("%s", ew_RemoveHtml($t05_pinjamanjaminan->jaminan_id->FldCaption()), $Language->Phrase("LookupLink", TRUE))) ?>" onclick="ew_ModalLookupShow({lnk:this,el:'x_jaminan_id',m:0,n:10});" class="ewLookupBtn btn btn-default btn-sm"><span class="glyphicon glyphicon-search ewIcon"></span></button>
+<input type="hidden" data-table="t05_pinjamanjaminan" data-field="x_jaminan_id" data-multiple="0" data-lookup="1" data-value-separator="<?php echo $t05_pinjamanjaminan->jaminan_id->DisplayValueSeparatorAttribute() ?>" name="x_jaminan_id" id="x_jaminan_id" value="<?php echo $t05_pinjamanjaminan->jaminan_id->CurrentValue ?>"<?php echo $t05_pinjamanjaminan->jaminan_id->EditAttributes() ?>>
+<?php if (AllowAdd(CurrentProjectID() . "t02_jaminan")) { ?>
+<button type="button" title="<?php echo ew_HtmlTitle($Language->Phrase("AddLink")) . "&nbsp;" . $t05_pinjamanjaminan->jaminan_id->FldCaption() ?>" onclick="ew_AddOptDialogShow({lnk:this,el:'x_jaminan_id',url:'t02_jaminanaddopt.php'});" class="ewAddOptBtn btn btn-default btn-sm" id="aol_x_jaminan_id"><span class="glyphicon glyphicon-plus ewIcon"></span><span class="hide"><?php echo $Language->Phrase("AddLink") ?>&nbsp;<?php echo $t05_pinjamanjaminan->jaminan_id->FldCaption() ?></span></button>
+<?php } ?>
+<input type="hidden" name="s_x_jaminan_id" id="s_x_jaminan_id" value="<?php echo $t05_pinjamanjaminan->jaminan_id->LookupFilterQuery() ?>">
 </span>
 <?php echo $t05_pinjamanjaminan->jaminan_id->CustomMsg ?></div></div>
 	</div>

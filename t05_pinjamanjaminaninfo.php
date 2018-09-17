@@ -60,8 +60,10 @@ class ct05_pinjamanjaminan extends cTable {
 		$this->fields['pinjaman_id'] = &$this->pinjaman_id;
 
 		// jaminan_id
-		$this->jaminan_id = new cField('t05_pinjamanjaminan', 't05_pinjamanjaminan', 'x_jaminan_id', 'jaminan_id', '`jaminan_id`', '`jaminan_id`', 3, -1, FALSE, '`jaminan_id`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXT');
+		$this->jaminan_id = new cField('t05_pinjamanjaminan', 't05_pinjamanjaminan', 'x_jaminan_id', 'jaminan_id', '`jaminan_id`', '`jaminan_id`', 3, -1, FALSE, '`EV__jaminan_id`', TRUE, TRUE, TRUE, 'FORMATTED TEXT', 'SELECT');
 		$this->jaminan_id->Sortable = TRUE; // Allow sort
+		$this->jaminan_id->UsePleaseSelect = TRUE; // Use PleaseSelect by default
+		$this->jaminan_id->PleaseSelectText = $Language->Phrase("PleaseSelect"); // PleaseSelect text
 		$this->jaminan_id->FldDefaultErrMsg = $Language->Phrase("IncorrectInteger");
 		$this->fields['jaminan_id'] = &$this->jaminan_id;
 	}
@@ -95,9 +97,31 @@ class ct05_pinjamanjaminan extends cTable {
 			} else {
 				$this->setSessionOrderBy($sSortField . " " . $sThisSort); // Save to Session
 			}
+			$sSortFieldList = ($ofld->FldVirtualExpression <> "") ? $ofld->FldVirtualExpression : $sSortField;
+			if ($ctrl) {
+				$sOrderByList = $this->getSessionOrderByList();
+				if (strpos($sOrderByList, $sSortFieldList . " " . $sLastSort) !== FALSE) {
+					$sOrderByList = str_replace($sSortFieldList . " " . $sLastSort, $sSortFieldList . " " . $sThisSort, $sOrderByList);
+				} else {
+					if ($sOrderByList <> "") $sOrderByList .= ", ";
+					$sOrderByList .= $sSortFieldList . " " . $sThisSort;
+				}
+				$this->setSessionOrderByList($sOrderByList); // Save to Session
+			} else {
+				$this->setSessionOrderByList($sSortFieldList . " " . $sThisSort); // Save to Session
+			}
 		} else {
 			if (!$ctrl) $ofld->setSort("");
 		}
+	}
+
+	// Session ORDER BY for List page
+	function getSessionOrderByList() {
+		return @$_SESSION[EW_PROJECT_NAME . "_" . $this->TableVar . "_" . EW_TABLE_ORDER_BY_LIST];
+	}
+
+	function setSessionOrderByList($v) {
+		$_SESSION[EW_PROJECT_NAME . "_" . $this->TableVar . "_" . EW_TABLE_ORDER_BY_LIST] = $v;
 	}
 
 	// Current master table name
@@ -173,6 +197,23 @@ class ct05_pinjamanjaminan extends cTable {
 
 	function setSqlSelect($v) {
 		$this->_SqlSelect = $v;
+	}
+	var $_SqlSelectList = "";
+
+	function getSqlSelectList() { // Select for List page
+		$select = "";
+		$select = "SELECT * FROM (" .
+			"SELECT *, (SELECT `MerkType` FROM `t02_jaminan` `EW_TMP_LOOKUPTABLE` WHERE `EW_TMP_LOOKUPTABLE`.`id` = `t05_pinjamanjaminan`.`jaminan_id` LIMIT 1) AS `EV__jaminan_id` FROM `t05_pinjamanjaminan`" .
+			") `EW_TMP_TABLE`";
+		return ($this->_SqlSelectList <> "") ? $this->_SqlSelectList : $select;
+	}
+
+	function SqlSelectList() { // For backward compatibility
+		return $this->getSqlSelectList();
+	}
+
+	function setSqlSelectList($v) {
+		$this->_SqlSelectList = $v;
 	}
 	var $_SqlWhere = "";
 
@@ -285,15 +326,38 @@ class ct05_pinjamanjaminan extends cTable {
 		ew_AddFilter($sFilter, $this->CurrentFilter);
 		$sFilter = $this->ApplyUserIDFilters($sFilter);
 		$this->Recordset_Selecting($sFilter);
-		$sSort = $this->getSessionOrderBy();
-		return ew_BuildSelectSql($this->getSqlSelect(), $this->getSqlWhere(), $this->getSqlGroupBy(),
-			$this->getSqlHaving(), $this->getSqlOrderBy(), $sFilter, $sSort);
+		if ($this->UseVirtualFields()) {
+			$sSort = $this->getSessionOrderByList();
+			return ew_BuildSelectSql($this->getSqlSelectList(), $this->getSqlWhere(), $this->getSqlGroupBy(),
+				$this->getSqlHaving(), $this->getSqlOrderBy(), $sFilter, $sSort);
+		} else {
+			$sSort = $this->getSessionOrderBy();
+			return ew_BuildSelectSql($this->getSqlSelect(), $this->getSqlWhere(), $this->getSqlGroupBy(),
+				$this->getSqlHaving(), $this->getSqlOrderBy(), $sFilter, $sSort);
+		}
 	}
 
 	// Get ORDER BY clause
 	function GetOrderBy() {
-		$sSort = $this->getSessionOrderBy();
+		$sSort = ($this->UseVirtualFields()) ? $this->getSessionOrderByList() : $this->getSessionOrderBy();
 		return ew_BuildSelectSql("", "", "", "", $this->getSqlOrderBy(), "", $sSort);
+	}
+
+	// Check if virtual fields is used in SQL
+	function UseVirtualFields() {
+		$sWhere = $this->getSessionWhere();
+		$sOrderBy = $this->getSessionOrderByList();
+		if ($sWhere <> "")
+			$sWhere = " " . str_replace(array("(",")"), array("",""), $sWhere) . " ";
+		if ($sOrderBy <> "")
+			$sOrderBy = " " . str_replace(array("(",")"), array("",""), $sOrderBy) . " ";
+		if ($this->jaminan_id->AdvancedSearch->SearchValue <> "" ||
+			$this->jaminan_id->AdvancedSearch->SearchValue2 <> "" ||
+			strpos($sWhere, " " . $this->jaminan_id->FldVirtualExpression . " ") !== FALSE)
+			return TRUE;
+		if (strpos($sOrderBy, " " . $this->jaminan_id->FldVirtualExpression . " ") !== FALSE)
+			return TRUE;
+		return FALSE;
 	}
 
 	// Try to get record count
@@ -653,7 +717,31 @@ class ct05_pinjamanjaminan extends cTable {
 		$this->pinjaman_id->ViewCustomAttributes = "";
 
 		// jaminan_id
-		$this->jaminan_id->ViewValue = $this->jaminan_id->CurrentValue;
+		if ($this->jaminan_id->VirtualValue <> "") {
+			$this->jaminan_id->ViewValue = $this->jaminan_id->VirtualValue;
+		} else {
+		if (strval($this->jaminan_id->CurrentValue) <> "") {
+			$sFilterWrk = "`id`" . ew_SearchString("=", $this->jaminan_id->CurrentValue, EW_DATATYPE_NUMBER, "");
+		$sSqlWrk = "SELECT `id`, `MerkType` AS `DispFld`, '' AS `Disp2Fld`, '' AS `Disp3Fld`, '' AS `Disp4Fld` FROM `t02_jaminan`";
+		$sWhereWrk = "";
+		$this->jaminan_id->LookupFilters = array("dx1" => '`MerkType`');
+		ew_AddFilter($sWhereWrk, $sFilterWrk);
+		$this->Lookup_Selecting($this->jaminan_id, $sWhereWrk); // Call Lookup selecting
+		if ($sWhereWrk <> "") $sSqlWrk .= " WHERE " . $sWhereWrk;
+		$sSqlWrk .= " ORDER BY `MerkType` ASC";
+			$rswrk = Conn()->Execute($sSqlWrk);
+			if ($rswrk && !$rswrk->EOF) { // Lookup values found
+				$arwrk = array();
+				$arwrk[1] = $rswrk->fields('DispFld');
+				$this->jaminan_id->ViewValue = $this->jaminan_id->DisplayValue($arwrk);
+				$rswrk->Close();
+			} else {
+				$this->jaminan_id->ViewValue = $this->jaminan_id->CurrentValue;
+			}
+		} else {
+			$this->jaminan_id->ViewValue = NULL;
+		}
+		}
 		$this->jaminan_id->ViewCustomAttributes = "";
 
 		// id
@@ -703,8 +791,6 @@ class ct05_pinjamanjaminan extends cTable {
 		// jaminan_id
 		$this->jaminan_id->EditAttrs["class"] = "form-control";
 		$this->jaminan_id->EditCustomAttributes = "";
-		$this->jaminan_id->EditValue = $this->jaminan_id->CurrentValue;
-		$this->jaminan_id->PlaceHolder = ew_RemoveHtml($this->jaminan_id->FldCaption());
 
 		// Call Row Rendered event
 		$this->Row_Rendered();
@@ -733,8 +819,6 @@ class ct05_pinjamanjaminan extends cTable {
 			if ($Doc->Horizontal) { // Horizontal format, write header
 				$Doc->BeginExportRow();
 				if ($ExportPageType == "view") {
-					if ($this->id->Exportable) $Doc->ExportCaption($this->id);
-					if ($this->pinjaman_id->Exportable) $Doc->ExportCaption($this->pinjaman_id);
 					if ($this->jaminan_id->Exportable) $Doc->ExportCaption($this->jaminan_id);
 				} else {
 					if ($this->id->Exportable) $Doc->ExportCaption($this->id);
@@ -771,8 +855,6 @@ class ct05_pinjamanjaminan extends cTable {
 				if (!$Doc->ExportCustom) {
 					$Doc->BeginExportRow($RowCnt); // Allow CSS styles if enabled
 					if ($ExportPageType == "view") {
-						if ($this->id->Exportable) $Doc->ExportField($this->id);
-						if ($this->pinjaman_id->Exportable) $Doc->ExportField($this->pinjaman_id);
 						if ($this->jaminan_id->Exportable) $Doc->ExportField($this->jaminan_id);
 					} else {
 						if ($this->id->Exportable) $Doc->ExportField($this->id);
