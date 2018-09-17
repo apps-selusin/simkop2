@@ -282,10 +282,9 @@ class ct01_nasabah_delete extends ct01_nasabah {
 			$Security->UserID_Loaded();
 		}
 		$this->CurrentAction = (@$_GET["a"] <> "") ? $_GET["a"] : @$_POST["a_list"]; // Set up current action
-		$this->id->SetVisibility();
-		$this->id->Visible = !$this->IsAdd() && !$this->IsCopy() && !$this->IsGridAdd();
 		$this->Customer->SetVisibility();
 		$this->Pekerjaan->SetVisibility();
+		$this->Alamat->SetVisibility();
 		$this->NoTelpHp->SetVisibility();
 
 		// Global Page Loading event (in userfn*.php)
@@ -509,14 +508,13 @@ class ct01_nasabah_delete extends ct01_nasabah {
 		$this->Pekerjaan->ViewValue = $this->Pekerjaan->CurrentValue;
 		$this->Pekerjaan->ViewCustomAttributes = "";
 
+		// Alamat
+		$this->Alamat->ViewValue = $this->Alamat->CurrentValue;
+		$this->Alamat->ViewCustomAttributes = "";
+
 		// NoTelpHp
 		$this->NoTelpHp->ViewValue = $this->NoTelpHp->CurrentValue;
 		$this->NoTelpHp->ViewCustomAttributes = "";
-
-			// id
-			$this->id->LinkCustomAttributes = "";
-			$this->id->HrefValue = "";
-			$this->id->TooltipValue = "";
 
 			// Customer
 			$this->Customer->LinkCustomAttributes = "";
@@ -527,6 +525,11 @@ class ct01_nasabah_delete extends ct01_nasabah {
 			$this->Pekerjaan->LinkCustomAttributes = "";
 			$this->Pekerjaan->HrefValue = "";
 			$this->Pekerjaan->TooltipValue = "";
+
+			// Alamat
+			$this->Alamat->LinkCustomAttributes = "";
+			$this->Alamat->HrefValue = "";
+			$this->Alamat->TooltipValue = "";
 
 			// NoTelpHp
 			$this->NoTelpHp->LinkCustomAttributes = "";
@@ -785,14 +788,14 @@ $t01_nasabah_delete->ShowMessage();
 <?php echo $t01_nasabah->TableCustomInnerHtml ?>
 	<thead>
 	<tr class="ewTableHeader">
-<?php if ($t01_nasabah->id->Visible) { // id ?>
-		<th><span id="elh_t01_nasabah_id" class="t01_nasabah_id"><?php echo $t01_nasabah->id->FldCaption() ?></span></th>
-<?php } ?>
 <?php if ($t01_nasabah->Customer->Visible) { // Customer ?>
 		<th><span id="elh_t01_nasabah_Customer" class="t01_nasabah_Customer"><?php echo $t01_nasabah->Customer->FldCaption() ?></span></th>
 <?php } ?>
 <?php if ($t01_nasabah->Pekerjaan->Visible) { // Pekerjaan ?>
 		<th><span id="elh_t01_nasabah_Pekerjaan" class="t01_nasabah_Pekerjaan"><?php echo $t01_nasabah->Pekerjaan->FldCaption() ?></span></th>
+<?php } ?>
+<?php if ($t01_nasabah->Alamat->Visible) { // Alamat ?>
+		<th><span id="elh_t01_nasabah_Alamat" class="t01_nasabah_Alamat"><?php echo $t01_nasabah->Alamat->FldCaption() ?></span></th>
 <?php } ?>
 <?php if ($t01_nasabah->NoTelpHp->Visible) { // NoTelpHp ?>
 		<th><span id="elh_t01_nasabah_NoTelpHp" class="t01_nasabah_NoTelpHp"><?php echo $t01_nasabah->NoTelpHp->FldCaption() ?></span></th>
@@ -818,14 +821,6 @@ while (!$t01_nasabah_delete->Recordset->EOF) {
 	$t01_nasabah_delete->RenderRow();
 ?>
 	<tr<?php echo $t01_nasabah->RowAttributes() ?>>
-<?php if ($t01_nasabah->id->Visible) { // id ?>
-		<td<?php echo $t01_nasabah->id->CellAttributes() ?>>
-<span id="el<?php echo $t01_nasabah_delete->RowCnt ?>_t01_nasabah_id" class="t01_nasabah_id">
-<span<?php echo $t01_nasabah->id->ViewAttributes() ?>>
-<?php echo $t01_nasabah->id->ListViewValue() ?></span>
-</span>
-</td>
-<?php } ?>
 <?php if ($t01_nasabah->Customer->Visible) { // Customer ?>
 		<td<?php echo $t01_nasabah->Customer->CellAttributes() ?>>
 <span id="el<?php echo $t01_nasabah_delete->RowCnt ?>_t01_nasabah_Customer" class="t01_nasabah_Customer">
@@ -839,6 +834,14 @@ while (!$t01_nasabah_delete->Recordset->EOF) {
 <span id="el<?php echo $t01_nasabah_delete->RowCnt ?>_t01_nasabah_Pekerjaan" class="t01_nasabah_Pekerjaan">
 <span<?php echo $t01_nasabah->Pekerjaan->ViewAttributes() ?>>
 <?php echo $t01_nasabah->Pekerjaan->ListViewValue() ?></span>
+</span>
+</td>
+<?php } ?>
+<?php if ($t01_nasabah->Alamat->Visible) { // Alamat ?>
+		<td<?php echo $t01_nasabah->Alamat->CellAttributes() ?>>
+<span id="el<?php echo $t01_nasabah_delete->RowCnt ?>_t01_nasabah_Alamat" class="t01_nasabah_Alamat">
+<span<?php echo $t01_nasabah->Alamat->ViewAttributes() ?>>
+<?php echo $t01_nasabah->Alamat->ListViewValue() ?></span>
 </span>
 </td>
 <?php } ?>

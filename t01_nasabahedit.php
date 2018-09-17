@@ -7,6 +7,7 @@ ob_start(); // Turn on output buffering
 <?php include_once "phpfn13.php" ?>
 <?php include_once "t01_nasabahinfo.php" ?>
 <?php include_once "t96_employeesinfo.php" ?>
+<?php include_once "t02_jaminangridcls.php" ?>
 <?php include_once "userfn13.php" ?>
 <?php
 
@@ -285,8 +286,6 @@ class ct01_nasabah_edit extends ct01_nasabah {
 		// Create form object
 		$objForm = new cFormObj();
 		$this->CurrentAction = (@$_GET["a"] <> "") ? $_GET["a"] : @$_POST["a_list"]; // Set up current action
-		$this->id->SetVisibility();
-		$this->id->Visible = !$this->IsAdd() && !$this->IsCopy() && !$this->IsGridAdd();
 		$this->Customer->SetVisibility();
 		$this->Pekerjaan->SetVisibility();
 		$this->Alamat->SetVisibility();
@@ -307,6 +306,14 @@ class ct01_nasabah_edit extends ct01_nasabah {
 
 		// Process auto fill
 		if (@$_POST["ajax"] == "autofill") {
+
+			// Process auto fill for detail table 't02_jaminan'
+			if (@$_POST["grid"] == "ft02_jaminangrid") {
+				if (!isset($GLOBALS["t02_jaminan_grid"])) $GLOBALS["t02_jaminan_grid"] = new ct02_jaminan_grid;
+				$GLOBALS["t02_jaminan_grid"]->Page_Init();
+				$this->Page_Terminate();
+				exit();
+			}
 			$results = $this->GetAutoFill(@$_POST["name"], @$_POST["q"]);
 			if ($results) {
 
@@ -445,6 +452,9 @@ class ct01_nasabah_edit extends ct01_nasabah {
 		if (@$_POST["a_edit"] <> "") {
 			$this->CurrentAction = $_POST["a_edit"]; // Get action code
 			$this->LoadFormValues(); // Get form values
+
+			// Set up detail parameters
+			$this->SetUpDetailParms();
 		} else {
 			$this->CurrentAction = "I"; // Default action is display
 		}
@@ -467,9 +477,15 @@ class ct01_nasabah_edit extends ct01_nasabah {
 				} else {
 					$this->LoadRowValues($this->Recordset); // Load row values
 				}
+
+				// Set up detail parameters
+				$this->SetUpDetailParms();
 				break;
 			Case "U": // Update
-				$sReturnUrl = $this->getReturnUrl();
+				if ($this->getCurrentDetailTable() <> "") // Master/detail edit
+					$sReturnUrl = $this->GetViewUrl(EW_TABLE_SHOW_DETAIL . "=" . $this->getCurrentDetailTable()); // Master/Detail view page
+				else
+					$sReturnUrl = $this->getReturnUrl();
 				if (ew_GetPageName($sReturnUrl) == "t01_nasabahlist.php")
 					$sReturnUrl = $this->AddMasterUrl($sReturnUrl); // List page, return to list page with correct master key if necessary
 				$this->SendEmail = TRUE; // Send email on update success
@@ -482,6 +498,9 @@ class ct01_nasabah_edit extends ct01_nasabah {
 				} else {
 					$this->EventCancelled = TRUE; // Event cancelled
 					$this->RestoreFormValues(); // Restore form values if update failed
+
+					// Set up detail parameters
+					$this->SetUpDetailParms();
 				}
 		}
 
@@ -542,8 +561,6 @@ class ct01_nasabah_edit extends ct01_nasabah {
 
 		// Load from form
 		global $objForm;
-		if (!$this->id->FldIsDetailKey)
-			$this->id->setFormValue($objForm->GetValue("x_id"));
 		if (!$this->Customer->FldIsDetailKey) {
 			$this->Customer->setFormValue($objForm->GetValue("x_Customer"));
 		}
@@ -556,6 +573,8 @@ class ct01_nasabah_edit extends ct01_nasabah {
 		if (!$this->NoTelpHp->FldIsDetailKey) {
 			$this->NoTelpHp->setFormValue($objForm->GetValue("x_NoTelpHp"));
 		}
+		if (!$this->id->FldIsDetailKey)
+			$this->id->setFormValue($objForm->GetValue("x_id"));
 	}
 
 	// Restore form values
@@ -680,11 +699,6 @@ class ct01_nasabah_edit extends ct01_nasabah {
 		$this->NoTelpHp->ViewValue = $this->NoTelpHp->CurrentValue;
 		$this->NoTelpHp->ViewCustomAttributes = "";
 
-			// id
-			$this->id->LinkCustomAttributes = "";
-			$this->id->HrefValue = "";
-			$this->id->TooltipValue = "";
-
 			// Customer
 			$this->Customer->LinkCustomAttributes = "";
 			$this->Customer->HrefValue = "";
@@ -705,12 +719,6 @@ class ct01_nasabah_edit extends ct01_nasabah {
 			$this->NoTelpHp->HrefValue = "";
 			$this->NoTelpHp->TooltipValue = "";
 		} elseif ($this->RowType == EW_ROWTYPE_EDIT) { // Edit row
-
-			// id
-			$this->id->EditAttrs["class"] = "form-control";
-			$this->id->EditCustomAttributes = "";
-			$this->id->EditValue = $this->id->CurrentValue;
-			$this->id->ViewCustomAttributes = "";
 
 			// Customer
 			$this->Customer->EditAttrs["class"] = "form-control";
@@ -737,12 +745,8 @@ class ct01_nasabah_edit extends ct01_nasabah {
 			$this->NoTelpHp->PlaceHolder = ew_RemoveHtml($this->NoTelpHp->FldCaption());
 
 			// Edit refer script
-			// id
-
-			$this->id->LinkCustomAttributes = "";
-			$this->id->HrefValue = "";
-
 			// Customer
+
 			$this->Customer->LinkCustomAttributes = "";
 			$this->Customer->HrefValue = "";
 
@@ -783,6 +787,13 @@ class ct01_nasabah_edit extends ct01_nasabah {
 			ew_AddMessage($gsFormError, str_replace("%s", $this->Customer->FldCaption(), $this->Customer->ReqErrMsg));
 		}
 
+		// Validate detail grid
+		$DetailTblVar = explode(",", $this->getCurrentDetailTable());
+		if (in_array("t02_jaminan", $DetailTblVar) && $GLOBALS["t02_jaminan"]->DetailEdit) {
+			if (!isset($GLOBALS["t02_jaminan_grid"])) $GLOBALS["t02_jaminan_grid"] = new ct02_jaminan_grid(); // get detail page object
+			$GLOBALS["t02_jaminan_grid"]->ValidateGridForm();
+		}
+
 		// Return validate result
 		$ValidateForm = ($gsFormError == "");
 
@@ -813,6 +824,10 @@ class ct01_nasabah_edit extends ct01_nasabah {
 			$EditRow = FALSE; // Update Failed
 		} else {
 
+			// Begin transaction
+			if ($this->getCurrentDetailTable() <> "")
+				$conn->BeginTrans();
+
 			// Save old values
 			$rsold = &$rs->fields;
 			$this->LoadDbValues($rsold);
@@ -841,6 +856,26 @@ class ct01_nasabah_edit extends ct01_nasabah {
 				$conn->raiseErrorFn = '';
 				if ($EditRow) {
 				}
+
+				// Update detail records
+				$DetailTblVar = explode(",", $this->getCurrentDetailTable());
+				if ($EditRow) {
+					if (in_array("t02_jaminan", $DetailTblVar) && $GLOBALS["t02_jaminan"]->DetailEdit) {
+						if (!isset($GLOBALS["t02_jaminan_grid"])) $GLOBALS["t02_jaminan_grid"] = new ct02_jaminan_grid(); // Get detail page object
+						$Security->LoadCurrentUserLevel($this->ProjectID . "t02_jaminan"); // Load user level of detail table
+						$EditRow = $GLOBALS["t02_jaminan_grid"]->GridUpdate();
+						$Security->LoadCurrentUserLevel($this->ProjectID . $this->TableName); // Restore user level of master table
+					}
+				}
+
+				// Commit/Rollback transaction
+				if ($this->getCurrentDetailTable() <> "") {
+					if ($EditRow) {
+						$conn->CommitTrans(); // Commit transaction
+					} else {
+						$conn->RollbackTrans(); // Rollback transaction
+					}
+				}
 			} else {
 				if ($this->getSuccessMessage() <> "" || $this->getFailureMessage() <> "") {
 
@@ -860,6 +895,36 @@ class ct01_nasabah_edit extends ct01_nasabah {
 			$this->Row_Updated($rsold, $rsnew);
 		$rs->Close();
 		return $EditRow;
+	}
+
+	// Set up detail parms based on QueryString
+	function SetUpDetailParms() {
+
+		// Get the keys for master table
+		if (isset($_GET[EW_TABLE_SHOW_DETAIL])) {
+			$sDetailTblVar = $_GET[EW_TABLE_SHOW_DETAIL];
+			$this->setCurrentDetailTable($sDetailTblVar);
+		} else {
+			$sDetailTblVar = $this->getCurrentDetailTable();
+		}
+		if ($sDetailTblVar <> "") {
+			$DetailTblVar = explode(",", $sDetailTblVar);
+			if (in_array("t02_jaminan", $DetailTblVar)) {
+				if (!isset($GLOBALS["t02_jaminan_grid"]))
+					$GLOBALS["t02_jaminan_grid"] = new ct02_jaminan_grid;
+				if ($GLOBALS["t02_jaminan_grid"]->DetailEdit) {
+					$GLOBALS["t02_jaminan_grid"]->CurrentMode = "edit";
+					$GLOBALS["t02_jaminan_grid"]->CurrentAction = "gridedit";
+
+					// Save current master table to detail table
+					$GLOBALS["t02_jaminan_grid"]->setCurrentMasterTable($this->TableVar);
+					$GLOBALS["t02_jaminan_grid"]->setStartRecordNumber(1);
+					$GLOBALS["t02_jaminan_grid"]->nasabah_id->FldIsDetailKey = TRUE;
+					$GLOBALS["t02_jaminan_grid"]->nasabah_id->CurrentValue = $this->id->CurrentValue;
+					$GLOBALS["t02_jaminan_grid"]->nasabah_id->setSessionValue($GLOBALS["t02_jaminan_grid"]->nasabah_id->CurrentValue);
+				}
+			}
+		}
 	}
 
 	// Set up Breadcrumb
@@ -1105,18 +1170,6 @@ $t01_nasabah_edit->ShowMessage();
 <input type="hidden" name="modal" value="1">
 <?php } ?>
 <div>
-<?php if ($t01_nasabah->id->Visible) { // id ?>
-	<div id="r_id" class="form-group">
-		<label id="elh_t01_nasabah_id" class="col-sm-2 control-label ewLabel"><?php echo $t01_nasabah->id->FldCaption() ?></label>
-		<div class="col-sm-10"><div<?php echo $t01_nasabah->id->CellAttributes() ?>>
-<span id="el_t01_nasabah_id">
-<span<?php echo $t01_nasabah->id->ViewAttributes() ?>>
-<p class="form-control-static"><?php echo $t01_nasabah->id->EditValue ?></p></span>
-</span>
-<input type="hidden" data-table="t01_nasabah" data-field="x_id" name="x_id" id="x_id" value="<?php echo ew_HtmlEncode($t01_nasabah->id->CurrentValue) ?>">
-<?php echo $t01_nasabah->id->CustomMsg ?></div></div>
-	</div>
-<?php } ?>
 <?php if ($t01_nasabah->Customer->Visible) { // Customer ?>
 	<div id="r_Customer" class="form-group">
 		<label id="elh_t01_nasabah_Customer" for="x_Customer" class="col-sm-2 control-label ewLabel"><?php echo $t01_nasabah->Customer->FldCaption() ?><?php echo $Language->Phrase("FieldRequiredIndicator") ?></label>
@@ -1158,6 +1211,15 @@ $t01_nasabah_edit->ShowMessage();
 	</div>
 <?php } ?>
 </div>
+<input type="hidden" data-table="t01_nasabah" data-field="x_id" name="x_id" id="x_id" value="<?php echo ew_HtmlEncode($t01_nasabah->id->CurrentValue) ?>">
+<?php
+	if (in_array("t02_jaminan", explode(",", $t01_nasabah->getCurrentDetailTable())) && $t02_jaminan->DetailEdit) {
+?>
+<?php if ($t01_nasabah->getCurrentDetailTable() <> "") { ?>
+<h4 class="ewDetailCaption"><?php echo $Language->TablePhrase("t02_jaminan", "TblCaption") ?></h4>
+<?php } ?>
+<?php include_once "t02_jaminangrid.php" ?>
+<?php } ?>
 <?php if (!$t01_nasabah_edit->IsModal) { ?>
 <div class="form-group">
 	<div class="col-sm-offset-2 col-sm-10">

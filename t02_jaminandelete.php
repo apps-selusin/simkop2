@@ -6,6 +6,7 @@ ob_start(); // Turn on output buffering
 <?php include_once ((EW_USE_ADODB) ? "adodb5/adodb.inc.php" : "ewmysql13.php") ?>
 <?php include_once "phpfn13.php" ?>
 <?php include_once "t02_jaminaninfo.php" ?>
+<?php include_once "t01_nasabahinfo.php" ?>
 <?php include_once "t96_employeesinfo.php" ?>
 <?php include_once "userfn13.php" ?>
 <?php
@@ -232,6 +233,9 @@ class ct02_jaminan_delete extends ct02_jaminan {
 			$GLOBALS["Table"] = &$GLOBALS["t02_jaminan"];
 		}
 
+		// Table object (t01_nasabah)
+		if (!isset($GLOBALS['t01_nasabah'])) $GLOBALS['t01_nasabah'] = new ct01_nasabah();
+
 		// Table object (t96_employees)
 		if (!isset($GLOBALS['t96_employees'])) $GLOBALS['t96_employees'] = new ct96_employees();
 
@@ -282,14 +286,13 @@ class ct02_jaminan_delete extends ct02_jaminan {
 			$Security->UserID_Loaded();
 		}
 		$this->CurrentAction = (@$_GET["a"] <> "") ? $_GET["a"] : @$_POST["a_list"]; // Set up current action
-		$this->id->SetVisibility();
-		$this->id->Visible = !$this->IsAdd() && !$this->IsCopy() && !$this->IsGridAdd();
 		$this->nasabah_id->SetVisibility();
 		$this->MerkType->SetVisibility();
 		$this->NoRangka->SetVisibility();
 		$this->NoMesin->SetVisibility();
 		$this->Warna->SetVisibility();
 		$this->NoPol->SetVisibility();
+		$this->Keterangan->SetVisibility();
 		$this->AtasNama->SetVisibility();
 
 		// Global Page Loading event (in userfn*.php)
@@ -366,6 +369,9 @@ class ct02_jaminan_delete extends ct02_jaminan {
 	//
 	function Page_Main() {
 		global $Language;
+
+		// Set up master/detail parameters
+		$this->SetUpMasterParms();
 
 		// Set up Breadcrumb
 		$this->SetupBreadcrumb();
@@ -541,14 +547,13 @@ class ct02_jaminan_delete extends ct02_jaminan {
 		$this->NoPol->ViewValue = $this->NoPol->CurrentValue;
 		$this->NoPol->ViewCustomAttributes = "";
 
+		// Keterangan
+		$this->Keterangan->ViewValue = $this->Keterangan->CurrentValue;
+		$this->Keterangan->ViewCustomAttributes = "";
+
 		// AtasNama
 		$this->AtasNama->ViewValue = $this->AtasNama->CurrentValue;
 		$this->AtasNama->ViewCustomAttributes = "";
-
-			// id
-			$this->id->LinkCustomAttributes = "";
-			$this->id->HrefValue = "";
-			$this->id->TooltipValue = "";
 
 			// nasabah_id
 			$this->nasabah_id->LinkCustomAttributes = "";
@@ -579,6 +584,11 @@ class ct02_jaminan_delete extends ct02_jaminan {
 			$this->NoPol->LinkCustomAttributes = "";
 			$this->NoPol->HrefValue = "";
 			$this->NoPol->TooltipValue = "";
+
+			// Keterangan
+			$this->Keterangan->LinkCustomAttributes = "";
+			$this->Keterangan->HrefValue = "";
+			$this->Keterangan->TooltipValue = "";
 
 			// AtasNama
 			$this->AtasNama->LinkCustomAttributes = "";
@@ -675,6 +685,66 @@ class ct02_jaminan_delete extends ct02_jaminan {
 			}
 		}
 		return $DeleteRows;
+	}
+
+	// Set up master/detail based on QueryString
+	function SetUpMasterParms() {
+		$bValidMaster = FALSE;
+
+		// Get the keys for master table
+		if (isset($_GET[EW_TABLE_SHOW_MASTER])) {
+			$sMasterTblVar = $_GET[EW_TABLE_SHOW_MASTER];
+			if ($sMasterTblVar == "") {
+				$bValidMaster = TRUE;
+				$this->DbMasterFilter = "";
+				$this->DbDetailFilter = "";
+			}
+			if ($sMasterTblVar == "t01_nasabah") {
+				$bValidMaster = TRUE;
+				if (@$_GET["fk_id"] <> "") {
+					$GLOBALS["t01_nasabah"]->id->setQueryStringValue($_GET["fk_id"]);
+					$this->nasabah_id->setQueryStringValue($GLOBALS["t01_nasabah"]->id->QueryStringValue);
+					$this->nasabah_id->setSessionValue($this->nasabah_id->QueryStringValue);
+					if (!is_numeric($GLOBALS["t01_nasabah"]->id->QueryStringValue)) $bValidMaster = FALSE;
+				} else {
+					$bValidMaster = FALSE;
+				}
+			}
+		} elseif (isset($_POST[EW_TABLE_SHOW_MASTER])) {
+			$sMasterTblVar = $_POST[EW_TABLE_SHOW_MASTER];
+			if ($sMasterTblVar == "") {
+				$bValidMaster = TRUE;
+				$this->DbMasterFilter = "";
+				$this->DbDetailFilter = "";
+			}
+			if ($sMasterTblVar == "t01_nasabah") {
+				$bValidMaster = TRUE;
+				if (@$_POST["fk_id"] <> "") {
+					$GLOBALS["t01_nasabah"]->id->setFormValue($_POST["fk_id"]);
+					$this->nasabah_id->setFormValue($GLOBALS["t01_nasabah"]->id->FormValue);
+					$this->nasabah_id->setSessionValue($this->nasabah_id->FormValue);
+					if (!is_numeric($GLOBALS["t01_nasabah"]->id->FormValue)) $bValidMaster = FALSE;
+				} else {
+					$bValidMaster = FALSE;
+				}
+			}
+		}
+		if ($bValidMaster) {
+
+			// Save current master table
+			$this->setCurrentMasterTable($sMasterTblVar);
+
+			// Reset start record counter (new master key)
+			$this->StartRec = 1;
+			$this->setStartRecordNumber($this->StartRec);
+
+			// Clear previous master key from Session
+			if ($sMasterTblVar <> "t01_nasabah") {
+				if ($this->nasabah_id->CurrentValue == "") $this->nasabah_id->setSessionValue("");
+			}
+		}
+		$this->DbMasterFilter = $this->GetMasterFilter(); // Get master filter
+		$this->DbDetailFilter = $this->GetDetailFilter(); // Get detail filter
 	}
 
 	// Set up Breadcrumb
@@ -837,9 +907,6 @@ $t02_jaminan_delete->ShowMessage();
 <?php echo $t02_jaminan->TableCustomInnerHtml ?>
 	<thead>
 	<tr class="ewTableHeader">
-<?php if ($t02_jaminan->id->Visible) { // id ?>
-		<th><span id="elh_t02_jaminan_id" class="t02_jaminan_id"><?php echo $t02_jaminan->id->FldCaption() ?></span></th>
-<?php } ?>
 <?php if ($t02_jaminan->nasabah_id->Visible) { // nasabah_id ?>
 		<th><span id="elh_t02_jaminan_nasabah_id" class="t02_jaminan_nasabah_id"><?php echo $t02_jaminan->nasabah_id->FldCaption() ?></span></th>
 <?php } ?>
@@ -857,6 +924,9 @@ $t02_jaminan_delete->ShowMessage();
 <?php } ?>
 <?php if ($t02_jaminan->NoPol->Visible) { // NoPol ?>
 		<th><span id="elh_t02_jaminan_NoPol" class="t02_jaminan_NoPol"><?php echo $t02_jaminan->NoPol->FldCaption() ?></span></th>
+<?php } ?>
+<?php if ($t02_jaminan->Keterangan->Visible) { // Keterangan ?>
+		<th><span id="elh_t02_jaminan_Keterangan" class="t02_jaminan_Keterangan"><?php echo $t02_jaminan->Keterangan->FldCaption() ?></span></th>
 <?php } ?>
 <?php if ($t02_jaminan->AtasNama->Visible) { // AtasNama ?>
 		<th><span id="elh_t02_jaminan_AtasNama" class="t02_jaminan_AtasNama"><?php echo $t02_jaminan->AtasNama->FldCaption() ?></span></th>
@@ -882,14 +952,6 @@ while (!$t02_jaminan_delete->Recordset->EOF) {
 	$t02_jaminan_delete->RenderRow();
 ?>
 	<tr<?php echo $t02_jaminan->RowAttributes() ?>>
-<?php if ($t02_jaminan->id->Visible) { // id ?>
-		<td<?php echo $t02_jaminan->id->CellAttributes() ?>>
-<span id="el<?php echo $t02_jaminan_delete->RowCnt ?>_t02_jaminan_id" class="t02_jaminan_id">
-<span<?php echo $t02_jaminan->id->ViewAttributes() ?>>
-<?php echo $t02_jaminan->id->ListViewValue() ?></span>
-</span>
-</td>
-<?php } ?>
 <?php if ($t02_jaminan->nasabah_id->Visible) { // nasabah_id ?>
 		<td<?php echo $t02_jaminan->nasabah_id->CellAttributes() ?>>
 <span id="el<?php echo $t02_jaminan_delete->RowCnt ?>_t02_jaminan_nasabah_id" class="t02_jaminan_nasabah_id">
@@ -935,6 +997,14 @@ while (!$t02_jaminan_delete->Recordset->EOF) {
 <span id="el<?php echo $t02_jaminan_delete->RowCnt ?>_t02_jaminan_NoPol" class="t02_jaminan_NoPol">
 <span<?php echo $t02_jaminan->NoPol->ViewAttributes() ?>>
 <?php echo $t02_jaminan->NoPol->ListViewValue() ?></span>
+</span>
+</td>
+<?php } ?>
+<?php if ($t02_jaminan->Keterangan->Visible) { // Keterangan ?>
+		<td<?php echo $t02_jaminan->Keterangan->CellAttributes() ?>>
+<span id="el<?php echo $t02_jaminan_delete->RowCnt ?>_t02_jaminan_Keterangan" class="t02_jaminan_Keterangan">
+<span<?php echo $t02_jaminan->Keterangan->ViewAttributes() ?>>
+<?php echo $t02_jaminan->Keterangan->ListViewValue() ?></span>
 </span>
 </td>
 <?php } ?>

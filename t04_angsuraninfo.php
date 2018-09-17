@@ -715,6 +715,9 @@ class ct04_angsuran extends cTable {
 		// pinjaman_id
 		// AngsuranKe
 		// AngsuranTanggal
+
+		$this->AngsuranTanggal->CellCssStyle = "white-space: nowrap;";
+
 		// AngsuranPokok
 		// AngsuranBunga
 		// AngsuranTotal
@@ -743,18 +746,26 @@ class ct04_angsuran extends cTable {
 
 		// AngsuranPokok
 		$this->AngsuranPokok->ViewValue = $this->AngsuranPokok->CurrentValue;
+		$this->AngsuranPokok->ViewValue = ew_FormatNumber($this->AngsuranPokok->ViewValue, 2, -2, -2, -2);
+		$this->AngsuranPokok->CellCssStyle .= "text-align: right;";
 		$this->AngsuranPokok->ViewCustomAttributes = "";
 
 		// AngsuranBunga
 		$this->AngsuranBunga->ViewValue = $this->AngsuranBunga->CurrentValue;
+		$this->AngsuranBunga->ViewValue = ew_FormatNumber($this->AngsuranBunga->ViewValue, 2, -2, -2, -2);
+		$this->AngsuranBunga->CellCssStyle .= "text-align: right;";
 		$this->AngsuranBunga->ViewCustomAttributes = "";
 
 		// AngsuranTotal
 		$this->AngsuranTotal->ViewValue = $this->AngsuranTotal->CurrentValue;
+		$this->AngsuranTotal->ViewValue = ew_FormatNumber($this->AngsuranTotal->ViewValue, 2, -2, -2, -2);
+		$this->AngsuranTotal->CellCssStyle .= "text-align: right;";
 		$this->AngsuranTotal->ViewCustomAttributes = "";
 
 		// SisaHutang
 		$this->SisaHutang->ViewValue = $this->SisaHutang->CurrentValue;
+		$this->SisaHutang->ViewValue = ew_FormatNumber($this->SisaHutang->ViewValue, 2, -2, -2, -2);
+		$this->SisaHutang->CellCssStyle .= "text-align: right;";
 		$this->SisaHutang->ViewCustomAttributes = "";
 
 		// TanggalBayar
@@ -880,29 +891,37 @@ class ct04_angsuran extends cTable {
 		$this->AngsuranPokok->EditAttrs["class"] = "form-control";
 		$this->AngsuranPokok->EditCustomAttributes = "";
 		$this->AngsuranPokok->EditValue = $this->AngsuranPokok->CurrentValue;
+		$this->AngsuranPokok->EditValue = ew_FormatNumber($this->AngsuranPokok->EditValue, 2, -2, -2, -2);
+		$this->AngsuranPokok->CellCssStyle .= "text-align: right;";
 		$this->AngsuranPokok->ViewCustomAttributes = "";
 
 		// AngsuranBunga
 		$this->AngsuranBunga->EditAttrs["class"] = "form-control";
 		$this->AngsuranBunga->EditCustomAttributes = "";
 		$this->AngsuranBunga->EditValue = $this->AngsuranBunga->CurrentValue;
+		$this->AngsuranBunga->EditValue = ew_FormatNumber($this->AngsuranBunga->EditValue, 2, -2, -2, -2);
+		$this->AngsuranBunga->CellCssStyle .= "text-align: right;";
 		$this->AngsuranBunga->ViewCustomAttributes = "";
 
 		// AngsuranTotal
 		$this->AngsuranTotal->EditAttrs["class"] = "form-control";
 		$this->AngsuranTotal->EditCustomAttributes = "";
 		$this->AngsuranTotal->EditValue = $this->AngsuranTotal->CurrentValue;
+		$this->AngsuranTotal->EditValue = ew_FormatNumber($this->AngsuranTotal->EditValue, 2, -2, -2, -2);
+		$this->AngsuranTotal->CellCssStyle .= "text-align: right;";
 		$this->AngsuranTotal->ViewCustomAttributes = "";
 
 		// SisaHutang
 		$this->SisaHutang->EditAttrs["class"] = "form-control";
 		$this->SisaHutang->EditCustomAttributes = "";
 		$this->SisaHutang->EditValue = $this->SisaHutang->CurrentValue;
+		$this->SisaHutang->EditValue = ew_FormatNumber($this->SisaHutang->EditValue, 2, -2, -2, -2);
+		$this->SisaHutang->CellCssStyle .= "text-align: right;";
 		$this->SisaHutang->ViewCustomAttributes = "";
 
 		// TanggalBayar
 		$this->TanggalBayar->EditAttrs["class"] = "form-control";
-		$this->TanggalBayar->EditCustomAttributes = "";
+		$this->TanggalBayar->EditCustomAttributes = "style='width: 115px;'";
 		$this->TanggalBayar->EditValue = ew_FormatDateTime($this->TanggalBayar->CurrentValue, 7);
 		$this->TanggalBayar->PlaceHolder = ew_RemoveHtml($this->TanggalBayar->FldCaption());
 
@@ -975,6 +994,7 @@ class ct04_angsuran extends cTable {
 					if ($this->TanggalBayar->Exportable) $Doc->ExportCaption($this->TanggalBayar);
 					if ($this->TotalDenda->Exportable) $Doc->ExportCaption($this->TotalDenda);
 					if ($this->Terlambat->Exportable) $Doc->ExportCaption($this->Terlambat);
+					if ($this->Keterangan->Exportable) $Doc->ExportCaption($this->Keterangan);
 				}
 				$Doc->EndExportRow();
 			}
@@ -1029,6 +1049,7 @@ class ct04_angsuran extends cTable {
 						if ($this->TanggalBayar->Exportable) $Doc->ExportField($this->TanggalBayar);
 						if ($this->TotalDenda->Exportable) $Doc->ExportField($this->TotalDenda);
 						if ($this->Terlambat->Exportable) $Doc->ExportField($this->Terlambat);
+						if ($this->Keterangan->Exportable) $Doc->ExportField($this->Keterangan);
 					}
 					$Doc->EndExportRow();
 				}

@@ -1486,6 +1486,12 @@ class ct03_pinjaman_view extends ct03_pinjaman {
 	function Page_Render() {
 
 		//echo "Page Render";
+		// sembunyikan add, delete di halaman view master/detail
+
+		$this->OtherOptions["action"]->Items["add"]->Visible = FALSE;
+		$this->OtherOptions["action"]->Items["edit"]->Visible = FALSE;
+		$this->OtherOptions["action"]->Items["copy"]->Visible = FALSE;
+		$this->OtherOptions["action"]->Items["delete"]->Visible = FALSE;
 	}
 
 	// Page Data Rendering event

@@ -586,20 +586,17 @@
     <menu id="11">
       <phrase id="menutext" value="Home" />
     </menu>
-    <menu id="2">
-      <phrase id="menutext" value="t 02 jaminan" />
-    </menu>
     <menu id="3">
       <phrase id="menutext" value="Pinjaman" />
-    </menu>
-    <menu id="4">
-      <phrase id="menutext" value="Angsuran" />
     </menu>
     <menu id="12">
       <phrase id="menutext" value="Setup" />
     </menu>
     <menu id="1">
-      <phrase id="menutext" value="t 01 nasabah" />
+      <phrase id="menutext" value="Nasabah" />
+    </menu>
+    <menu id="2">
+      <phrase id="menutext" value="Jaminan" />
     </menu>
     <menu id="7">
       <phrase id="menutext" value="t 96 employees" />
@@ -613,6 +610,9 @@
     <menu id="10">
       <phrase id="menutext" value="t 99 audittrail" />
     </menu>
+    <menu id="4">
+      <phrase id="menutext" value="Angsuran" />
+    </menu>
     <menu id="5">
       <phrase id="menutext" value="Jaminan" />
     </menu>
@@ -620,7 +620,7 @@
       <phrase id="menutext" value="t 06 pinjamantitipan" />
     </menu>
     <table id="t01_nasabah">
-      <phrase id="tblcaption" value="t 01 nasabah" />
+      <phrase id="tblcaption" value="Nasabah" />
       <field id="id">
         <phrase id="fldcaption" value="id" />
       </field>
@@ -634,11 +634,11 @@
         <phrase id="fldcaption" value="Alamat" />
       </field>
       <field id="notelphp">
-        <phrase id="fldcaption" value="No Telp Hp" />
+        <phrase id="fldcaption" value="No. Telp./HP" />
       </field>
     </table>
     <table id="t02_jaminan">
-      <phrase id="tblcaption" value="t 02 jaminan" />
+      <phrase id="tblcaption" value="Jaminan" />
       <field id="id">
         <phrase id="fldcaption" value="id" />
       </field>
@@ -646,19 +646,19 @@
         <phrase id="fldcaption" value="nasabah id" />
       </field>
       <field id="merktype">
-        <phrase id="fldcaption" value="Merk Type" />
+        <phrase id="fldcaption" value="Merk/Type" />
       </field>
       <field id="norangka">
-        <phrase id="fldcaption" value="No Rangka" />
+        <phrase id="fldcaption" value="No. Rangka" />
       </field>
       <field id="nomesin">
-        <phrase id="fldcaption" value="No Mesin" />
+        <phrase id="fldcaption" value="No. Mesin" />
       </field>
       <field id="warna">
         <phrase id="fldcaption" value="Warna" />
       </field>
       <field id="nopol">
-        <phrase id="fldcaption" value="No Pol" />
+        <phrase id="fldcaption" value="No. Pol." />
       </field>
       <field id="keterangan">
         <phrase id="fldcaption" value="Keterangan" />
@@ -673,10 +673,10 @@
         <phrase id="fldcaption" value="id" />
       </field>
       <field id="nokontrak">
-        <phrase id="fldcaption" value="No. Kontrak" />
+        <phrase id="fldcaption" value="No. Kntrk." />
       </field>
       <field id="tglkontrak">
-        <phrase id="fldcaption" value="Tgl. Kontrak" />
+        <phrase id="fldcaption" value="Tgl. Kntrk." />
       </field>
       <field id="nasabah_id">
         <phrase id="fldcaption" value="Nasabah" />
@@ -685,28 +685,28 @@
         <phrase id="fldcaption" value="Pinjaman" />
       </field>
       <field id="lamaangsuran">
-        <phrase id="fldcaption" value="Lama Angsuran" />
+        <phrase id="fldcaption" value="Lama Angs." />
       </field>
       <field id="bunga">
-        <phrase id="fldcaption" value="Bunga" />
+        <phrase id="fldcaption" value="Bunga (%)" />
       </field>
       <field id="denda">
-        <phrase id="fldcaption" value="Denda" />
+        <phrase id="fldcaption" value="Denda (%)" />
       </field>
       <field id="dispensasidenda">
-        <phrase id="fldcaption" value="Dispensasi Denda" />
+        <phrase id="fldcaption" value="Disp. Denda" />
       </field>
       <field id="angsuranpokok">
-        <phrase id="fldcaption" value="Angsuran Pokok" />
+        <phrase id="fldcaption" value="Angs. Pokok" />
       </field>
       <field id="angsuranbunga">
-        <phrase id="fldcaption" value="Angsuran Bunga" />
+        <phrase id="fldcaption" value="Angs. Bunga" />
       </field>
       <field id="angsurantotal">
-        <phrase id="fldcaption" value="Angsuran Total" />
+        <phrase id="fldcaption" value="Angs. Total" />
       </field>
       <field id="nokontrakrefto">
-        <phrase id="fldcaption" value="No Kontrak Ref To" />
+        <phrase id="fldcaption" value="No. Ref." />
       </field>
     </table>
     <table id="t04_angsuran">

@@ -44,9 +44,9 @@ class ct02_jaminan extends cTable {
 		$this->ExportPageSize = "a4"; // Page size (PDF only)
 		$this->ExportExcelPageOrientation = ""; // Page orientation (PHPExcel only)
 		$this->ExportExcelPageSize = ""; // Page size (PHPExcel only)
-		$this->DetailAdd = FALSE; // Allow detail add
-		$this->DetailEdit = FALSE; // Allow detail edit
-		$this->DetailView = FALSE; // Allow detail view
+		$this->DetailAdd = TRUE; // Allow detail add
+		$this->DetailEdit = TRUE; // Allow detail edit
+		$this->DetailView = TRUE; // Allow detail view
 		$this->ShowMultipleDetails = FALSE; // Show multiple details
 		$this->GridAddRowCount = 5;
 		$this->AllowAddDeleteRow = ew_AllowAddDeleteRow(); // Allow add/delete row
@@ -133,6 +133,53 @@ class ct02_jaminan extends cTable {
 		} else {
 			if (!$ctrl) $ofld->setSort("");
 		}
+	}
+
+	// Current master table name
+	function getCurrentMasterTable() {
+		return @$_SESSION[EW_PROJECT_NAME . "_" . $this->TableVar . "_" . EW_TABLE_MASTER_TABLE];
+	}
+
+	function setCurrentMasterTable($v) {
+		$_SESSION[EW_PROJECT_NAME . "_" . $this->TableVar . "_" . EW_TABLE_MASTER_TABLE] = $v;
+	}
+
+	// Session master WHERE clause
+	function GetMasterFilter() {
+
+		// Master filter
+		$sMasterFilter = "";
+		if ($this->getCurrentMasterTable() == "t01_nasabah") {
+			if ($this->nasabah_id->getSessionValue() <> "")
+				$sMasterFilter .= "`id`=" . ew_QuotedValue($this->nasabah_id->getSessionValue(), EW_DATATYPE_NUMBER, "DB");
+			else
+				return "";
+		}
+		return $sMasterFilter;
+	}
+
+	// Session detail WHERE clause
+	function GetDetailFilter() {
+
+		// Detail filter
+		$sDetailFilter = "";
+		if ($this->getCurrentMasterTable() == "t01_nasabah") {
+			if ($this->nasabah_id->getSessionValue() <> "")
+				$sDetailFilter .= "`nasabah_id`=" . ew_QuotedValue($this->nasabah_id->getSessionValue(), EW_DATATYPE_NUMBER, "DB");
+			else
+				return "";
+		}
+		return $sDetailFilter;
+	}
+
+	// Master filter
+	function SqlMasterFilter_t01_nasabah() {
+		return "`id`=@id@";
+	}
+
+	// Detail filter
+	function SqlDetailFilter_t01_nasabah() {
+		return "`nasabah_id`=@nasabah_id@";
 	}
 
 	// Table level SQL
@@ -515,6 +562,10 @@ class ct02_jaminan extends cTable {
 
 	// Add master url
 	function AddMasterUrl($url) {
+		if ($this->getCurrentMasterTable() == "t01_nasabah" && strpos($url, EW_TABLE_SHOW_MASTER . "=") === FALSE) {
+			$url .= (strpos($url, "?") !== FALSE ? "&" : "?") . EW_TABLE_SHOW_MASTER . "=" . $this->getCurrentMasterTable();
+			$url .= "&fk_id=" . urlencode($this->nasabah_id->CurrentValue);
+		}
 		return $url;
 	}
 
@@ -741,8 +792,14 @@ class ct02_jaminan extends cTable {
 		// nasabah_id
 		$this->nasabah_id->EditAttrs["class"] = "form-control";
 		$this->nasabah_id->EditCustomAttributes = "";
+		if ($this->nasabah_id->getSessionValue() <> "") {
+			$this->nasabah_id->CurrentValue = $this->nasabah_id->getSessionValue();
+		$this->nasabah_id->ViewValue = $this->nasabah_id->CurrentValue;
+		$this->nasabah_id->ViewCustomAttributes = "";
+		} else {
 		$this->nasabah_id->EditValue = $this->nasabah_id->CurrentValue;
 		$this->nasabah_id->PlaceHolder = ew_RemoveHtml($this->nasabah_id->FldCaption());
+		}
 
 		// MerkType
 		$this->MerkType->EditAttrs["class"] = "form-control";
@@ -813,7 +870,6 @@ class ct02_jaminan extends cTable {
 			if ($Doc->Horizontal) { // Horizontal format, write header
 				$Doc->BeginExportRow();
 				if ($ExportPageType == "view") {
-					if ($this->id->Exportable) $Doc->ExportCaption($this->id);
 					if ($this->nasabah_id->Exportable) $Doc->ExportCaption($this->nasabah_id);
 					if ($this->MerkType->Exportable) $Doc->ExportCaption($this->MerkType);
 					if ($this->NoRangka->Exportable) $Doc->ExportCaption($this->NoRangka);
@@ -830,6 +886,7 @@ class ct02_jaminan extends cTable {
 					if ($this->NoMesin->Exportable) $Doc->ExportCaption($this->NoMesin);
 					if ($this->Warna->Exportable) $Doc->ExportCaption($this->Warna);
 					if ($this->NoPol->Exportable) $Doc->ExportCaption($this->NoPol);
+					if ($this->Keterangan->Exportable) $Doc->ExportCaption($this->Keterangan);
 					if ($this->AtasNama->Exportable) $Doc->ExportCaption($this->AtasNama);
 				}
 				$Doc->EndExportRow();
@@ -862,7 +919,6 @@ class ct02_jaminan extends cTable {
 				if (!$Doc->ExportCustom) {
 					$Doc->BeginExportRow($RowCnt); // Allow CSS styles if enabled
 					if ($ExportPageType == "view") {
-						if ($this->id->Exportable) $Doc->ExportField($this->id);
 						if ($this->nasabah_id->Exportable) $Doc->ExportField($this->nasabah_id);
 						if ($this->MerkType->Exportable) $Doc->ExportField($this->MerkType);
 						if ($this->NoRangka->Exportable) $Doc->ExportField($this->NoRangka);
@@ -879,6 +935,7 @@ class ct02_jaminan extends cTable {
 						if ($this->NoMesin->Exportable) $Doc->ExportField($this->NoMesin);
 						if ($this->Warna->Exportable) $Doc->ExportField($this->Warna);
 						if ($this->NoPol->Exportable) $Doc->ExportField($this->NoPol);
+						if ($this->Keterangan->Exportable) $Doc->ExportField($this->Keterangan);
 						if ($this->AtasNama->Exportable) $Doc->ExportField($this->AtasNama);
 					}
 					$Doc->EndExportRow();
