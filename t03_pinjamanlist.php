@@ -2381,8 +2381,8 @@ class ct03_pinjaman_list extends ct03_pinjaman {
 	function Page_Render() {
 
 		//echo "Page Render";
-		// hapus button tambah data master
-		// hanya boleh tambah data master dan detail
+		// sembunyikan button tambah data master
+		// hanya boleh tambah data pada link add master/detail
 
 		$this->OtherOptions['addedit'] = new cListOptions();
 		$this->OtherOptions['addedit']->Body = "";
@@ -2427,10 +2427,11 @@ class ct03_pinjaman_list extends ct03_pinjaman {
 
 		// Example: 
 		//$this->ListOptions->Items["new"]->Body = "xxx";
-		// hapus button edit data master
-		// hanya boleh edit data master dan detail
+		// sembunyikan button edit dan view data master
+		// hanya boleh edit dan view link master/detail
 
 		$this->ListOptions->Items["edit"]->Body = "";
+		$this->ListOptions->Items["view"]->Body = "";
 	}
 
 	// Row Custom Action event
