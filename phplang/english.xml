@@ -613,11 +613,44 @@
     <menu id="4">
       <phrase id="menutext" value="Angsuran" />
     </menu>
+    <menu id="10011">
+      <phrase id="menutext" value="List" />
+    </menu>
+    <menu id="10010">
+      <phrase id="menutext" value="User Log" />
+    </menu>
     <menu id="5">
       <phrase id="menutext" value="Jaminan" />
     </menu>
     <menu id="6">
       <phrase id="menutext" value="t 06 pinjamantitipan" />
+    </menu>
+    <menu id="10001">
+      <phrase id="menutext" value="t 01 nasabah" />
+    </menu>
+    <menu id="10002">
+      <phrase id="menutext" value="t 02 jaminan" />
+    </menu>
+    <menu id="10003">
+      <phrase id="menutext" value="t 03 pinjaman" />
+    </menu>
+    <menu id="10004">
+      <phrase id="menutext" value="t 04 angsuran" />
+    </menu>
+    <menu id="10005">
+      <phrase id="menutext" value="t 05 pinjamanjaminan" />
+    </menu>
+    <menu id="10006">
+      <phrase id="menutext" value="t 06 pinjamantitipan" />
+    </menu>
+    <menu id="10007">
+      <phrase id="menutext" value="t 96 employees" />
+    </menu>
+    <menu id="10008">
+      <phrase id="menutext" value="t 97 userlevels" />
+    </menu>
+    <menu id="10009">
+      <phrase id="menutext" value="t 98 userlevelpermissions" />
     </menu>
     <table id="t01_nasabah">
       <phrase id="tblcaption" value="Nasabah" />
