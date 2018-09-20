@@ -1262,12 +1262,13 @@ class ct03_pinjaman_add extends ct03_pinjaman {
 			}
 			if (in_array("t06_pinjamantitipan", $DetailTblVar) && $GLOBALS["t06_pinjamantitipan"]->DetailAdd) {
 				$GLOBALS["t06_pinjamantitipan"]->pinjaman_id->setSessionValue($this->id->CurrentValue); // Set master key
+				$GLOBALS["t06_pinjamantitipan"]->nasabah_id->setSessionValue($this->nasabah_id->CurrentValue); // Set master key
 				if (!isset($GLOBALS["t06_pinjamantitipan_grid"])) $GLOBALS["t06_pinjamantitipan_grid"] = new ct06_pinjamantitipan_grid(); // Get detail page object
 				$Security->LoadCurrentUserLevel($this->ProjectID . "t06_pinjamantitipan"); // Load user level of detail table
 				$AddRow = $GLOBALS["t06_pinjamantitipan_grid"]->GridInsert();
 				$Security->LoadCurrentUserLevel($this->ProjectID . $this->TableName); // Restore user level of master table
 				if (!$AddRow)
-					$GLOBALS["t06_pinjamantitipan"]->pinjaman_id->setSessionValue(""); // Clear master key if insert failed
+					$GLOBALS["t06_pinjamantitipan"]->nasabah_id->setSessionValue(""); // Clear master key if insert failed
 			}
 		}
 
@@ -1352,6 +1353,9 @@ class ct03_pinjaman_add extends ct03_pinjaman {
 					$GLOBALS["t06_pinjamantitipan_grid"]->pinjaman_id->FldIsDetailKey = TRUE;
 					$GLOBALS["t06_pinjamantitipan_grid"]->pinjaman_id->CurrentValue = $this->id->CurrentValue;
 					$GLOBALS["t06_pinjamantitipan_grid"]->pinjaman_id->setSessionValue($GLOBALS["t06_pinjamantitipan_grid"]->pinjaman_id->CurrentValue);
+					$GLOBALS["t06_pinjamantitipan_grid"]->nasabah_id->FldIsDetailKey = TRUE;
+					$GLOBALS["t06_pinjamantitipan_grid"]->nasabah_id->CurrentValue = $this->nasabah_id->CurrentValue;
+					$GLOBALS["t06_pinjamantitipan_grid"]->nasabah_id->setSessionValue($GLOBALS["t06_pinjamantitipan_grid"]->nasabah_id->CurrentValue);
 				}
 			}
 		}
@@ -1610,7 +1614,7 @@ ft03_pinjamanadd.ValidateRequired = false;
 <?php } ?>
 
 // Dynamic selection lists
-ft03_pinjamanadd.Lists["x_nasabah_id"] = {"LinkField":"x_id","Ajax":true,"AutoFill":false,"DisplayFields":["x_Customer","x_Pekerjaan","",""],"ParentFields":[],"ChildFields":["t05_pinjamanjaminan x_jaminan_id"],"FilterFields":[],"Options":[],"Template":"","LinkTable":"t01_nasabah"};
+ft03_pinjamanadd.Lists["x_nasabah_id"] = {"LinkField":"x_id","Ajax":true,"AutoFill":false,"DisplayFields":["x_Customer","x_Pekerjaan","",""],"ParentFields":[],"ChildFields":["t04_angsuran x_pinjamantitipan_id","t05_pinjamanjaminan x_jaminan_id"],"FilterFields":[],"Options":[],"Template":"","LinkTable":"t01_nasabah"};
 
 // Form object for search
 </script>

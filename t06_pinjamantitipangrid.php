@@ -65,6 +65,12 @@ ft06_pinjamantitipangrid.Validate = function() {
 			elm = this.GetElements("x" + infix + "_Sisa");
 			if (elm && !ew_CheckNumber(elm.value))
 				return this.OnError(elm, "<?php echo ew_JsEncode2($t06_pinjamantitipan->Sisa->FldErrMsg()) ?>");
+			elm = this.GetElements("x" + infix + "_nasabah_id");
+			if (elm && !ew_IsHidden(elm) && !ew_HasValue(elm))
+				return this.OnError(elm, "<?php echo ew_JsEncode2(str_replace("%s", $t06_pinjamantitipan->nasabah_id->FldCaption(), $t06_pinjamantitipan->nasabah_id->ReqErrMsg)) ?>");
+			elm = this.GetElements("x" + infix + "_nasabah_id");
+			if (elm && !ew_CheckInteger(elm.value))
+				return this.OnError(elm, "<?php echo ew_JsEncode2($t06_pinjamantitipan->nasabah_id->FldErrMsg()) ?>");
 
 			// Fire Form_CustomValidate event
 			if (!this.Form_CustomValidate(fobj))
@@ -82,6 +88,7 @@ ft06_pinjamantitipangrid.EmptyRow = function(infix) {
 	if (ew_ValueChanged(fobj, infix, "Masuk", false)) return false;
 	if (ew_ValueChanged(fobj, infix, "Keluar", false)) return false;
 	if (ew_ValueChanged(fobj, infix, "Sisa", false)) return false;
+	if (ew_ValueChanged(fobj, infix, "nasabah_id", false)) return false;
 	return true;
 }
 
@@ -225,6 +232,15 @@ $t06_pinjamantitipan_grid->ListOptions->Render("header", "left");
 	<?php } else { ?>
 		<th data-name="Sisa"><div><div id="elh_t06_pinjamantitipan_Sisa" class="t06_pinjamantitipan_Sisa">
 			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t06_pinjamantitipan->Sisa->FldCaption() ?></span><span class="ewTableHeaderSort"><?php if ($t06_pinjamantitipan->Sisa->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t06_pinjamantitipan->Sisa->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
+        </div></div></th>
+	<?php } ?>
+<?php } ?>		
+<?php if ($t06_pinjamantitipan->nasabah_id->Visible) { // nasabah_id ?>
+	<?php if ($t06_pinjamantitipan->SortUrl($t06_pinjamantitipan->nasabah_id) == "") { ?>
+		<th data-name="nasabah_id"><div id="elh_t06_pinjamantitipan_nasabah_id" class="t06_pinjamantitipan_nasabah_id"><div class="ewTableHeaderCaption"><?php echo $t06_pinjamantitipan->nasabah_id->FldCaption() ?></div></div></th>
+	<?php } else { ?>
+		<th data-name="nasabah_id"><div><div id="elh_t06_pinjamantitipan_nasabah_id" class="t06_pinjamantitipan_nasabah_id">
+			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t06_pinjamantitipan->nasabah_id->FldCaption() ?></span><span class="ewTableHeaderSort"><?php if ($t06_pinjamantitipan->nasabah_id->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t06_pinjamantitipan->nasabah_id->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
         </div></div></th>
 	<?php } ?>
 <?php } ?>		
@@ -494,6 +510,50 @@ ew_CreateCalendar("ft06_pinjamantitipangrid", "x<?php echo $t06_pinjamantitipan_
 <?php } ?>
 </td>
 	<?php } ?>
+	<?php if ($t06_pinjamantitipan->nasabah_id->Visible) { // nasabah_id ?>
+		<td data-name="nasabah_id"<?php echo $t06_pinjamantitipan->nasabah_id->CellAttributes() ?>>
+<?php if ($t06_pinjamantitipan->RowType == EW_ROWTYPE_ADD) { // Add record ?>
+<?php if ($t06_pinjamantitipan->nasabah_id->getSessionValue() <> "") { ?>
+<span id="el<?php echo $t06_pinjamantitipan_grid->RowCnt ?>_t06_pinjamantitipan_nasabah_id" class="form-group t06_pinjamantitipan_nasabah_id">
+<span<?php echo $t06_pinjamantitipan->nasabah_id->ViewAttributes() ?>>
+<p class="form-control-static"><?php echo $t06_pinjamantitipan->nasabah_id->ViewValue ?></p></span>
+</span>
+<input type="hidden" id="x<?php echo $t06_pinjamantitipan_grid->RowIndex ?>_nasabah_id" name="x<?php echo $t06_pinjamantitipan_grid->RowIndex ?>_nasabah_id" value="<?php echo ew_HtmlEncode($t06_pinjamantitipan->nasabah_id->CurrentValue) ?>">
+<?php } else { ?>
+<span id="el<?php echo $t06_pinjamantitipan_grid->RowCnt ?>_t06_pinjamantitipan_nasabah_id" class="form-group t06_pinjamantitipan_nasabah_id">
+<input type="text" data-table="t06_pinjamantitipan" data-field="x_nasabah_id" name="x<?php echo $t06_pinjamantitipan_grid->RowIndex ?>_nasabah_id" id="x<?php echo $t06_pinjamantitipan_grid->RowIndex ?>_nasabah_id" size="30" placeholder="<?php echo ew_HtmlEncode($t06_pinjamantitipan->nasabah_id->getPlaceHolder()) ?>" value="<?php echo $t06_pinjamantitipan->nasabah_id->EditValue ?>"<?php echo $t06_pinjamantitipan->nasabah_id->EditAttributes() ?>>
+</span>
+<?php } ?>
+<input type="hidden" data-table="t06_pinjamantitipan" data-field="x_nasabah_id" name="o<?php echo $t06_pinjamantitipan_grid->RowIndex ?>_nasabah_id" id="o<?php echo $t06_pinjamantitipan_grid->RowIndex ?>_nasabah_id" value="<?php echo ew_HtmlEncode($t06_pinjamantitipan->nasabah_id->OldValue) ?>">
+<?php } ?>
+<?php if ($t06_pinjamantitipan->RowType == EW_ROWTYPE_EDIT) { // Edit record ?>
+<?php if ($t06_pinjamantitipan->nasabah_id->getSessionValue() <> "") { ?>
+<span id="el<?php echo $t06_pinjamantitipan_grid->RowCnt ?>_t06_pinjamantitipan_nasabah_id" class="form-group t06_pinjamantitipan_nasabah_id">
+<span<?php echo $t06_pinjamantitipan->nasabah_id->ViewAttributes() ?>>
+<p class="form-control-static"><?php echo $t06_pinjamantitipan->nasabah_id->ViewValue ?></p></span>
+</span>
+<input type="hidden" id="x<?php echo $t06_pinjamantitipan_grid->RowIndex ?>_nasabah_id" name="x<?php echo $t06_pinjamantitipan_grid->RowIndex ?>_nasabah_id" value="<?php echo ew_HtmlEncode($t06_pinjamantitipan->nasabah_id->CurrentValue) ?>">
+<?php } else { ?>
+<span id="el<?php echo $t06_pinjamantitipan_grid->RowCnt ?>_t06_pinjamantitipan_nasabah_id" class="form-group t06_pinjamantitipan_nasabah_id">
+<input type="text" data-table="t06_pinjamantitipan" data-field="x_nasabah_id" name="x<?php echo $t06_pinjamantitipan_grid->RowIndex ?>_nasabah_id" id="x<?php echo $t06_pinjamantitipan_grid->RowIndex ?>_nasabah_id" size="30" placeholder="<?php echo ew_HtmlEncode($t06_pinjamantitipan->nasabah_id->getPlaceHolder()) ?>" value="<?php echo $t06_pinjamantitipan->nasabah_id->EditValue ?>"<?php echo $t06_pinjamantitipan->nasabah_id->EditAttributes() ?>>
+</span>
+<?php } ?>
+<?php } ?>
+<?php if ($t06_pinjamantitipan->RowType == EW_ROWTYPE_VIEW) { // View record ?>
+<span id="el<?php echo $t06_pinjamantitipan_grid->RowCnt ?>_t06_pinjamantitipan_nasabah_id" class="t06_pinjamantitipan_nasabah_id">
+<span<?php echo $t06_pinjamantitipan->nasabah_id->ViewAttributes() ?>>
+<?php echo $t06_pinjamantitipan->nasabah_id->ListViewValue() ?></span>
+</span>
+<?php if ($t06_pinjamantitipan->CurrentAction <> "F") { ?>
+<input type="hidden" data-table="t06_pinjamantitipan" data-field="x_nasabah_id" name="x<?php echo $t06_pinjamantitipan_grid->RowIndex ?>_nasabah_id" id="x<?php echo $t06_pinjamantitipan_grid->RowIndex ?>_nasabah_id" value="<?php echo ew_HtmlEncode($t06_pinjamantitipan->nasabah_id->FormValue) ?>">
+<input type="hidden" data-table="t06_pinjamantitipan" data-field="x_nasabah_id" name="o<?php echo $t06_pinjamantitipan_grid->RowIndex ?>_nasabah_id" id="o<?php echo $t06_pinjamantitipan_grid->RowIndex ?>_nasabah_id" value="<?php echo ew_HtmlEncode($t06_pinjamantitipan->nasabah_id->OldValue) ?>">
+<?php } else { ?>
+<input type="hidden" data-table="t06_pinjamantitipan" data-field="x_nasabah_id" name="ft06_pinjamantitipangrid$x<?php echo $t06_pinjamantitipan_grid->RowIndex ?>_nasabah_id" id="ft06_pinjamantitipangrid$x<?php echo $t06_pinjamantitipan_grid->RowIndex ?>_nasabah_id" value="<?php echo ew_HtmlEncode($t06_pinjamantitipan->nasabah_id->FormValue) ?>">
+<input type="hidden" data-table="t06_pinjamantitipan" data-field="x_nasabah_id" name="ft06_pinjamantitipangrid$o<?php echo $t06_pinjamantitipan_grid->RowIndex ?>_nasabah_id" id="ft06_pinjamantitipangrid$o<?php echo $t06_pinjamantitipan_grid->RowIndex ?>_nasabah_id" value="<?php echo ew_HtmlEncode($t06_pinjamantitipan->nasabah_id->OldValue) ?>">
+<?php } ?>
+<?php } ?>
+</td>
+	<?php } ?>
 <?php
 
 // Render list options (body, right)
@@ -619,6 +679,30 @@ ew_CreateCalendar("ft06_pinjamantitipangrid", "x<?php echo $t06_pinjamantitipan_
 <input type="hidden" data-table="t06_pinjamantitipan" data-field="x_Sisa" name="x<?php echo $t06_pinjamantitipan_grid->RowIndex ?>_Sisa" id="x<?php echo $t06_pinjamantitipan_grid->RowIndex ?>_Sisa" value="<?php echo ew_HtmlEncode($t06_pinjamantitipan->Sisa->FormValue) ?>">
 <?php } ?>
 <input type="hidden" data-table="t06_pinjamantitipan" data-field="x_Sisa" name="o<?php echo $t06_pinjamantitipan_grid->RowIndex ?>_Sisa" id="o<?php echo $t06_pinjamantitipan_grid->RowIndex ?>_Sisa" value="<?php echo ew_HtmlEncode($t06_pinjamantitipan->Sisa->OldValue) ?>">
+</td>
+	<?php } ?>
+	<?php if ($t06_pinjamantitipan->nasabah_id->Visible) { // nasabah_id ?>
+		<td data-name="nasabah_id">
+<?php if ($t06_pinjamantitipan->CurrentAction <> "F") { ?>
+<?php if ($t06_pinjamantitipan->nasabah_id->getSessionValue() <> "") { ?>
+<span id="el$rowindex$_t06_pinjamantitipan_nasabah_id" class="form-group t06_pinjamantitipan_nasabah_id">
+<span<?php echo $t06_pinjamantitipan->nasabah_id->ViewAttributes() ?>>
+<p class="form-control-static"><?php echo $t06_pinjamantitipan->nasabah_id->ViewValue ?></p></span>
+</span>
+<input type="hidden" id="x<?php echo $t06_pinjamantitipan_grid->RowIndex ?>_nasabah_id" name="x<?php echo $t06_pinjamantitipan_grid->RowIndex ?>_nasabah_id" value="<?php echo ew_HtmlEncode($t06_pinjamantitipan->nasabah_id->CurrentValue) ?>">
+<?php } else { ?>
+<span id="el$rowindex$_t06_pinjamantitipan_nasabah_id" class="form-group t06_pinjamantitipan_nasabah_id">
+<input type="text" data-table="t06_pinjamantitipan" data-field="x_nasabah_id" name="x<?php echo $t06_pinjamantitipan_grid->RowIndex ?>_nasabah_id" id="x<?php echo $t06_pinjamantitipan_grid->RowIndex ?>_nasabah_id" size="30" placeholder="<?php echo ew_HtmlEncode($t06_pinjamantitipan->nasabah_id->getPlaceHolder()) ?>" value="<?php echo $t06_pinjamantitipan->nasabah_id->EditValue ?>"<?php echo $t06_pinjamantitipan->nasabah_id->EditAttributes() ?>>
+</span>
+<?php } ?>
+<?php } else { ?>
+<span id="el$rowindex$_t06_pinjamantitipan_nasabah_id" class="form-group t06_pinjamantitipan_nasabah_id">
+<span<?php echo $t06_pinjamantitipan->nasabah_id->ViewAttributes() ?>>
+<p class="form-control-static"><?php echo $t06_pinjamantitipan->nasabah_id->ViewValue ?></p></span>
+</span>
+<input type="hidden" data-table="t06_pinjamantitipan" data-field="x_nasabah_id" name="x<?php echo $t06_pinjamantitipan_grid->RowIndex ?>_nasabah_id" id="x<?php echo $t06_pinjamantitipan_grid->RowIndex ?>_nasabah_id" value="<?php echo ew_HtmlEncode($t06_pinjamantitipan->nasabah_id->FormValue) ?>">
+<?php } ?>
+<input type="hidden" data-table="t06_pinjamantitipan" data-field="x_nasabah_id" name="o<?php echo $t06_pinjamantitipan_grid->RowIndex ?>_nasabah_id" id="o<?php echo $t06_pinjamantitipan_grid->RowIndex ?>_nasabah_id" value="<?php echo ew_HtmlEncode($t06_pinjamantitipan->nasabah_id->OldValue) ?>">
 </td>
 	<?php } ?>
 <?php

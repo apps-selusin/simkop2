@@ -44,9 +44,6 @@ ft04_angsurangrid.Validate = function() {
 			elm = this.GetElements("x" + infix + "_pinjaman_id");
 			if (elm && !ew_IsHidden(elm) && !ew_HasValue(elm))
 				return this.OnError(elm, "<?php echo ew_JsEncode2(str_replace("%s", $t04_angsuran->pinjaman_id->FldCaption(), $t04_angsuran->pinjaman_id->ReqErrMsg)) ?>");
-			elm = this.GetElements("x" + infix + "_pinjaman_id");
-			if (elm && !ew_CheckInteger(elm.value))
-				return this.OnError(elm, "<?php echo ew_JsEncode2($t04_angsuran->pinjaman_id->FldErrMsg()) ?>");
 			elm = this.GetElements("x" + infix + "_AngsuranKe");
 			if (elm && !ew_IsHidden(elm) && !ew_HasValue(elm))
 				return this.OnError(elm, "<?php echo ew_JsEncode2(str_replace("%s", $t04_angsuran->AngsuranKe->FldCaption(), $t04_angsuran->AngsuranKe->ReqErrMsg)) ?>");
@@ -74,15 +71,15 @@ ft04_angsurangrid.Validate = function() {
 			elm = this.GetElements("x" + infix + "_TotalDenda");
 			if (elm && !ew_CheckNumber(elm.value))
 				return this.OnError(elm, "<?php echo ew_JsEncode2($t04_angsuran->TotalDenda->FldErrMsg()) ?>");
+			elm = this.GetElements("x" + infix + "_Bayar_Titipan");
+			if (elm && !ew_CheckNumber(elm.value))
+				return this.OnError(elm, "<?php echo ew_JsEncode2($t04_angsuran->Bayar_Titipan->FldErrMsg()) ?>");
 			elm = this.GetElements("x" + infix + "_Bayar_Non_Titipan");
 			if (elm && !ew_CheckNumber(elm.value))
 				return this.OnError(elm, "<?php echo ew_JsEncode2($t04_angsuran->Bayar_Non_Titipan->FldErrMsg()) ?>");
 			elm = this.GetElements("x" + infix + "_Bayar_Total");
 			if (elm && !ew_CheckNumber(elm.value))
 				return this.OnError(elm, "<?php echo ew_JsEncode2($t04_angsuran->Bayar_Total->FldErrMsg()) ?>");
-			elm = this.GetElements("x" + infix + "_pinjamantitipan_id");
-			if (elm && !ew_CheckInteger(elm.value))
-				return this.OnError(elm, "<?php echo ew_JsEncode2($t04_angsuran->pinjamantitipan_id->FldErrMsg()) ?>");
 
 			// Fire Form_CustomValidate event
 			if (!this.Form_CustomValidate(fobj))
@@ -129,7 +126,7 @@ ft04_angsurangrid.ValidateRequired = false;
 <?php } ?>
 
 // Dynamic selection lists
-ft04_angsurangrid.Lists["x_Bayar_Titipan"] = {"LinkField":"x_id","Ajax":true,"AutoFill":false,"DisplayFields":["x_Sisa","","",""],"ParentFields":[],"ChildFields":[],"FilterFields":[],"Options":[],"Template":"","LinkTable":"t06_pinjamantitipan"};
+ft04_angsurangrid.Lists["x_pinjamantitipan_id"] = {"LinkField":"x_id","Ajax":true,"AutoFill":false,"DisplayFields":["x_Sisa","","",""],"ParentFields":["t03_pinjaman x_nasabah_id"],"ChildFields":[],"FilterFields":["x_nasabah_id"],"Options":[],"Template":"","LinkTable":"t06_pinjamantitipan"};
 
 // Form object for search
 </script>
@@ -467,7 +464,9 @@ $t04_angsuran_grid->ListOptions->Render("body", "left", $t04_angsuran_grid->RowC
 <input type="hidden" id="x<?php echo $t04_angsuran_grid->RowIndex ?>_pinjaman_id" name="x<?php echo $t04_angsuran_grid->RowIndex ?>_pinjaman_id" value="<?php echo ew_HtmlEncode($t04_angsuran->pinjaman_id->CurrentValue) ?>">
 <?php } else { ?>
 <span id="el<?php echo $t04_angsuran_grid->RowCnt ?>_t04_angsuran_pinjaman_id" class="form-group t04_angsuran_pinjaman_id">
-<input type="text" data-table="t04_angsuran" data-field="x_pinjaman_id" name="x<?php echo $t04_angsuran_grid->RowIndex ?>_pinjaman_id" id="x<?php echo $t04_angsuran_grid->RowIndex ?>_pinjaman_id" size="30" placeholder="<?php echo ew_HtmlEncode($t04_angsuran->pinjaman_id->getPlaceHolder()) ?>" value="<?php echo $t04_angsuran->pinjaman_id->EditValue ?>"<?php echo $t04_angsuran->pinjaman_id->EditAttributes() ?>>
+<select data-table="t04_angsuran" data-field="x_pinjaman_id" data-value-separator="<?php echo $t04_angsuran->pinjaman_id->DisplayValueSeparatorAttribute() ?>" id="x<?php echo $t04_angsuran_grid->RowIndex ?>_pinjaman_id" name="x<?php echo $t04_angsuran_grid->RowIndex ?>_pinjaman_id"<?php echo $t04_angsuran->pinjaman_id->EditAttributes() ?>>
+<?php echo $t04_angsuran->pinjaman_id->SelectOptionListHtml("x<?php echo $t04_angsuran_grid->RowIndex ?>_pinjaman_id") ?>
+</select>
 </span>
 <?php } ?>
 <input type="hidden" data-table="t04_angsuran" data-field="x_pinjaman_id" name="o<?php echo $t04_angsuran_grid->RowIndex ?>_pinjaman_id" id="o<?php echo $t04_angsuran_grid->RowIndex ?>_pinjaman_id" value="<?php echo ew_HtmlEncode($t04_angsuran->pinjaman_id->OldValue) ?>">
@@ -481,7 +480,9 @@ $t04_angsuran_grid->ListOptions->Render("body", "left", $t04_angsuran_grid->RowC
 <input type="hidden" id="x<?php echo $t04_angsuran_grid->RowIndex ?>_pinjaman_id" name="x<?php echo $t04_angsuran_grid->RowIndex ?>_pinjaman_id" value="<?php echo ew_HtmlEncode($t04_angsuran->pinjaman_id->CurrentValue) ?>">
 <?php } else { ?>
 <span id="el<?php echo $t04_angsuran_grid->RowCnt ?>_t04_angsuran_pinjaman_id" class="form-group t04_angsuran_pinjaman_id">
-<input type="text" data-table="t04_angsuran" data-field="x_pinjaman_id" name="x<?php echo $t04_angsuran_grid->RowIndex ?>_pinjaman_id" id="x<?php echo $t04_angsuran_grid->RowIndex ?>_pinjaman_id" size="30" placeholder="<?php echo ew_HtmlEncode($t04_angsuran->pinjaman_id->getPlaceHolder()) ?>" value="<?php echo $t04_angsuran->pinjaman_id->EditValue ?>"<?php echo $t04_angsuran->pinjaman_id->EditAttributes() ?>>
+<select data-table="t04_angsuran" data-field="x_pinjaman_id" data-value-separator="<?php echo $t04_angsuran->pinjaman_id->DisplayValueSeparatorAttribute() ?>" id="x<?php echo $t04_angsuran_grid->RowIndex ?>_pinjaman_id" name="x<?php echo $t04_angsuran_grid->RowIndex ?>_pinjaman_id"<?php echo $t04_angsuran->pinjaman_id->EditAttributes() ?>>
+<?php echo $t04_angsuran->pinjaman_id->SelectOptionListHtml("x<?php echo $t04_angsuran_grid->RowIndex ?>_pinjaman_id") ?>
+</select>
 </span>
 <?php } ?>
 <?php } ?>
@@ -785,19 +786,13 @@ ew_CreateCalendar("ft04_angsurangrid", "x<?php echo $t04_angsuran_grid->RowIndex
 		<td data-name="Bayar_Titipan"<?php echo $t04_angsuran->Bayar_Titipan->CellAttributes() ?>>
 <?php if ($t04_angsuran->RowType == EW_ROWTYPE_ADD) { // Add record ?>
 <span id="el<?php echo $t04_angsuran_grid->RowCnt ?>_t04_angsuran_Bayar_Titipan" class="form-group t04_angsuran_Bayar_Titipan">
-<select data-table="t04_angsuran" data-field="x_Bayar_Titipan" data-value-separator="<?php echo $t04_angsuran->Bayar_Titipan->DisplayValueSeparatorAttribute() ?>" id="x<?php echo $t04_angsuran_grid->RowIndex ?>_Bayar_Titipan" name="x<?php echo $t04_angsuran_grid->RowIndex ?>_Bayar_Titipan"<?php echo $t04_angsuran->Bayar_Titipan->EditAttributes() ?>>
-<?php echo $t04_angsuran->Bayar_Titipan->SelectOptionListHtml("x<?php echo $t04_angsuran_grid->RowIndex ?>_Bayar_Titipan") ?>
-</select>
-<input type="hidden" name="s_x<?php echo $t04_angsuran_grid->RowIndex ?>_Bayar_Titipan" id="s_x<?php echo $t04_angsuran_grid->RowIndex ?>_Bayar_Titipan" value="<?php echo $t04_angsuran->Bayar_Titipan->LookupFilterQuery() ?>">
+<input type="text" data-table="t04_angsuran" data-field="x_Bayar_Titipan" name="x<?php echo $t04_angsuran_grid->RowIndex ?>_Bayar_Titipan" id="x<?php echo $t04_angsuran_grid->RowIndex ?>_Bayar_Titipan" size="10" placeholder="<?php echo ew_HtmlEncode($t04_angsuran->Bayar_Titipan->getPlaceHolder()) ?>" value="<?php echo $t04_angsuran->Bayar_Titipan->EditValue ?>"<?php echo $t04_angsuran->Bayar_Titipan->EditAttributes() ?>>
 </span>
 <input type="hidden" data-table="t04_angsuran" data-field="x_Bayar_Titipan" name="o<?php echo $t04_angsuran_grid->RowIndex ?>_Bayar_Titipan" id="o<?php echo $t04_angsuran_grid->RowIndex ?>_Bayar_Titipan" value="<?php echo ew_HtmlEncode($t04_angsuran->Bayar_Titipan->OldValue) ?>">
 <?php } ?>
 <?php if ($t04_angsuran->RowType == EW_ROWTYPE_EDIT) { // Edit record ?>
 <span id="el<?php echo $t04_angsuran_grid->RowCnt ?>_t04_angsuran_Bayar_Titipan" class="form-group t04_angsuran_Bayar_Titipan">
-<select data-table="t04_angsuran" data-field="x_Bayar_Titipan" data-value-separator="<?php echo $t04_angsuran->Bayar_Titipan->DisplayValueSeparatorAttribute() ?>" id="x<?php echo $t04_angsuran_grid->RowIndex ?>_Bayar_Titipan" name="x<?php echo $t04_angsuran_grid->RowIndex ?>_Bayar_Titipan"<?php echo $t04_angsuran->Bayar_Titipan->EditAttributes() ?>>
-<?php echo $t04_angsuran->Bayar_Titipan->SelectOptionListHtml("x<?php echo $t04_angsuran_grid->RowIndex ?>_Bayar_Titipan") ?>
-</select>
-<input type="hidden" name="s_x<?php echo $t04_angsuran_grid->RowIndex ?>_Bayar_Titipan" id="s_x<?php echo $t04_angsuran_grid->RowIndex ?>_Bayar_Titipan" value="<?php echo $t04_angsuran->Bayar_Titipan->LookupFilterQuery() ?>">
+<input type="text" data-table="t04_angsuran" data-field="x_Bayar_Titipan" name="x<?php echo $t04_angsuran_grid->RowIndex ?>_Bayar_Titipan" id="x<?php echo $t04_angsuran_grid->RowIndex ?>_Bayar_Titipan" size="10" placeholder="<?php echo ew_HtmlEncode($t04_angsuran->Bayar_Titipan->getPlaceHolder()) ?>" value="<?php echo $t04_angsuran->Bayar_Titipan->EditValue ?>"<?php echo $t04_angsuran->Bayar_Titipan->EditAttributes() ?>>
 </span>
 <?php } ?>
 <?php if ($t04_angsuran->RowType == EW_ROWTYPE_VIEW) { // View record ?>
@@ -903,13 +898,19 @@ ew_CreateCalendar("ft04_angsurangrid", "x<?php echo $t04_angsuran_grid->RowIndex
 		<td data-name="pinjamantitipan_id"<?php echo $t04_angsuran->pinjamantitipan_id->CellAttributes() ?>>
 <?php if ($t04_angsuran->RowType == EW_ROWTYPE_ADD) { // Add record ?>
 <span id="el<?php echo $t04_angsuran_grid->RowCnt ?>_t04_angsuran_pinjamantitipan_id" class="form-group t04_angsuran_pinjamantitipan_id">
-<input type="text" data-table="t04_angsuran" data-field="x_pinjamantitipan_id" name="x<?php echo $t04_angsuran_grid->RowIndex ?>_pinjamantitipan_id" id="x<?php echo $t04_angsuran_grid->RowIndex ?>_pinjamantitipan_id" size="30" placeholder="<?php echo ew_HtmlEncode($t04_angsuran->pinjamantitipan_id->getPlaceHolder()) ?>" value="<?php echo $t04_angsuran->pinjamantitipan_id->EditValue ?>"<?php echo $t04_angsuran->pinjamantitipan_id->EditAttributes() ?>>
+<select data-table="t04_angsuran" data-field="x_pinjamantitipan_id" data-value-separator="<?php echo $t04_angsuran->pinjamantitipan_id->DisplayValueSeparatorAttribute() ?>" id="x<?php echo $t04_angsuran_grid->RowIndex ?>_pinjamantitipan_id" name="x<?php echo $t04_angsuran_grid->RowIndex ?>_pinjamantitipan_id"<?php echo $t04_angsuran->pinjamantitipan_id->EditAttributes() ?>>
+<?php echo $t04_angsuran->pinjamantitipan_id->SelectOptionListHtml("x<?php echo $t04_angsuran_grid->RowIndex ?>_pinjamantitipan_id") ?>
+</select>
+<input type="hidden" name="s_x<?php echo $t04_angsuran_grid->RowIndex ?>_pinjamantitipan_id" id="s_x<?php echo $t04_angsuran_grid->RowIndex ?>_pinjamantitipan_id" value="<?php echo $t04_angsuran->pinjamantitipan_id->LookupFilterQuery() ?>">
 </span>
 <input type="hidden" data-table="t04_angsuran" data-field="x_pinjamantitipan_id" name="o<?php echo $t04_angsuran_grid->RowIndex ?>_pinjamantitipan_id" id="o<?php echo $t04_angsuran_grid->RowIndex ?>_pinjamantitipan_id" value="<?php echo ew_HtmlEncode($t04_angsuran->pinjamantitipan_id->OldValue) ?>">
 <?php } ?>
 <?php if ($t04_angsuran->RowType == EW_ROWTYPE_EDIT) { // Edit record ?>
 <span id="el<?php echo $t04_angsuran_grid->RowCnt ?>_t04_angsuran_pinjamantitipan_id" class="form-group t04_angsuran_pinjamantitipan_id">
-<input type="text" data-table="t04_angsuran" data-field="x_pinjamantitipan_id" name="x<?php echo $t04_angsuran_grid->RowIndex ?>_pinjamantitipan_id" id="x<?php echo $t04_angsuran_grid->RowIndex ?>_pinjamantitipan_id" size="30" placeholder="<?php echo ew_HtmlEncode($t04_angsuran->pinjamantitipan_id->getPlaceHolder()) ?>" value="<?php echo $t04_angsuran->pinjamantitipan_id->EditValue ?>"<?php echo $t04_angsuran->pinjamantitipan_id->EditAttributes() ?>>
+<select data-table="t04_angsuran" data-field="x_pinjamantitipan_id" data-value-separator="<?php echo $t04_angsuran->pinjamantitipan_id->DisplayValueSeparatorAttribute() ?>" id="x<?php echo $t04_angsuran_grid->RowIndex ?>_pinjamantitipan_id" name="x<?php echo $t04_angsuran_grid->RowIndex ?>_pinjamantitipan_id"<?php echo $t04_angsuran->pinjamantitipan_id->EditAttributes() ?>>
+<?php echo $t04_angsuran->pinjamantitipan_id->SelectOptionListHtml("x<?php echo $t04_angsuran_grid->RowIndex ?>_pinjamantitipan_id") ?>
+</select>
+<input type="hidden" name="s_x<?php echo $t04_angsuran_grid->RowIndex ?>_pinjamantitipan_id" id="s_x<?php echo $t04_angsuran_grid->RowIndex ?>_pinjamantitipan_id" value="<?php echo $t04_angsuran->pinjamantitipan_id->LookupFilterQuery() ?>">
 </span>
 <?php } ?>
 <?php if ($t04_angsuran->RowType == EW_ROWTYPE_VIEW) { // View record ?>
@@ -980,7 +981,9 @@ $t04_angsuran_grid->ListOptions->Render("body", "left", $t04_angsuran_grid->RowI
 <input type="hidden" id="x<?php echo $t04_angsuran_grid->RowIndex ?>_pinjaman_id" name="x<?php echo $t04_angsuran_grid->RowIndex ?>_pinjaman_id" value="<?php echo ew_HtmlEncode($t04_angsuran->pinjaman_id->CurrentValue) ?>">
 <?php } else { ?>
 <span id="el$rowindex$_t04_angsuran_pinjaman_id" class="form-group t04_angsuran_pinjaman_id">
-<input type="text" data-table="t04_angsuran" data-field="x_pinjaman_id" name="x<?php echo $t04_angsuran_grid->RowIndex ?>_pinjaman_id" id="x<?php echo $t04_angsuran_grid->RowIndex ?>_pinjaman_id" size="30" placeholder="<?php echo ew_HtmlEncode($t04_angsuran->pinjaman_id->getPlaceHolder()) ?>" value="<?php echo $t04_angsuran->pinjaman_id->EditValue ?>"<?php echo $t04_angsuran->pinjaman_id->EditAttributes() ?>>
+<select data-table="t04_angsuran" data-field="x_pinjaman_id" data-value-separator="<?php echo $t04_angsuran->pinjaman_id->DisplayValueSeparatorAttribute() ?>" id="x<?php echo $t04_angsuran_grid->RowIndex ?>_pinjaman_id" name="x<?php echo $t04_angsuran_grid->RowIndex ?>_pinjaman_id"<?php echo $t04_angsuran->pinjaman_id->EditAttributes() ?>>
+<?php echo $t04_angsuran->pinjaman_id->SelectOptionListHtml("x<?php echo $t04_angsuran_grid->RowIndex ?>_pinjaman_id") ?>
+</select>
 </span>
 <?php } ?>
 <?php } else { ?>
@@ -1146,10 +1149,7 @@ ew_CreateCalendar("ft04_angsurangrid", "x<?php echo $t04_angsuran_grid->RowIndex
 		<td data-name="Bayar_Titipan">
 <?php if ($t04_angsuran->CurrentAction <> "F") { ?>
 <span id="el$rowindex$_t04_angsuran_Bayar_Titipan" class="form-group t04_angsuran_Bayar_Titipan">
-<select data-table="t04_angsuran" data-field="x_Bayar_Titipan" data-value-separator="<?php echo $t04_angsuran->Bayar_Titipan->DisplayValueSeparatorAttribute() ?>" id="x<?php echo $t04_angsuran_grid->RowIndex ?>_Bayar_Titipan" name="x<?php echo $t04_angsuran_grid->RowIndex ?>_Bayar_Titipan"<?php echo $t04_angsuran->Bayar_Titipan->EditAttributes() ?>>
-<?php echo $t04_angsuran->Bayar_Titipan->SelectOptionListHtml("x<?php echo $t04_angsuran_grid->RowIndex ?>_Bayar_Titipan") ?>
-</select>
-<input type="hidden" name="s_x<?php echo $t04_angsuran_grid->RowIndex ?>_Bayar_Titipan" id="s_x<?php echo $t04_angsuran_grid->RowIndex ?>_Bayar_Titipan" value="<?php echo $t04_angsuran->Bayar_Titipan->LookupFilterQuery() ?>">
+<input type="text" data-table="t04_angsuran" data-field="x_Bayar_Titipan" name="x<?php echo $t04_angsuran_grid->RowIndex ?>_Bayar_Titipan" id="x<?php echo $t04_angsuran_grid->RowIndex ?>_Bayar_Titipan" size="10" placeholder="<?php echo ew_HtmlEncode($t04_angsuran->Bayar_Titipan->getPlaceHolder()) ?>" value="<?php echo $t04_angsuran->Bayar_Titipan->EditValue ?>"<?php echo $t04_angsuran->Bayar_Titipan->EditAttributes() ?>>
 </span>
 <?php } else { ?>
 <span id="el$rowindex$_t04_angsuran_Bayar_Titipan" class="form-group t04_angsuran_Bayar_Titipan">
@@ -1213,7 +1213,10 @@ ew_CreateCalendar("ft04_angsurangrid", "x<?php echo $t04_angsuran_grid->RowIndex
 		<td data-name="pinjamantitipan_id">
 <?php if ($t04_angsuran->CurrentAction <> "F") { ?>
 <span id="el$rowindex$_t04_angsuran_pinjamantitipan_id" class="form-group t04_angsuran_pinjamantitipan_id">
-<input type="text" data-table="t04_angsuran" data-field="x_pinjamantitipan_id" name="x<?php echo $t04_angsuran_grid->RowIndex ?>_pinjamantitipan_id" id="x<?php echo $t04_angsuran_grid->RowIndex ?>_pinjamantitipan_id" size="30" placeholder="<?php echo ew_HtmlEncode($t04_angsuran->pinjamantitipan_id->getPlaceHolder()) ?>" value="<?php echo $t04_angsuran->pinjamantitipan_id->EditValue ?>"<?php echo $t04_angsuran->pinjamantitipan_id->EditAttributes() ?>>
+<select data-table="t04_angsuran" data-field="x_pinjamantitipan_id" data-value-separator="<?php echo $t04_angsuran->pinjamantitipan_id->DisplayValueSeparatorAttribute() ?>" id="x<?php echo $t04_angsuran_grid->RowIndex ?>_pinjamantitipan_id" name="x<?php echo $t04_angsuran_grid->RowIndex ?>_pinjamantitipan_id"<?php echo $t04_angsuran->pinjamantitipan_id->EditAttributes() ?>>
+<?php echo $t04_angsuran->pinjamantitipan_id->SelectOptionListHtml("x<?php echo $t04_angsuran_grid->RowIndex ?>_pinjamantitipan_id") ?>
+</select>
+<input type="hidden" name="s_x<?php echo $t04_angsuran_grid->RowIndex ?>_pinjamantitipan_id" id="s_x<?php echo $t04_angsuran_grid->RowIndex ?>_pinjamantitipan_id" value="<?php echo $t04_angsuran->pinjamantitipan_id->LookupFilterQuery() ?>">
 </span>
 <?php } else { ?>
 <span id="el$rowindex$_t04_angsuran_pinjamantitipan_id" class="form-group t04_angsuran_pinjamantitipan_id">

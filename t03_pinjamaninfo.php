@@ -218,6 +218,7 @@ class ct03_pinjaman extends cTable {
 		if ($this->getCurrentDetailTable() == "t06_pinjamantitipan") {
 			$sDetailUrl = $GLOBALS["t06_pinjamantitipan"]->GetListUrl() . "?" . EW_TABLE_SHOW_MASTER . "=" . $this->TableVar;
 			$sDetailUrl .= "&fk_id=" . urlencode($this->id->CurrentValue);
+			$sDetailUrl .= "&fk_nasabah_id=" . urlencode($this->nasabah_id->CurrentValue);
 		}
 		if ($sDetailUrl == "") {
 			$sDetailUrl = "t03_pinjamanlist.php";
@@ -570,9 +571,13 @@ class ct03_pinjaman extends cTable {
 			$bCascadeUpdate = TRUE;
 			$rscascade['pinjaman_id'] = $rs['id']; 
 		}
+		if (!is_null($rsold) && (isset($rs['nasabah_id']) && $rsold['nasabah_id'] <> $rs['nasabah_id'])) { // Update detail field 'nasabah_id'
+			$bCascadeUpdate = TRUE;
+			$rscascade['nasabah_id'] = $rs['nasabah_id']; 
+		}
 		if ($bCascadeUpdate) {
 			if (!isset($GLOBALS["t06_pinjamantitipan"])) $GLOBALS["t06_pinjamantitipan"] = new ct06_pinjamantitipan();
-			$rswrk = $GLOBALS["t06_pinjamantitipan"]->LoadRs("`pinjaman_id` = " . ew_QuotedValue($rsold['id'], EW_DATATYPE_NUMBER, 'DB')); 
+			$rswrk = $GLOBALS["t06_pinjamantitipan"]->LoadRs("`pinjaman_id` = " . ew_QuotedValue($rsold['id'], EW_DATATYPE_NUMBER, 'DB') . " AND " . "`nasabah_id` = " . ew_QuotedValue($rsold['nasabah_id'], EW_DATATYPE_NUMBER, 'DB')); 
 			while ($rswrk && !$rswrk->EOF) {
 				$rskey = array();
 				$fldname = 'id';
@@ -632,7 +637,7 @@ class ct03_pinjaman extends cTable {
 
 		// Cascade delete detail table 't06_pinjamantitipan'
 		if (!isset($GLOBALS["t06_pinjamantitipan"])) $GLOBALS["t06_pinjamantitipan"] = new ct06_pinjamantitipan();
-		$rscascade = $GLOBALS["t06_pinjamantitipan"]->LoadRs("`pinjaman_id` = " . ew_QuotedValue($rs['id'], EW_DATATYPE_NUMBER, "DB")); 
+		$rscascade = $GLOBALS["t06_pinjamantitipan"]->LoadRs("`pinjaman_id` = " . ew_QuotedValue($rs['id'], EW_DATATYPE_NUMBER, "DB") . " AND " . "`nasabah_id` = " . ew_QuotedValue($rs['nasabah_id'], EW_DATATYPE_NUMBER, "DB")); 
 		while ($rscascade && !$rscascade->EOF) {
 			$GLOBALS["t06_pinjamantitipan"]->Delete($rscascade->fields);
 			$rscascade->MoveNext();

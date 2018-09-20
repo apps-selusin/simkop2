@@ -317,6 +317,7 @@ class ct06_pinjamantitipan_grid extends ct06_pinjamantitipan {
 		$this->Masuk->SetVisibility();
 		$this->Keluar->SetVisibility();
 		$this->Sisa->SetVisibility();
+		$this->nasabah_id->SetVisibility();
 
 		// Global Page Loading event (in userfn*.php)
 		Page_Loading();
@@ -792,6 +793,8 @@ class ct06_pinjamantitipan_grid extends ct06_pinjamantitipan {
 			return FALSE;
 		if ($objForm->HasValue("x_Sisa") && $objForm->HasValue("o_Sisa") && $this->Sisa->CurrentValue <> $this->Sisa->OldValue)
 			return FALSE;
+		if ($objForm->HasValue("x_nasabah_id") && $objForm->HasValue("o_nasabah_id") && $this->nasabah_id->CurrentValue <> $this->nasabah_id->OldValue)
+			return FALSE;
 		return TRUE;
 	}
 
@@ -900,6 +903,7 @@ class ct06_pinjamantitipan_grid extends ct06_pinjamantitipan {
 				$this->DbMasterFilter = "";
 				$this->DbDetailFilter = "";
 				$this->pinjaman_id->setSessionValue("");
+				$this->nasabah_id->setSessionValue("");
 			}
 
 			// Reset sorting order
@@ -1158,6 +1162,8 @@ class ct06_pinjamantitipan_grid extends ct06_pinjamantitipan {
 		$this->Keluar->OldValue = $this->Keluar->CurrentValue;
 		$this->Sisa->CurrentValue = 0.00;
 		$this->Sisa->OldValue = $this->Sisa->CurrentValue;
+		$this->nasabah_id->CurrentValue = NULL;
+		$this->nasabah_id->OldValue = $this->nasabah_id->CurrentValue;
 	}
 
 	// Load form values
@@ -1187,6 +1193,10 @@ class ct06_pinjamantitipan_grid extends ct06_pinjamantitipan {
 			$this->Sisa->setFormValue($objForm->GetValue("x_Sisa"));
 		}
 		$this->Sisa->setOldValue($objForm->GetValue("o_Sisa"));
+		if (!$this->nasabah_id->FldIsDetailKey) {
+			$this->nasabah_id->setFormValue($objForm->GetValue("x_nasabah_id"));
+		}
+		$this->nasabah_id->setOldValue($objForm->GetValue("o_nasabah_id"));
 		if (!$this->id->FldIsDetailKey && $this->CurrentAction <> "gridadd" && $this->CurrentAction <> "add")
 			$this->id->setFormValue($objForm->GetValue("x_id"));
 	}
@@ -1202,6 +1212,7 @@ class ct06_pinjamantitipan_grid extends ct06_pinjamantitipan {
 		$this->Masuk->CurrentValue = $this->Masuk->FormValue;
 		$this->Keluar->CurrentValue = $this->Keluar->FormValue;
 		$this->Sisa->CurrentValue = $this->Sisa->FormValue;
+		$this->nasabah_id->CurrentValue = $this->nasabah_id->FormValue;
 	}
 
 	// Load recordset
@@ -1266,6 +1277,7 @@ class ct06_pinjamantitipan_grid extends ct06_pinjamantitipan {
 		$this->Masuk->setDbValue($rs->fields('Masuk'));
 		$this->Keluar->setDbValue($rs->fields('Keluar'));
 		$this->Sisa->setDbValue($rs->fields('Sisa'));
+		$this->nasabah_id->setDbValue($rs->fields('nasabah_id'));
 	}
 
 	// Load DbValue from recordset
@@ -1279,6 +1291,7 @@ class ct06_pinjamantitipan_grid extends ct06_pinjamantitipan {
 		$this->Masuk->DbValue = $row['Masuk'];
 		$this->Keluar->DbValue = $row['Keluar'];
 		$this->Sisa->DbValue = $row['Sisa'];
+		$this->nasabah_id->DbValue = $row['nasabah_id'];
 	}
 
 	// Load old record
@@ -1343,6 +1356,7 @@ class ct06_pinjamantitipan_grid extends ct06_pinjamantitipan {
 		// Masuk
 		// Keluar
 		// Sisa
+		// nasabah_id
 
 		if ($this->RowType == EW_ROWTYPE_VIEW) { // View row
 
@@ -1381,6 +1395,10 @@ class ct06_pinjamantitipan_grid extends ct06_pinjamantitipan {
 		$this->Sisa->CellCssStyle .= "text-align: right;";
 		$this->Sisa->ViewCustomAttributes = "";
 
+		// nasabah_id
+		$this->nasabah_id->ViewValue = $this->nasabah_id->CurrentValue;
+		$this->nasabah_id->ViewCustomAttributes = "";
+
 			// Tanggal
 			$this->Tanggal->LinkCustomAttributes = "";
 			$this->Tanggal->HrefValue = "";
@@ -1405,6 +1423,11 @@ class ct06_pinjamantitipan_grid extends ct06_pinjamantitipan {
 			$this->Sisa->LinkCustomAttributes = "";
 			$this->Sisa->HrefValue = "";
 			$this->Sisa->TooltipValue = "";
+
+			// nasabah_id
+			$this->nasabah_id->LinkCustomAttributes = "";
+			$this->nasabah_id->HrefValue = "";
+			$this->nasabah_id->TooltipValue = "";
 		} elseif ($this->RowType == EW_ROWTYPE_ADD) { // Add row
 
 			// Tanggal
@@ -1449,6 +1472,19 @@ class ct06_pinjamantitipan_grid extends ct06_pinjamantitipan {
 			$this->Sisa->OldValue = $this->Sisa->EditValue;
 			}
 
+			// nasabah_id
+			$this->nasabah_id->EditAttrs["class"] = "form-control";
+			$this->nasabah_id->EditCustomAttributes = "";
+			if ($this->nasabah_id->getSessionValue() <> "") {
+				$this->nasabah_id->CurrentValue = $this->nasabah_id->getSessionValue();
+				$this->nasabah_id->OldValue = $this->nasabah_id->CurrentValue;
+			$this->nasabah_id->ViewValue = $this->nasabah_id->CurrentValue;
+			$this->nasabah_id->ViewCustomAttributes = "";
+			} else {
+			$this->nasabah_id->EditValue = ew_HtmlEncode($this->nasabah_id->CurrentValue);
+			$this->nasabah_id->PlaceHolder = ew_RemoveHtml($this->nasabah_id->FldCaption());
+			}
+
 			// Add refer script
 			// Tanggal
 
@@ -1470,6 +1506,10 @@ class ct06_pinjamantitipan_grid extends ct06_pinjamantitipan {
 			// Sisa
 			$this->Sisa->LinkCustomAttributes = "";
 			$this->Sisa->HrefValue = "";
+
+			// nasabah_id
+			$this->nasabah_id->LinkCustomAttributes = "";
+			$this->nasabah_id->HrefValue = "";
 		} elseif ($this->RowType == EW_ROWTYPE_EDIT) { // Edit row
 
 			// Tanggal
@@ -1514,6 +1554,19 @@ class ct06_pinjamantitipan_grid extends ct06_pinjamantitipan {
 			$this->Sisa->OldValue = $this->Sisa->EditValue;
 			}
 
+			// nasabah_id
+			$this->nasabah_id->EditAttrs["class"] = "form-control";
+			$this->nasabah_id->EditCustomAttributes = "";
+			if ($this->nasabah_id->getSessionValue() <> "") {
+				$this->nasabah_id->CurrentValue = $this->nasabah_id->getSessionValue();
+				$this->nasabah_id->OldValue = $this->nasabah_id->CurrentValue;
+			$this->nasabah_id->ViewValue = $this->nasabah_id->CurrentValue;
+			$this->nasabah_id->ViewCustomAttributes = "";
+			} else {
+			$this->nasabah_id->EditValue = ew_HtmlEncode($this->nasabah_id->CurrentValue);
+			$this->nasabah_id->PlaceHolder = ew_RemoveHtml($this->nasabah_id->FldCaption());
+			}
+
 			// Edit refer script
 			// Tanggal
 
@@ -1535,6 +1588,10 @@ class ct06_pinjamantitipan_grid extends ct06_pinjamantitipan {
 			// Sisa
 			$this->Sisa->LinkCustomAttributes = "";
 			$this->Sisa->HrefValue = "";
+
+			// nasabah_id
+			$this->nasabah_id->LinkCustomAttributes = "";
+			$this->nasabah_id->HrefValue = "";
 		}
 		if ($this->RowType == EW_ROWTYPE_ADD ||
 			$this->RowType == EW_ROWTYPE_EDIT ||
@@ -1577,6 +1634,12 @@ class ct06_pinjamantitipan_grid extends ct06_pinjamantitipan {
 		}
 		if (!ew_CheckNumber($this->Sisa->FormValue)) {
 			ew_AddMessage($gsFormError, $this->Sisa->FldErrMsg());
+		}
+		if (!$this->nasabah_id->FldIsDetailKey && !is_null($this->nasabah_id->FormValue) && $this->nasabah_id->FormValue == "") {
+			ew_AddMessage($gsFormError, str_replace("%s", $this->nasabah_id->FldCaption(), $this->nasabah_id->ReqErrMsg));
+		}
+		if (!ew_CheckInteger($this->nasabah_id->FormValue)) {
+			ew_AddMessage($gsFormError, $this->nasabah_id->FldErrMsg());
 		}
 
 		// Return validate result
@@ -1711,12 +1774,21 @@ class ct06_pinjamantitipan_grid extends ct06_pinjamantitipan {
 			// Sisa
 			$this->Sisa->SetDbValueDef($rsnew, $this->Sisa->CurrentValue, 0, $this->Sisa->ReadOnly);
 
+			// nasabah_id
+			$this->nasabah_id->SetDbValueDef($rsnew, $this->nasabah_id->CurrentValue, 0, $this->nasabah_id->ReadOnly);
+
 			// Check referential integrity for master table 't03_pinjaman'
 			$bValidMasterRecord = TRUE;
 			$sMasterFilter = $this->SqlMasterFilter_t03_pinjaman();
 			$KeyValue = isset($rsnew['pinjaman_id']) ? $rsnew['pinjaman_id'] : $rsold['pinjaman_id'];
 			if (strval($KeyValue) <> "") {
 				$sMasterFilter = str_replace("@id@", ew_AdjustSql($KeyValue), $sMasterFilter);
+			} else {
+				$bValidMasterRecord = FALSE;
+			}
+			$KeyValue = isset($rsnew['nasabah_id']) ? $rsnew['nasabah_id'] : $rsold['nasabah_id'];
+			if (strval($KeyValue) <> "") {
+				$sMasterFilter = str_replace("@nasabah_id@", ew_AdjustSql($KeyValue), $sMasterFilter);
 			} else {
 				$bValidMasterRecord = FALSE;
 			}
@@ -1772,6 +1844,7 @@ class ct06_pinjamantitipan_grid extends ct06_pinjamantitipan {
 		// Set up foreign key field value from Session
 			if ($this->getCurrentMasterTable() == "t03_pinjaman") {
 				$this->pinjaman_id->CurrentValue = $this->pinjaman_id->getSessionValue();
+				$this->nasabah_id->CurrentValue = $this->nasabah_id->getSessionValue();
 			}
 
 		// Check referential integrity for master table 't03_pinjaman'
@@ -1779,6 +1852,11 @@ class ct06_pinjamantitipan_grid extends ct06_pinjamantitipan {
 		$sMasterFilter = $this->SqlMasterFilter_t03_pinjaman();
 		if ($this->pinjaman_id->getSessionValue() <> "") {
 			$sMasterFilter = str_replace("@id@", ew_AdjustSql($this->pinjaman_id->getSessionValue(), "DB"), $sMasterFilter);
+		} else {
+			$bValidMasterRecord = FALSE;
+		}
+		if (strval($this->nasabah_id->CurrentValue) <> "") {
+			$sMasterFilter = str_replace("@nasabah_id@", ew_AdjustSql($this->nasabah_id->CurrentValue, "DB"), $sMasterFilter);
 		} else {
 			$bValidMasterRecord = FALSE;
 		}
@@ -1815,6 +1893,9 @@ class ct06_pinjamantitipan_grid extends ct06_pinjamantitipan {
 
 		// Sisa
 		$this->Sisa->SetDbValueDef($rsnew, $this->Sisa->CurrentValue, 0, strval($this->Sisa->CurrentValue) == "");
+
+		// nasabah_id
+		$this->nasabah_id->SetDbValueDef($rsnew, $this->nasabah_id->CurrentValue, 0, FALSE);
 
 		// pinjaman_id
 		if ($this->pinjaman_id->getSessionValue() <> "") {
@@ -1858,6 +1939,8 @@ class ct06_pinjamantitipan_grid extends ct06_pinjamantitipan {
 		$sMasterTblVar = $this->getCurrentMasterTable();
 		if ($sMasterTblVar == "t03_pinjaman") {
 			$this->pinjaman_id->Visible = FALSE;
+			if ($GLOBALS["t03_pinjaman"]->EventCancelled) $this->EventCancelled = TRUE;
+			$this->nasabah_id->Visible = FALSE;
 			if ($GLOBALS["t03_pinjaman"]->EventCancelled) $this->EventCancelled = TRUE;
 		}
 		$this->DbMasterFilter = $this->GetMasterFilter(); // Get master filter

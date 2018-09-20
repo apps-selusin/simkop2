@@ -1395,6 +1395,9 @@ class ct03_pinjaman_edit extends ct03_pinjaman {
 					$GLOBALS["t06_pinjamantitipan_grid"]->pinjaman_id->FldIsDetailKey = TRUE;
 					$GLOBALS["t06_pinjamantitipan_grid"]->pinjaman_id->CurrentValue = $this->id->CurrentValue;
 					$GLOBALS["t06_pinjamantitipan_grid"]->pinjaman_id->setSessionValue($GLOBALS["t06_pinjamantitipan_grid"]->pinjaman_id->CurrentValue);
+					$GLOBALS["t06_pinjamantitipan_grid"]->nasabah_id->FldIsDetailKey = TRUE;
+					$GLOBALS["t06_pinjamantitipan_grid"]->nasabah_id->CurrentValue = $this->nasabah_id->CurrentValue;
+					$GLOBALS["t06_pinjamantitipan_grid"]->nasabah_id->setSessionValue($GLOBALS["t06_pinjamantitipan_grid"]->nasabah_id->CurrentValue);
 				}
 			}
 		}
@@ -1653,7 +1656,7 @@ ft03_pinjamanedit.ValidateRequired = false;
 <?php } ?>
 
 // Dynamic selection lists
-ft03_pinjamanedit.Lists["x_nasabah_id"] = {"LinkField":"x_id","Ajax":true,"AutoFill":false,"DisplayFields":["x_Customer","x_Pekerjaan","",""],"ParentFields":[],"ChildFields":["t05_pinjamanjaminan x_jaminan_id"],"FilterFields":[],"Options":[],"Template":"","LinkTable":"t01_nasabah"};
+ft03_pinjamanedit.Lists["x_nasabah_id"] = {"LinkField":"x_id","Ajax":true,"AutoFill":false,"DisplayFields":["x_Customer","x_Pekerjaan","",""],"ParentFields":[],"ChildFields":["t04_angsuran x_pinjamantitipan_id","t05_pinjamanjaminan x_jaminan_id"],"FilterFields":[],"Options":[],"Template":"","LinkTable":"t01_nasabah"};
 
 // Form object for search
 </script>

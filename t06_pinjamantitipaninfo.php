@@ -20,6 +20,7 @@ class ct06_pinjamantitipan extends cTable {
 	var $Masuk;
 	var $Keluar;
 	var $Sisa;
+	var $nasabah_id;
 
 	//
 	// Table class constructor
@@ -91,6 +92,12 @@ class ct06_pinjamantitipan extends cTable {
 		$this->Sisa->Sortable = TRUE; // Allow sort
 		$this->Sisa->FldDefaultErrMsg = $Language->Phrase("IncorrectFloat");
 		$this->fields['Sisa'] = &$this->Sisa;
+
+		// nasabah_id
+		$this->nasabah_id = new cField('t06_pinjamantitipan', 't06_pinjamantitipan', 'x_nasabah_id', 'nasabah_id', '`nasabah_id`', '`nasabah_id`', 3, -1, FALSE, '`nasabah_id`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXT');
+		$this->nasabah_id->Sortable = TRUE; // Allow sort
+		$this->nasabah_id->FldDefaultErrMsg = $Language->Phrase("IncorrectInteger");
+		$this->fields['nasabah_id'] = &$this->nasabah_id;
 	}
 
 	// Set Field Visibility
@@ -146,6 +153,10 @@ class ct06_pinjamantitipan extends cTable {
 				$sMasterFilter .= "`id`=" . ew_QuotedValue($this->pinjaman_id->getSessionValue(), EW_DATATYPE_NUMBER, "DB");
 			else
 				return "";
+			if ($this->nasabah_id->getSessionValue() <> "")
+				$sMasterFilter .= " AND `nasabah_id`=" . ew_QuotedValue($this->nasabah_id->getSessionValue(), EW_DATATYPE_NUMBER, "DB");
+			else
+				return "";
 		}
 		return $sMasterFilter;
 	}
@@ -160,18 +171,22 @@ class ct06_pinjamantitipan extends cTable {
 				$sDetailFilter .= "`pinjaman_id`=" . ew_QuotedValue($this->pinjaman_id->getSessionValue(), EW_DATATYPE_NUMBER, "DB");
 			else
 				return "";
+			if ($this->nasabah_id->getSessionValue() <> "")
+				$sDetailFilter .= " AND `nasabah_id`=" . ew_QuotedValue($this->nasabah_id->getSessionValue(), EW_DATATYPE_NUMBER, "DB");
+			else
+				return "";
 		}
 		return $sDetailFilter;
 	}
 
 	// Master filter
 	function SqlMasterFilter_t03_pinjaman() {
-		return "`id`=@id@";
+		return "`id`=@id@ AND `nasabah_id`=@nasabah_id@";
 	}
 
 	// Detail filter
 	function SqlDetailFilter_t03_pinjaman() {
-		return "`pinjaman_id`=@pinjaman_id@";
+		return "`pinjaman_id`=@pinjaman_id@ AND `nasabah_id`=@nasabah_id@";
 	}
 
 	// Table level SQL
@@ -557,6 +572,7 @@ class ct06_pinjamantitipan extends cTable {
 		if ($this->getCurrentMasterTable() == "t03_pinjaman" && strpos($url, EW_TABLE_SHOW_MASTER . "=") === FALSE) {
 			$url .= (strpos($url, "?") !== FALSE ? "&" : "?") . EW_TABLE_SHOW_MASTER . "=" . $this->getCurrentMasterTable();
 			$url .= "&fk_id=" . urlencode($this->pinjaman_id->CurrentValue);
+			$url .= "&fk_nasabah_id=" . urlencode($this->nasabah_id->CurrentValue);
 		}
 		return $url;
 	}
@@ -661,6 +677,7 @@ class ct06_pinjamantitipan extends cTable {
 		$this->Masuk->setDbValue($rs->fields('Masuk'));
 		$this->Keluar->setDbValue($rs->fields('Keluar'));
 		$this->Sisa->setDbValue($rs->fields('Sisa'));
+		$this->nasabah_id->setDbValue($rs->fields('nasabah_id'));
 	}
 
 	// Render list row values
@@ -678,6 +695,7 @@ class ct06_pinjamantitipan extends cTable {
 		// Masuk
 		// Keluar
 		// Sisa
+		// nasabah_id
 		// id
 
 		$this->id->ViewValue = $this->id->CurrentValue;
@@ -714,6 +732,10 @@ class ct06_pinjamantitipan extends cTable {
 		$this->Sisa->CellCssStyle .= "text-align: right;";
 		$this->Sisa->ViewCustomAttributes = "";
 
+		// nasabah_id
+		$this->nasabah_id->ViewValue = $this->nasabah_id->CurrentValue;
+		$this->nasabah_id->ViewCustomAttributes = "";
+
 		// id
 		$this->id->LinkCustomAttributes = "";
 		$this->id->HrefValue = "";
@@ -748,6 +770,11 @@ class ct06_pinjamantitipan extends cTable {
 		$this->Sisa->LinkCustomAttributes = "";
 		$this->Sisa->HrefValue = "";
 		$this->Sisa->TooltipValue = "";
+
+		// nasabah_id
+		$this->nasabah_id->LinkCustomAttributes = "";
+		$this->nasabah_id->HrefValue = "";
+		$this->nasabah_id->TooltipValue = "";
 
 		// Call Row Rendered event
 		$this->Row_Rendered();
@@ -811,6 +838,18 @@ class ct06_pinjamantitipan extends cTable {
 		$this->Sisa->PlaceHolder = ew_RemoveHtml($this->Sisa->FldCaption());
 		if (strval($this->Sisa->EditValue) <> "" && is_numeric($this->Sisa->EditValue)) $this->Sisa->EditValue = ew_FormatNumber($this->Sisa->EditValue, -2, -2, -2, -2);
 
+		// nasabah_id
+		$this->nasabah_id->EditAttrs["class"] = "form-control";
+		$this->nasabah_id->EditCustomAttributes = "";
+		if ($this->nasabah_id->getSessionValue() <> "") {
+			$this->nasabah_id->CurrentValue = $this->nasabah_id->getSessionValue();
+		$this->nasabah_id->ViewValue = $this->nasabah_id->CurrentValue;
+		$this->nasabah_id->ViewCustomAttributes = "";
+		} else {
+		$this->nasabah_id->EditValue = $this->nasabah_id->CurrentValue;
+		$this->nasabah_id->PlaceHolder = ew_RemoveHtml($this->nasabah_id->FldCaption());
+		}
+
 		// Call Row Rendered event
 		$this->Row_Rendered();
 	}
@@ -843,6 +882,7 @@ class ct06_pinjamantitipan extends cTable {
 					if ($this->Masuk->Exportable) $Doc->ExportCaption($this->Masuk);
 					if ($this->Keluar->Exportable) $Doc->ExportCaption($this->Keluar);
 					if ($this->Sisa->Exportable) $Doc->ExportCaption($this->Sisa);
+					if ($this->nasabah_id->Exportable) $Doc->ExportCaption($this->nasabah_id);
 				} else {
 					if ($this->id->Exportable) $Doc->ExportCaption($this->id);
 					if ($this->pinjaman_id->Exportable) $Doc->ExportCaption($this->pinjaman_id);
@@ -851,6 +891,7 @@ class ct06_pinjamantitipan extends cTable {
 					if ($this->Masuk->Exportable) $Doc->ExportCaption($this->Masuk);
 					if ($this->Keluar->Exportable) $Doc->ExportCaption($this->Keluar);
 					if ($this->Sisa->Exportable) $Doc->ExportCaption($this->Sisa);
+					if ($this->nasabah_id->Exportable) $Doc->ExportCaption($this->nasabah_id);
 				}
 				$Doc->EndExportRow();
 			}
@@ -887,6 +928,7 @@ class ct06_pinjamantitipan extends cTable {
 						if ($this->Masuk->Exportable) $Doc->ExportField($this->Masuk);
 						if ($this->Keluar->Exportable) $Doc->ExportField($this->Keluar);
 						if ($this->Sisa->Exportable) $Doc->ExportField($this->Sisa);
+						if ($this->nasabah_id->Exportable) $Doc->ExportField($this->nasabah_id);
 					} else {
 						if ($this->id->Exportable) $Doc->ExportField($this->id);
 						if ($this->pinjaman_id->Exportable) $Doc->ExportField($this->pinjaman_id);
@@ -895,6 +937,7 @@ class ct06_pinjamantitipan extends cTable {
 						if ($this->Masuk->Exportable) $Doc->ExportField($this->Masuk);
 						if ($this->Keluar->Exportable) $Doc->ExportField($this->Keluar);
 						if ($this->Sisa->Exportable) $Doc->ExportField($this->Sisa);
+						if ($this->nasabah_id->Exportable) $Doc->ExportField($this->nasabah_id);
 					}
 					$Doc->EndExportRow();
 				}

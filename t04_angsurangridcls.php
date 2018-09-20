@@ -549,6 +549,7 @@ class ct04_angsuran_grid extends ct04_angsuran {
 		$this->AngsuranTotal->FormValue = ""; // Clear form value
 		$this->SisaHutang->FormValue = ""; // Clear form value
 		$this->TotalDenda->FormValue = ""; // Clear form value
+		$this->Bayar_Titipan->FormValue = ""; // Clear form value
 		$this->Bayar_Non_Titipan->FormValue = ""; // Clear form value
 		$this->Bayar_Total->FormValue = ""; // Clear form value
 		$this->LastAction = $this->CurrentAction; // Save last action
@@ -966,6 +967,12 @@ class ct04_angsuran_grid extends ct04_angsuran {
 		$item->OnLeft = TRUE;
 		$item->Visible = FALSE;
 
+		// "edit"
+		$item = &$this->ListOptions->Add("edit");
+		$item->CssStyle = "white-space: nowrap;";
+		$item->Visible = $Security->CanEdit();
+		$item->OnLeft = TRUE;
+
 		// "sequence"
 		$item = &$this->ListOptions->Add("sequence");
 		$item->CssStyle = "white-space: nowrap;";
@@ -1031,6 +1038,15 @@ class ct04_angsuran_grid extends ct04_angsuran {
 		$oListOpt = &$this->ListOptions->Items["sequence"];
 		$oListOpt->Body = ew_FormatSeqNo($this->RecCnt);
 		if ($this->CurrentMode == "view") { // View mode
+
+		// "edit"
+		$oListOpt = &$this->ListOptions->Items["edit"];
+		$editcaption = ew_HtmlTitle($Language->Phrase("EditLink"));
+		if ($Security->CanEdit()) {
+			$oListOpt->Body = "<a class=\"ewRowLink ewEdit\" title=\"" . ew_HtmlTitle($Language->Phrase("EditLink")) . "\" data-caption=\"" . ew_HtmlTitle($Language->Phrase("EditLink")) . "\" href=\"" . ew_HtmlEncode($this->EditUrl) . "\">" . $Language->Phrase("EditLink") . "</a>";
+		} else {
+			$oListOpt->Body = "";
+		}
 		} // End View mode
 		if ($this->CurrentMode == "edit" && is_numeric($this->RowIndex)) {
 			$this->MultiSelectKey .= "<input type=\"hidden\" name=\"" . $KeyName . "\" id=\"" . $KeyName . "\" value=\"" . $this->id->CurrentValue . "\">";
@@ -1412,6 +1428,10 @@ class ct04_angsuran_grid extends ct04_angsuran {
 			$this->TotalDenda->CurrentValue = ew_StrToFloat($this->TotalDenda->CurrentValue);
 
 		// Convert decimal values if posted back
+		if ($this->Bayar_Titipan->FormValue == $this->Bayar_Titipan->CurrentValue && is_numeric(ew_StrToFloat($this->Bayar_Titipan->CurrentValue)))
+			$this->Bayar_Titipan->CurrentValue = ew_StrToFloat($this->Bayar_Titipan->CurrentValue);
+
+		// Convert decimal values if posted back
 		if ($this->Bayar_Non_Titipan->FormValue == $this->Bayar_Non_Titipan->CurrentValue && is_numeric(ew_StrToFloat($this->Bayar_Non_Titipan->CurrentValue)))
 			$this->Bayar_Non_Titipan->CurrentValue = ew_StrToFloat($this->Bayar_Non_Titipan->CurrentValue);
 
@@ -1450,7 +1470,6 @@ class ct04_angsuran_grid extends ct04_angsuran {
 		$this->id->ViewCustomAttributes = "";
 
 		// pinjaman_id
-		$this->pinjaman_id->ViewValue = $this->pinjaman_id->CurrentValue;
 		$this->pinjaman_id->ViewCustomAttributes = "";
 
 		// AngsuranKe
@@ -1502,26 +1521,7 @@ class ct04_angsuran_grid extends ct04_angsuran {
 		$this->TotalDenda->ViewCustomAttributes = "";
 
 		// Bayar_Titipan
-		if (strval($this->Bayar_Titipan->CurrentValue) <> "") {
-			$sFilterWrk = "`id`" . ew_SearchString("=", $this->Bayar_Titipan->CurrentValue, EW_DATATYPE_NUMBER, "");
-		$sSqlWrk = "SELECT `id`, `Sisa` AS `DispFld`, '' AS `Disp2Fld`, '' AS `Disp3Fld`, '' AS `Disp4Fld` FROM `t06_pinjamantitipan`";
-		$sWhereWrk = "";
-		$this->Bayar_Titipan->LookupFilters = array();
-		ew_AddFilter($sWhereWrk, $sFilterWrk);
-		$this->Lookup_Selecting($this->Bayar_Titipan, $sWhereWrk); // Call Lookup selecting
-		if ($sWhereWrk <> "") $sSqlWrk .= " WHERE " . $sWhereWrk;
-			$rswrk = Conn()->Execute($sSqlWrk);
-			if ($rswrk && !$rswrk->EOF) { // Lookup values found
-				$arwrk = array();
-				$arwrk[1] = ew_FormatNumber($rswrk->fields('DispFld'), 2, -2, -2, -2);
-				$this->Bayar_Titipan->ViewValue = $this->Bayar_Titipan->DisplayValue($arwrk);
-				$rswrk->Close();
-			} else {
-				$this->Bayar_Titipan->ViewValue = $this->Bayar_Titipan->CurrentValue;
-			}
-		} else {
-			$this->Bayar_Titipan->ViewValue = NULL;
-		}
+		$this->Bayar_Titipan->ViewValue = $this->Bayar_Titipan->CurrentValue;
 		$this->Bayar_Titipan->ViewValue = ew_FormatNumber($this->Bayar_Titipan->ViewValue, 2, -2, -2, -2);
 		$this->Bayar_Titipan->CellCssStyle .= "text-align: right;";
 		$this->Bayar_Titipan->ViewCustomAttributes = "";
@@ -1543,7 +1543,26 @@ class ct04_angsuran_grid extends ct04_angsuran {
 		$this->Keterangan->ViewCustomAttributes = "";
 
 		// pinjamantitipan_id
-		$this->pinjamantitipan_id->ViewValue = $this->pinjamantitipan_id->CurrentValue;
+		if (strval($this->pinjamantitipan_id->CurrentValue) <> "") {
+			$sFilterWrk = "`id`" . ew_SearchString("=", $this->pinjamantitipan_id->CurrentValue, EW_DATATYPE_NUMBER, "");
+		$sSqlWrk = "SELECT `id`, `Sisa` AS `DispFld`, '' AS `Disp2Fld`, '' AS `Disp3Fld`, '' AS `Disp4Fld` FROM `t06_pinjamantitipan`";
+		$sWhereWrk = "";
+		$this->pinjamantitipan_id->LookupFilters = array();
+		ew_AddFilter($sWhereWrk, $sFilterWrk);
+		$this->Lookup_Selecting($this->pinjamantitipan_id, $sWhereWrk); // Call Lookup selecting
+		if ($sWhereWrk <> "") $sSqlWrk .= " WHERE " . $sWhereWrk;
+			$rswrk = Conn()->Execute($sSqlWrk);
+			if ($rswrk && !$rswrk->EOF) { // Lookup values found
+				$arwrk = array();
+				$arwrk[1] = ew_FormatNumber($rswrk->fields('DispFld'), 2, -2, -2, -2);
+				$this->pinjamantitipan_id->ViewValue = $this->pinjamantitipan_id->DisplayValue($arwrk);
+				$rswrk->Close();
+			} else {
+				$this->pinjamantitipan_id->ViewValue = $this->pinjamantitipan_id->CurrentValue;
+			}
+		} else {
+			$this->pinjamantitipan_id->ViewValue = NULL;
+		}
 		$this->pinjamantitipan_id->ViewCustomAttributes = "";
 
 			// pinjaman_id
@@ -1628,11 +1647,8 @@ class ct04_angsuran_grid extends ct04_angsuran {
 			if ($this->pinjaman_id->getSessionValue() <> "") {
 				$this->pinjaman_id->CurrentValue = $this->pinjaman_id->getSessionValue();
 				$this->pinjaman_id->OldValue = $this->pinjaman_id->CurrentValue;
-			$this->pinjaman_id->ViewValue = $this->pinjaman_id->CurrentValue;
 			$this->pinjaman_id->ViewCustomAttributes = "";
 			} else {
-			$this->pinjaman_id->EditValue = ew_HtmlEncode($this->pinjaman_id->CurrentValue);
-			$this->pinjaman_id->PlaceHolder = ew_RemoveHtml($this->pinjaman_id->FldCaption());
 			}
 
 			// AngsuranKe
@@ -1712,25 +1728,12 @@ class ct04_angsuran_grid extends ct04_angsuran {
 			// Bayar_Titipan
 			$this->Bayar_Titipan->EditAttrs["class"] = "form-control";
 			$this->Bayar_Titipan->EditCustomAttributes = "";
-			if (trim(strval($this->Bayar_Titipan->CurrentValue)) == "") {
-				$sFilterWrk = "0=1";
-			} else {
-				$sFilterWrk = "`id`" . ew_SearchString("=", $this->Bayar_Titipan->CurrentValue, EW_DATATYPE_NUMBER, "");
+			$this->Bayar_Titipan->EditValue = ew_HtmlEncode($this->Bayar_Titipan->CurrentValue);
+			$this->Bayar_Titipan->PlaceHolder = ew_RemoveHtml($this->Bayar_Titipan->FldCaption());
+			if (strval($this->Bayar_Titipan->EditValue) <> "" && is_numeric($this->Bayar_Titipan->EditValue)) {
+			$this->Bayar_Titipan->EditValue = ew_FormatNumber($this->Bayar_Titipan->EditValue, -2, -2, -2, -2);
+			$this->Bayar_Titipan->OldValue = $this->Bayar_Titipan->EditValue;
 			}
-			$sSqlWrk = "SELECT `id`, `Sisa` AS `DispFld`, '' AS `Disp2Fld`, '' AS `Disp3Fld`, '' AS `Disp4Fld`, `pinjaman_id` AS `SelectFilterFld`, `pinjaman_id` AS `SelectFilterFld2`, '' AS `SelectFilterFld3`, '' AS `SelectFilterFld4` FROM `t06_pinjamantitipan`";
-			$sWhereWrk = "";
-			$this->Bayar_Titipan->LookupFilters = array();
-			ew_AddFilter($sWhereWrk, $sFilterWrk);
-			$this->Lookup_Selecting($this->Bayar_Titipan, $sWhereWrk); // Call Lookup selecting
-			if ($sWhereWrk <> "") $sSqlWrk .= " WHERE " . $sWhereWrk;
-			$rswrk = Conn()->Execute($sSqlWrk);
-			$arwrk = ($rswrk) ? $rswrk->GetRows() : array();
-			if ($rswrk) $rswrk->Close();
-			$rowswrk = count($arwrk);
-			for ($rowcntwrk = 0; $rowcntwrk < $rowswrk; $rowcntwrk++) {
-				$arwrk[$rowcntwrk][1] = ew_FormatNumber($arwrk[$rowcntwrk][1], 2, -2, -2, -2);
-			}
-			$this->Bayar_Titipan->EditValue = $arwrk;
 
 			// Bayar_Non_Titipan
 			$this->Bayar_Non_Titipan->EditAttrs["class"] = "form-control";
@@ -1761,8 +1764,25 @@ class ct04_angsuran_grid extends ct04_angsuran {
 			// pinjamantitipan_id
 			$this->pinjamantitipan_id->EditAttrs["class"] = "form-control";
 			$this->pinjamantitipan_id->EditCustomAttributes = "";
-			$this->pinjamantitipan_id->EditValue = ew_HtmlEncode($this->pinjamantitipan_id->CurrentValue);
-			$this->pinjamantitipan_id->PlaceHolder = ew_RemoveHtml($this->pinjamantitipan_id->FldCaption());
+			if (trim(strval($this->pinjamantitipan_id->CurrentValue)) == "") {
+				$sFilterWrk = "0=1";
+			} else {
+				$sFilterWrk = "`id`" . ew_SearchString("=", $this->pinjamantitipan_id->CurrentValue, EW_DATATYPE_NUMBER, "");
+			}
+			$sSqlWrk = "SELECT `id`, `Sisa` AS `DispFld`, '' AS `Disp2Fld`, '' AS `Disp3Fld`, '' AS `Disp4Fld`, `nasabah_id` AS `SelectFilterFld`, '' AS `SelectFilterFld2`, '' AS `SelectFilterFld3`, '' AS `SelectFilterFld4` FROM `t06_pinjamantitipan`";
+			$sWhereWrk = "";
+			$this->pinjamantitipan_id->LookupFilters = array();
+			ew_AddFilter($sWhereWrk, $sFilterWrk);
+			$this->Lookup_Selecting($this->pinjamantitipan_id, $sWhereWrk); // Call Lookup selecting
+			if ($sWhereWrk <> "") $sSqlWrk .= " WHERE " . $sWhereWrk;
+			$rswrk = Conn()->Execute($sSqlWrk);
+			$arwrk = ($rswrk) ? $rswrk->GetRows() : array();
+			if ($rswrk) $rswrk->Close();
+			$rowswrk = count($arwrk);
+			for ($rowcntwrk = 0; $rowcntwrk < $rowswrk; $rowcntwrk++) {
+				$arwrk[$rowcntwrk][1] = ew_FormatNumber($arwrk[$rowcntwrk][1], 2, -2, -2, -2);
+			}
+			$this->pinjamantitipan_id->EditValue = $arwrk;
 
 			// Add refer script
 			// pinjaman_id
@@ -1833,11 +1853,8 @@ class ct04_angsuran_grid extends ct04_angsuran {
 			if ($this->pinjaman_id->getSessionValue() <> "") {
 				$this->pinjaman_id->CurrentValue = $this->pinjaman_id->getSessionValue();
 				$this->pinjaman_id->OldValue = $this->pinjaman_id->CurrentValue;
-			$this->pinjaman_id->ViewValue = $this->pinjaman_id->CurrentValue;
 			$this->pinjaman_id->ViewCustomAttributes = "";
 			} else {
-			$this->pinjaman_id->EditValue = ew_HtmlEncode($this->pinjaman_id->CurrentValue);
-			$this->pinjaman_id->PlaceHolder = ew_RemoveHtml($this->pinjaman_id->FldCaption());
 			}
 
 			// AngsuranKe
@@ -1910,25 +1927,12 @@ class ct04_angsuran_grid extends ct04_angsuran {
 			// Bayar_Titipan
 			$this->Bayar_Titipan->EditAttrs["class"] = "form-control";
 			$this->Bayar_Titipan->EditCustomAttributes = "";
-			if (trim(strval($this->Bayar_Titipan->CurrentValue)) == "") {
-				$sFilterWrk = "0=1";
-			} else {
-				$sFilterWrk = "`id`" . ew_SearchString("=", $this->Bayar_Titipan->CurrentValue, EW_DATATYPE_NUMBER, "");
+			$this->Bayar_Titipan->EditValue = ew_HtmlEncode($this->Bayar_Titipan->CurrentValue);
+			$this->Bayar_Titipan->PlaceHolder = ew_RemoveHtml($this->Bayar_Titipan->FldCaption());
+			if (strval($this->Bayar_Titipan->EditValue) <> "" && is_numeric($this->Bayar_Titipan->EditValue)) {
+			$this->Bayar_Titipan->EditValue = ew_FormatNumber($this->Bayar_Titipan->EditValue, -2, -2, -2, -2);
+			$this->Bayar_Titipan->OldValue = $this->Bayar_Titipan->EditValue;
 			}
-			$sSqlWrk = "SELECT `id`, `Sisa` AS `DispFld`, '' AS `Disp2Fld`, '' AS `Disp3Fld`, '' AS `Disp4Fld`, `pinjaman_id` AS `SelectFilterFld`, `pinjaman_id` AS `SelectFilterFld2`, '' AS `SelectFilterFld3`, '' AS `SelectFilterFld4` FROM `t06_pinjamantitipan`";
-			$sWhereWrk = "";
-			$this->Bayar_Titipan->LookupFilters = array();
-			ew_AddFilter($sWhereWrk, $sFilterWrk);
-			$this->Lookup_Selecting($this->Bayar_Titipan, $sWhereWrk); // Call Lookup selecting
-			if ($sWhereWrk <> "") $sSqlWrk .= " WHERE " . $sWhereWrk;
-			$rswrk = Conn()->Execute($sSqlWrk);
-			$arwrk = ($rswrk) ? $rswrk->GetRows() : array();
-			if ($rswrk) $rswrk->Close();
-			$rowswrk = count($arwrk);
-			for ($rowcntwrk = 0; $rowcntwrk < $rowswrk; $rowcntwrk++) {
-				$arwrk[$rowcntwrk][1] = ew_FormatNumber($arwrk[$rowcntwrk][1], 2, -2, -2, -2);
-			}
-			$this->Bayar_Titipan->EditValue = $arwrk;
 
 			// Bayar_Non_Titipan
 			$this->Bayar_Non_Titipan->EditAttrs["class"] = "form-control";
@@ -1959,8 +1963,25 @@ class ct04_angsuran_grid extends ct04_angsuran {
 			// pinjamantitipan_id
 			$this->pinjamantitipan_id->EditAttrs["class"] = "form-control";
 			$this->pinjamantitipan_id->EditCustomAttributes = "";
-			$this->pinjamantitipan_id->EditValue = ew_HtmlEncode($this->pinjamantitipan_id->CurrentValue);
-			$this->pinjamantitipan_id->PlaceHolder = ew_RemoveHtml($this->pinjamantitipan_id->FldCaption());
+			if (trim(strval($this->pinjamantitipan_id->CurrentValue)) == "") {
+				$sFilterWrk = "0=1";
+			} else {
+				$sFilterWrk = "`id`" . ew_SearchString("=", $this->pinjamantitipan_id->CurrentValue, EW_DATATYPE_NUMBER, "");
+			}
+			$sSqlWrk = "SELECT `id`, `Sisa` AS `DispFld`, '' AS `Disp2Fld`, '' AS `Disp3Fld`, '' AS `Disp4Fld`, `nasabah_id` AS `SelectFilterFld`, '' AS `SelectFilterFld2`, '' AS `SelectFilterFld3`, '' AS `SelectFilterFld4` FROM `t06_pinjamantitipan`";
+			$sWhereWrk = "";
+			$this->pinjamantitipan_id->LookupFilters = array();
+			ew_AddFilter($sWhereWrk, $sFilterWrk);
+			$this->Lookup_Selecting($this->pinjamantitipan_id, $sWhereWrk); // Call Lookup selecting
+			if ($sWhereWrk <> "") $sSqlWrk .= " WHERE " . $sWhereWrk;
+			$rswrk = Conn()->Execute($sSqlWrk);
+			$arwrk = ($rswrk) ? $rswrk->GetRows() : array();
+			if ($rswrk) $rswrk->Close();
+			$rowswrk = count($arwrk);
+			for ($rowcntwrk = 0; $rowcntwrk < $rowswrk; $rowcntwrk++) {
+				$arwrk[$rowcntwrk][1] = ew_FormatNumber($arwrk[$rowcntwrk][1], 2, -2, -2, -2);
+			}
+			$this->pinjamantitipan_id->EditValue = $arwrk;
 
 			// Edit refer script
 			// pinjaman_id
@@ -2051,9 +2072,6 @@ class ct04_angsuran_grid extends ct04_angsuran {
 		if (!$this->pinjaman_id->FldIsDetailKey && !is_null($this->pinjaman_id->FormValue) && $this->pinjaman_id->FormValue == "") {
 			ew_AddMessage($gsFormError, str_replace("%s", $this->pinjaman_id->FldCaption(), $this->pinjaman_id->ReqErrMsg));
 		}
-		if (!ew_CheckInteger($this->pinjaman_id->FormValue)) {
-			ew_AddMessage($gsFormError, $this->pinjaman_id->FldErrMsg());
-		}
 		if (!$this->AngsuranKe->FldIsDetailKey && !is_null($this->AngsuranKe->FormValue) && $this->AngsuranKe->FormValue == "") {
 			ew_AddMessage($gsFormError, str_replace("%s", $this->AngsuranKe->FldCaption(), $this->AngsuranKe->ReqErrMsg));
 		}
@@ -2081,14 +2099,14 @@ class ct04_angsuran_grid extends ct04_angsuran {
 		if (!ew_CheckNumber($this->TotalDenda->FormValue)) {
 			ew_AddMessage($gsFormError, $this->TotalDenda->FldErrMsg());
 		}
+		if (!ew_CheckNumber($this->Bayar_Titipan->FormValue)) {
+			ew_AddMessage($gsFormError, $this->Bayar_Titipan->FldErrMsg());
+		}
 		if (!ew_CheckNumber($this->Bayar_Non_Titipan->FormValue)) {
 			ew_AddMessage($gsFormError, $this->Bayar_Non_Titipan->FldErrMsg());
 		}
 		if (!ew_CheckNumber($this->Bayar_Total->FormValue)) {
 			ew_AddMessage($gsFormError, $this->Bayar_Total->FldErrMsg());
-		}
-		if (!ew_CheckInteger($this->pinjamantitipan_id->FormValue)) {
-			ew_AddMessage($gsFormError, $this->pinjamantitipan_id->FldErrMsg());
 		}
 
 		// Return validate result
@@ -2418,14 +2436,14 @@ class ct04_angsuran_grid extends ct04_angsuran {
 		global $gsLanguage;
 		$pageId = $pageId ?: $this->PageID;
 		switch ($fld->FldVar) {
-		case "x_Bayar_Titipan":
+		case "x_pinjamantitipan_id":
 			$sSqlWrk = "";
 			$sSqlWrk = "SELECT `id` AS `LinkFld`, `Sisa` AS `DispFld`, '' AS `Disp2Fld`, '' AS `Disp3Fld`, '' AS `Disp4Fld` FROM `t06_pinjamantitipan`";
-			$sWhereWrk = "";
-			$this->Bayar_Titipan->LookupFilters = array();
-			$fld->LookupFilters += array("s" => $sSqlWrk, "d" => "", "f0" => '`id` = {filter_value}', "t0" => "3", "fn0" => "");
+			$sWhereWrk = "{filter}";
+			$this->pinjamantitipan_id->LookupFilters = array();
+			$fld->LookupFilters += array("s" => $sSqlWrk, "d" => "", "f0" => '`id` = {filter_value}', "t0" => "3", "fn0" => "", "f1" => '`nasabah_id` IN ({filter_value})', "t1" => "3", "fn1" => "");
 			$sSqlWrk = "";
-			$this->Lookup_Selecting($this->Bayar_Titipan, $sWhereWrk); // Call Lookup selecting
+			$this->Lookup_Selecting($this->pinjamantitipan_id, $sWhereWrk); // Call Lookup selecting
 			if ($sWhereWrk <> "") $sSqlWrk .= " WHERE " . $sWhereWrk;
 			if ($sSqlWrk <> "")
 				$fld->LookupFilters["s"] .= $sSqlWrk;

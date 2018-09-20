@@ -342,9 +342,51 @@ class ct04_angsuran_view extends ct04_angsuran {
 			$Security->LoadUserID();
 			$Security->UserID_Loaded();
 		}
+
+		// Get export parameters
+		$custom = "";
+		if (@$_GET["export"] <> "") {
+			$this->Export = $_GET["export"];
+			$custom = @$_GET["custom"];
+		} elseif (@$_POST["export"] <> "") {
+			$this->Export = $_POST["export"];
+			$custom = @$_POST["custom"];
+		} elseif (ew_IsHttpPost()) {
+			if (@$_POST["exporttype"] <> "")
+				$this->Export = $_POST["exporttype"];
+			$custom = @$_POST["custom"];
+		} else {
+			$this->setExportReturnUrl(ew_CurrentUrl());
+		}
+		$gsExportFile = $this->TableVar; // Get export file, used in header
+		if (@$_GET["id"] <> "") {
+			if ($gsExportFile <> "") $gsExportFile .= "_";
+			$gsExportFile .= ew_StripSlashes($_GET["id"]);
+		}
+
+		// Get custom export parameters
+		if ($this->Export <> "" && $custom <> "") {
+			$this->CustomExport = $this->Export;
+			$this->Export = "print";
+		}
+		$gsCustomExport = $this->CustomExport;
+		$gsExport = $this->Export; // Get export parameter, used in header
+
+		// Update Export URLs
+		if (defined("EW_USE_PHPEXCEL"))
+			$this->ExportExcelCustom = FALSE;
+		if ($this->ExportExcelCustom)
+			$this->ExportExcelUrl .= "&amp;custom=1";
+		if (defined("EW_USE_PHPWORD"))
+			$this->ExportWordCustom = FALSE;
+		if ($this->ExportWordCustom)
+			$this->ExportWordUrl .= "&amp;custom=1";
+		if ($this->ExportPdfCustom)
+			$this->ExportPdfUrl .= "&amp;custom=1";
 		$this->CurrentAction = (@$_GET["a"] <> "") ? $_GET["a"] : @$_POST["a_list"]; // Set up current action
-		$this->id->SetVisibility();
-		$this->id->Visible = !$this->IsAdd() && !$this->IsCopy() && !$this->IsGridAdd();
+
+		// Setup export options
+		$this->SetupExportOptions();
 		$this->pinjaman_id->SetVisibility();
 		$this->AngsuranKe->SetVisibility();
 		$this->AngsuranTanggal->SetVisibility();
@@ -353,9 +395,13 @@ class ct04_angsuran_view extends ct04_angsuran {
 		$this->AngsuranTotal->SetVisibility();
 		$this->SisaHutang->SetVisibility();
 		$this->TanggalBayar->SetVisibility();
-		$this->TotalDenda->SetVisibility();
 		$this->Terlambat->SetVisibility();
+		$this->TotalDenda->SetVisibility();
+		$this->Bayar_Titipan->SetVisibility();
+		$this->Bayar_Non_Titipan->SetVisibility();
+		$this->Bayar_Total->SetVisibility();
 		$this->Keterangan->SetVisibility();
+		$this->pinjamantitipan_id->SetVisibility();
 
 		// Global Page Loading event (in userfn*.php)
 		Page_Loading();
@@ -433,6 +479,7 @@ class ct04_angsuran_view extends ct04_angsuran {
 	var $StopRec;
 	var $TotalRecs = 0;
 	var $RecRange = 10;
+	var $Pager;
 	var $RecCnt;
 	var $RecKey = array();
 	var $IsModal = FALSE;
@@ -449,6 +496,9 @@ class ct04_angsuran_view extends ct04_angsuran {
 		$this->IsModal = (@$_GET["modal"] == "1" || @$_POST["modal"] == "1");
 		if ($this->IsModal)
 			$gbSkipHeaderFooter = TRUE;
+
+		// Load current record
+		$bLoadCurrentRecord = FALSE;
 		$sReturnUrl = "";
 		$bMatchRecord = FALSE;
 
@@ -462,18 +512,54 @@ class ct04_angsuran_view extends ct04_angsuran {
 				$this->id->setFormValue($_POST["id"]);
 				$this->RecKey["id"] = $this->id->FormValue;
 			} else {
-				$sReturnUrl = "t04_angsuranlist.php"; // Return to list
+				$bLoadCurrentRecord = TRUE;
 			}
 
 			// Get action
 			$this->CurrentAction = "I"; // Display form
 			switch ($this->CurrentAction) {
 				case "I": // Get a record to display
-					if (!$this->LoadRow()) { // Load record based on key
+					$this->StartRec = 1; // Initialize start position
+					if ($this->Recordset = $this->LoadRecordset()) // Load records
+						$this->TotalRecs = $this->Recordset->RecordCount(); // Get record count
+					if ($this->TotalRecs <= 0) { // No record found
+						if ($this->getSuccessMessage() == "" && $this->getFailureMessage() == "")
+							$this->setFailureMessage($Language->Phrase("NoRecord")); // Set no record message
+						$this->Page_Terminate("t04_angsuranlist.php"); // Return to list page
+					} elseif ($bLoadCurrentRecord) { // Load current record position
+						$this->SetUpStartRec(); // Set up start record position
+
+						// Point to current record
+						if (intval($this->StartRec) <= intval($this->TotalRecs)) {
+							$bMatchRecord = TRUE;
+							$this->Recordset->Move($this->StartRec-1);
+						}
+					} else { // Match key values
+						while (!$this->Recordset->EOF) {
+							if (strval($this->id->CurrentValue) == strval($this->Recordset->fields('id'))) {
+								$this->setStartRecordNumber($this->StartRec); // Save record position
+								$bMatchRecord = TRUE;
+								break;
+							} else {
+								$this->StartRec++;
+								$this->Recordset->MoveNext();
+							}
+						}
+					}
+					if (!$bMatchRecord) {
 						if ($this->getSuccessMessage() == "" && $this->getFailureMessage() == "")
 							$this->setFailureMessage($Language->Phrase("NoRecord")); // Set no record message
 						$sReturnUrl = "t04_angsuranlist.php"; // No matching record, return to list
+					} else {
+						$this->LoadRowValues($this->Recordset); // Load row values
 					}
+			}
+
+			// Export data only
+			if ($this->CustomExport == "" && in_array($this->Export, array("html","word","excel","xml","csv","email","pdf"))) {
+				$this->ExportData();
+				$this->Page_Terminate(); // Terminate response
+				exit();
 			}
 		} else {
 			$sReturnUrl = "t04_angsuranlist.php"; // Not page request, return to list
@@ -496,6 +582,15 @@ class ct04_angsuran_view extends ct04_angsuran {
 		global $Language, $Security;
 		$options = &$this->OtherOptions;
 		$option = &$options["action"];
+
+		// Add
+		$item = &$option->Add("add");
+		$addcaption = ew_HtmlTitle($Language->Phrase("ViewPageAddLink"));
+		if ($this->IsModal) // Modal
+			$item->Body = "<a class=\"ewAction ewAdd\" title=\"" . $addcaption . "\" data-caption=\"" . $addcaption . "\" href=\"javascript:void(0);\" onclick=\"ew_ModalDialogShow({lnk:this,url:'" . ew_HtmlEncode($this->AddUrl) . "',caption:'" . $addcaption . "'});\">" . $Language->Phrase("ViewPageAddLink") . "</a>";
+		else
+			$item->Body = "<a class=\"ewAction ewAdd\" title=\"" . $addcaption . "\" data-caption=\"" . $addcaption . "\" href=\"" . ew_HtmlEncode($this->AddUrl) . "\">" . $Language->Phrase("ViewPageAddLink") . "</a>";
+		$item->Visible = ($this->AddUrl <> "" && $Security->CanAdd());
 
 		// Edit
 		$item = &$option->Add("edit");
@@ -553,6 +648,32 @@ class ct04_angsuran_view extends ct04_angsuran {
 		}
 	}
 
+	// Load recordset
+	function LoadRecordset($offset = -1, $rowcnt = -1) {
+
+		// Load List page SQL
+		$sSql = $this->SelectSQL();
+		$conn = &$this->Connection();
+
+		// Load recordset
+		$dbtype = ew_GetConnectionType($this->DBID);
+		if ($this->UseSelectLimit) {
+			$conn->raiseErrorFn = $GLOBALS["EW_ERROR_FN"];
+			if ($dbtype == "MSSQL") {
+				$rs = $conn->SelectLimit($sSql, $rowcnt, $offset, array("_hasOrderBy" => trim($this->getOrderBy()) || trim($this->getSessionOrderBy())));
+			} else {
+				$rs = $conn->SelectLimit($sSql, $rowcnt, $offset);
+			}
+			$conn->raiseErrorFn = '';
+		} else {
+			$rs = ew_LoadRecordset($sSql, $conn);
+		}
+
+		// Call Recordset Selected event
+		$this->Recordset_Selected($rs);
+		return $rs;
+	}
+
 	// Load row based on key values
 	function LoadRow() {
 		global $Security, $Language;
@@ -592,9 +713,13 @@ class ct04_angsuran_view extends ct04_angsuran {
 		$this->AngsuranTotal->setDbValue($rs->fields('AngsuranTotal'));
 		$this->SisaHutang->setDbValue($rs->fields('SisaHutang'));
 		$this->TanggalBayar->setDbValue($rs->fields('TanggalBayar'));
-		$this->TotalDenda->setDbValue($rs->fields('TotalDenda'));
 		$this->Terlambat->setDbValue($rs->fields('Terlambat'));
+		$this->TotalDenda->setDbValue($rs->fields('TotalDenda'));
+		$this->Bayar_Titipan->setDbValue($rs->fields('Bayar_Titipan'));
+		$this->Bayar_Non_Titipan->setDbValue($rs->fields('Bayar_Non_Titipan'));
+		$this->Bayar_Total->setDbValue($rs->fields('Bayar_Total'));
 		$this->Keterangan->setDbValue($rs->fields('Keterangan'));
+		$this->pinjamantitipan_id->setDbValue($rs->fields('pinjamantitipan_id'));
 	}
 
 	// Load DbValue from recordset
@@ -610,9 +735,13 @@ class ct04_angsuran_view extends ct04_angsuran {
 		$this->AngsuranTotal->DbValue = $row['AngsuranTotal'];
 		$this->SisaHutang->DbValue = $row['SisaHutang'];
 		$this->TanggalBayar->DbValue = $row['TanggalBayar'];
-		$this->TotalDenda->DbValue = $row['TotalDenda'];
 		$this->Terlambat->DbValue = $row['Terlambat'];
+		$this->TotalDenda->DbValue = $row['TotalDenda'];
+		$this->Bayar_Titipan->DbValue = $row['Bayar_Titipan'];
+		$this->Bayar_Non_Titipan->DbValue = $row['Bayar_Non_Titipan'];
+		$this->Bayar_Total->DbValue = $row['Bayar_Total'];
 		$this->Keterangan->DbValue = $row['Keterangan'];
+		$this->pinjamantitipan_id->DbValue = $row['pinjamantitipan_id'];
 	}
 
 	// Render row values based on field settings
@@ -647,6 +776,18 @@ class ct04_angsuran_view extends ct04_angsuran {
 		if ($this->TotalDenda->FormValue == $this->TotalDenda->CurrentValue && is_numeric(ew_StrToFloat($this->TotalDenda->CurrentValue)))
 			$this->TotalDenda->CurrentValue = ew_StrToFloat($this->TotalDenda->CurrentValue);
 
+		// Convert decimal values if posted back
+		if ($this->Bayar_Titipan->FormValue == $this->Bayar_Titipan->CurrentValue && is_numeric(ew_StrToFloat($this->Bayar_Titipan->CurrentValue)))
+			$this->Bayar_Titipan->CurrentValue = ew_StrToFloat($this->Bayar_Titipan->CurrentValue);
+
+		// Convert decimal values if posted back
+		if ($this->Bayar_Non_Titipan->FormValue == $this->Bayar_Non_Titipan->CurrentValue && is_numeric(ew_StrToFloat($this->Bayar_Non_Titipan->CurrentValue)))
+			$this->Bayar_Non_Titipan->CurrentValue = ew_StrToFloat($this->Bayar_Non_Titipan->CurrentValue);
+
+		// Convert decimal values if posted back
+		if ($this->Bayar_Total->FormValue == $this->Bayar_Total->CurrentValue && is_numeric(ew_StrToFloat($this->Bayar_Total->CurrentValue)))
+			$this->Bayar_Total->CurrentValue = ew_StrToFloat($this->Bayar_Total->CurrentValue);
+
 		// Call Row_Rendering event
 		$this->Row_Rendering();
 
@@ -660,9 +801,13 @@ class ct04_angsuran_view extends ct04_angsuran {
 		// AngsuranTotal
 		// SisaHutang
 		// TanggalBayar
-		// TotalDenda
 		// Terlambat
+		// TotalDenda
+		// Bayar_Titipan
+		// Bayar_Non_Titipan
+		// Bayar_Total
 		// Keterangan
+		// pinjamantitipan_id
 
 		if ($this->RowType == EW_ROWTYPE_VIEW) { // View row
 
@@ -671,7 +816,6 @@ class ct04_angsuran_view extends ct04_angsuran {
 		$this->id->ViewCustomAttributes = "";
 
 		// pinjaman_id
-		$this->pinjaman_id->ViewValue = $this->pinjaman_id->CurrentValue;
 		$this->pinjaman_id->ViewCustomAttributes = "";
 
 		// AngsuranKe
@@ -680,46 +824,92 @@ class ct04_angsuran_view extends ct04_angsuran {
 
 		// AngsuranTanggal
 		$this->AngsuranTanggal->ViewValue = $this->AngsuranTanggal->CurrentValue;
-		$this->AngsuranTanggal->ViewValue = ew_FormatDateTime($this->AngsuranTanggal->ViewValue, 0);
+		$this->AngsuranTanggal->ViewValue = ew_FormatDateTime($this->AngsuranTanggal->ViewValue, 7);
 		$this->AngsuranTanggal->ViewCustomAttributes = "";
 
 		// AngsuranPokok
 		$this->AngsuranPokok->ViewValue = $this->AngsuranPokok->CurrentValue;
+		$this->AngsuranPokok->ViewValue = ew_FormatNumber($this->AngsuranPokok->ViewValue, 2, -2, -2, -2);
+		$this->AngsuranPokok->CellCssStyle .= "text-align: right;";
 		$this->AngsuranPokok->ViewCustomAttributes = "";
 
 		// AngsuranBunga
 		$this->AngsuranBunga->ViewValue = $this->AngsuranBunga->CurrentValue;
+		$this->AngsuranBunga->ViewValue = ew_FormatNumber($this->AngsuranBunga->ViewValue, 2, -2, -2, -2);
+		$this->AngsuranBunga->CellCssStyle .= "text-align: right;";
 		$this->AngsuranBunga->ViewCustomAttributes = "";
 
 		// AngsuranTotal
 		$this->AngsuranTotal->ViewValue = $this->AngsuranTotal->CurrentValue;
+		$this->AngsuranTotal->ViewValue = ew_FormatNumber($this->AngsuranTotal->ViewValue, 2, -2, -2, -2);
+		$this->AngsuranTotal->CellCssStyle .= "text-align: right;";
 		$this->AngsuranTotal->ViewCustomAttributes = "";
 
 		// SisaHutang
 		$this->SisaHutang->ViewValue = $this->SisaHutang->CurrentValue;
+		$this->SisaHutang->ViewValue = ew_FormatNumber($this->SisaHutang->ViewValue, 2, -2, -2, -2);
+		$this->SisaHutang->CellCssStyle .= "text-align: right;";
 		$this->SisaHutang->ViewCustomAttributes = "";
 
 		// TanggalBayar
 		$this->TanggalBayar->ViewValue = $this->TanggalBayar->CurrentValue;
-		$this->TanggalBayar->ViewValue = ew_FormatDateTime($this->TanggalBayar->ViewValue, 0);
+		$this->TanggalBayar->ViewValue = ew_FormatDateTime($this->TanggalBayar->ViewValue, 7);
 		$this->TanggalBayar->ViewCustomAttributes = "";
-
-		// TotalDenda
-		$this->TotalDenda->ViewValue = $this->TotalDenda->CurrentValue;
-		$this->TotalDenda->ViewCustomAttributes = "";
 
 		// Terlambat
 		$this->Terlambat->ViewValue = $this->Terlambat->CurrentValue;
 		$this->Terlambat->ViewCustomAttributes = "";
 
+		// TotalDenda
+		$this->TotalDenda->ViewValue = $this->TotalDenda->CurrentValue;
+		$this->TotalDenda->ViewValue = ew_FormatNumber($this->TotalDenda->ViewValue, 2, -2, -2, -2);
+		$this->TotalDenda->CellCssStyle .= "text-align: right;";
+		$this->TotalDenda->ViewCustomAttributes = "";
+
+		// Bayar_Titipan
+		$this->Bayar_Titipan->ViewValue = $this->Bayar_Titipan->CurrentValue;
+		$this->Bayar_Titipan->ViewValue = ew_FormatNumber($this->Bayar_Titipan->ViewValue, 2, -2, -2, -2);
+		$this->Bayar_Titipan->CellCssStyle .= "text-align: right;";
+		$this->Bayar_Titipan->ViewCustomAttributes = "";
+
+		// Bayar_Non_Titipan
+		$this->Bayar_Non_Titipan->ViewValue = $this->Bayar_Non_Titipan->CurrentValue;
+		$this->Bayar_Non_Titipan->ViewValue = ew_FormatNumber($this->Bayar_Non_Titipan->ViewValue, 2, -2, -2, -2);
+		$this->Bayar_Non_Titipan->CellCssStyle .= "text-align: right;";
+		$this->Bayar_Non_Titipan->ViewCustomAttributes = "";
+
+		// Bayar_Total
+		$this->Bayar_Total->ViewValue = $this->Bayar_Total->CurrentValue;
+		$this->Bayar_Total->ViewValue = ew_FormatNumber($this->Bayar_Total->ViewValue, 2, -2, -2, -2);
+		$this->Bayar_Total->CellCssStyle .= "text-align: right;";
+		$this->Bayar_Total->ViewCustomAttributes = "";
+
 		// Keterangan
 		$this->Keterangan->ViewValue = $this->Keterangan->CurrentValue;
 		$this->Keterangan->ViewCustomAttributes = "";
 
-			// id
-			$this->id->LinkCustomAttributes = "";
-			$this->id->HrefValue = "";
-			$this->id->TooltipValue = "";
+		// pinjamantitipan_id
+		if (strval($this->pinjamantitipan_id->CurrentValue) <> "") {
+			$sFilterWrk = "`id`" . ew_SearchString("=", $this->pinjamantitipan_id->CurrentValue, EW_DATATYPE_NUMBER, "");
+		$sSqlWrk = "SELECT `id`, `Sisa` AS `DispFld`, '' AS `Disp2Fld`, '' AS `Disp3Fld`, '' AS `Disp4Fld` FROM `t06_pinjamantitipan`";
+		$sWhereWrk = "";
+		$this->pinjamantitipan_id->LookupFilters = array();
+		ew_AddFilter($sWhereWrk, $sFilterWrk);
+		$this->Lookup_Selecting($this->pinjamantitipan_id, $sWhereWrk); // Call Lookup selecting
+		if ($sWhereWrk <> "") $sSqlWrk .= " WHERE " . $sWhereWrk;
+			$rswrk = Conn()->Execute($sSqlWrk);
+			if ($rswrk && !$rswrk->EOF) { // Lookup values found
+				$arwrk = array();
+				$arwrk[1] = ew_FormatNumber($rswrk->fields('DispFld'), 2, -2, -2, -2);
+				$this->pinjamantitipan_id->ViewValue = $this->pinjamantitipan_id->DisplayValue($arwrk);
+				$rswrk->Close();
+			} else {
+				$this->pinjamantitipan_id->ViewValue = $this->pinjamantitipan_id->CurrentValue;
+			}
+		} else {
+			$this->pinjamantitipan_id->ViewValue = NULL;
+		}
+		$this->pinjamantitipan_id->ViewCustomAttributes = "";
 
 			// pinjaman_id
 			$this->pinjaman_id->LinkCustomAttributes = "";
@@ -761,25 +951,292 @@ class ct04_angsuran_view extends ct04_angsuran {
 			$this->TanggalBayar->HrefValue = "";
 			$this->TanggalBayar->TooltipValue = "";
 
-			// TotalDenda
-			$this->TotalDenda->LinkCustomAttributes = "";
-			$this->TotalDenda->HrefValue = "";
-			$this->TotalDenda->TooltipValue = "";
-
 			// Terlambat
 			$this->Terlambat->LinkCustomAttributes = "";
 			$this->Terlambat->HrefValue = "";
 			$this->Terlambat->TooltipValue = "";
 
+			// TotalDenda
+			$this->TotalDenda->LinkCustomAttributes = "";
+			$this->TotalDenda->HrefValue = "";
+			$this->TotalDenda->TooltipValue = "";
+
+			// Bayar_Titipan
+			$this->Bayar_Titipan->LinkCustomAttributes = "";
+			$this->Bayar_Titipan->HrefValue = "";
+			$this->Bayar_Titipan->TooltipValue = "";
+
+			// Bayar_Non_Titipan
+			$this->Bayar_Non_Titipan->LinkCustomAttributes = "";
+			$this->Bayar_Non_Titipan->HrefValue = "";
+			$this->Bayar_Non_Titipan->TooltipValue = "";
+
+			// Bayar_Total
+			$this->Bayar_Total->LinkCustomAttributes = "";
+			$this->Bayar_Total->HrefValue = "";
+			$this->Bayar_Total->TooltipValue = "";
+
 			// Keterangan
 			$this->Keterangan->LinkCustomAttributes = "";
 			$this->Keterangan->HrefValue = "";
 			$this->Keterangan->TooltipValue = "";
+
+			// pinjamantitipan_id
+			$this->pinjamantitipan_id->LinkCustomAttributes = "";
+			$this->pinjamantitipan_id->HrefValue = "";
+			$this->pinjamantitipan_id->TooltipValue = "";
 		}
 
 		// Call Row Rendered event
 		if ($this->RowType <> EW_ROWTYPE_AGGREGATEINIT)
 			$this->Row_Rendered();
+	}
+
+	// Set up export options
+	function SetupExportOptions() {
+		global $Language;
+
+		// Printer friendly
+		$item = &$this->ExportOptions->Add("print");
+		$item->Body = "<a href=\"" . $this->ExportPrintUrl . "\" class=\"ewExportLink ewPrint\" title=\"" . ew_HtmlEncode($Language->Phrase("PrinterFriendlyText")) . "\" data-caption=\"" . ew_HtmlEncode($Language->Phrase("PrinterFriendlyText")) . "\">" . $Language->Phrase("PrinterFriendly") . "</a>";
+		$item->Visible = TRUE;
+
+		// Export to Excel
+		$item = &$this->ExportOptions->Add("excel");
+		$item->Body = "<a href=\"" . $this->ExportExcelUrl . "\" class=\"ewExportLink ewExcel\" title=\"" . ew_HtmlEncode($Language->Phrase("ExportToExcelText")) . "\" data-caption=\"" . ew_HtmlEncode($Language->Phrase("ExportToExcelText")) . "\">" . $Language->Phrase("ExportToExcel") . "</a>";
+		$item->Visible = TRUE;
+
+		// Export to Word
+		$item = &$this->ExportOptions->Add("word");
+		$item->Body = "<a href=\"" . $this->ExportWordUrl . "\" class=\"ewExportLink ewWord\" title=\"" . ew_HtmlEncode($Language->Phrase("ExportToWordText")) . "\" data-caption=\"" . ew_HtmlEncode($Language->Phrase("ExportToWordText")) . "\">" . $Language->Phrase("ExportToWord") . "</a>";
+		$item->Visible = TRUE;
+
+		// Export to Html
+		$item = &$this->ExportOptions->Add("html");
+		$item->Body = "<a href=\"" . $this->ExportHtmlUrl . "\" class=\"ewExportLink ewHtml\" title=\"" . ew_HtmlEncode($Language->Phrase("ExportToHtmlText")) . "\" data-caption=\"" . ew_HtmlEncode($Language->Phrase("ExportToHtmlText")) . "\">" . $Language->Phrase("ExportToHtml") . "</a>";
+		$item->Visible = TRUE;
+
+		// Export to Xml
+		$item = &$this->ExportOptions->Add("xml");
+		$item->Body = "<a href=\"" . $this->ExportXmlUrl . "\" class=\"ewExportLink ewXml\" title=\"" . ew_HtmlEncode($Language->Phrase("ExportToXmlText")) . "\" data-caption=\"" . ew_HtmlEncode($Language->Phrase("ExportToXmlText")) . "\">" . $Language->Phrase("ExportToXml") . "</a>";
+		$item->Visible = TRUE;
+
+		// Export to Csv
+		$item = &$this->ExportOptions->Add("csv");
+		$item->Body = "<a href=\"" . $this->ExportCsvUrl . "\" class=\"ewExportLink ewCsv\" title=\"" . ew_HtmlEncode($Language->Phrase("ExportToCsvText")) . "\" data-caption=\"" . ew_HtmlEncode($Language->Phrase("ExportToCsvText")) . "\">" . $Language->Phrase("ExportToCsv") . "</a>";
+		$item->Visible = TRUE;
+
+		// Export to Pdf
+		$item = &$this->ExportOptions->Add("pdf");
+		$item->Body = "<a href=\"" . $this->ExportPdfUrl . "\" class=\"ewExportLink ewPdf\" title=\"" . ew_HtmlEncode($Language->Phrase("ExportToPDFText")) . "\" data-caption=\"" . ew_HtmlEncode($Language->Phrase("ExportToPDFText")) . "\">" . $Language->Phrase("ExportToPDF") . "</a>";
+		$item->Visible = TRUE;
+
+		// Export to Email
+		$item = &$this->ExportOptions->Add("email");
+		$url = "";
+		$item->Body = "<button id=\"emf_t04_angsuran\" class=\"ewExportLink ewEmail\" title=\"" . $Language->Phrase("ExportToEmailText") . "\" data-caption=\"" . $Language->Phrase("ExportToEmailText") . "\" onclick=\"ew_EmailDialogShow({lnk:'emf_t04_angsuran',hdr:ewLanguage.Phrase('ExportToEmailText'),f:document.ft04_angsuranview,key:" . ew_ArrayToJsonAttr($this->RecKey) . ",sel:false" . $url . "});\">" . $Language->Phrase("ExportToEmail") . "</button>";
+		$item->Visible = TRUE;
+
+		// Drop down button for export
+		$this->ExportOptions->UseButtonGroup = TRUE;
+		$this->ExportOptions->UseImageAndText = TRUE;
+		$this->ExportOptions->UseDropDownButton = TRUE;
+		if ($this->ExportOptions->UseButtonGroup && ew_IsMobile())
+			$this->ExportOptions->UseDropDownButton = TRUE;
+		$this->ExportOptions->DropDownButtonPhrase = $Language->Phrase("ButtonExport");
+
+		// Add group option item
+		$item = &$this->ExportOptions->Add($this->ExportOptions->GroupOptionName);
+		$item->Body = "";
+		$item->Visible = FALSE;
+
+		// Hide options for export
+		if ($this->Export <> "")
+			$this->ExportOptions->HideAllOptions();
+	}
+
+	// Export data in HTML/CSV/Word/Excel/XML/Email/PDF format
+	function ExportData() {
+		$utf8 = (strtolower(EW_CHARSET) == "utf-8");
+		$bSelectLimit = FALSE;
+
+		// Load recordset
+		if ($bSelectLimit) {
+			$this->TotalRecs = $this->SelectRecordCount();
+		} else {
+			if (!$this->Recordset)
+				$this->Recordset = $this->LoadRecordset();
+			$rs = &$this->Recordset;
+			if ($rs)
+				$this->TotalRecs = $rs->RecordCount();
+		}
+		$this->StartRec = 1;
+		$this->SetUpStartRec(); // Set up start record position
+
+		// Set the last record to display
+		if ($this->DisplayRecs <= 0) {
+			$this->StopRec = $this->TotalRecs;
+		} else {
+			$this->StopRec = $this->StartRec + $this->DisplayRecs - 1;
+		}
+		if (!$rs) {
+			header("Content-Type:"); // Remove header
+			header("Content-Disposition:");
+			$this->ShowMessage();
+			return;
+		}
+		$this->ExportDoc = ew_ExportDocument($this, "v");
+		$Doc = &$this->ExportDoc;
+		if ($bSelectLimit) {
+			$this->StartRec = 1;
+			$this->StopRec = $this->DisplayRecs <= 0 ? $this->TotalRecs : $this->DisplayRecs;
+		} else {
+
+			//$this->StartRec = $this->StartRec;
+			//$this->StopRec = $this->StopRec;
+
+		}
+
+		// Call Page Exporting server event
+		$this->ExportDoc->ExportCustom = !$this->Page_Exporting();
+		$ParentTable = "";
+		$sHeader = $this->PageHeader;
+		$this->Page_DataRendering($sHeader);
+		$Doc->Text .= $sHeader;
+		$this->ExportDocument($Doc, $rs, $this->StartRec, $this->StopRec, "view");
+		$sFooter = $this->PageFooter;
+		$this->Page_DataRendered($sFooter);
+		$Doc->Text .= $sFooter;
+
+		// Close recordset
+		$rs->Close();
+
+		// Call Page Exported server event
+		$this->Page_Exported();
+
+		// Export header and footer
+		$Doc->ExportHeaderAndFooter();
+
+		// Clean output buffer
+		if (!EW_DEBUG_ENABLED && ob_get_length())
+			ob_end_clean();
+
+		// Write debug message if enabled
+		if (EW_DEBUG_ENABLED && $this->Export <> "pdf")
+			echo ew_DebugMsg();
+
+		// Output data
+		if ($this->Export == "email") {
+			echo $this->ExportEmail($Doc->Text);
+		} else {
+			$Doc->Export();
+		}
+	}
+
+	// Export email
+	function ExportEmail($EmailContent) {
+		global $gTmpImages, $Language;
+		$sSender = @$_POST["sender"];
+		$sRecipient = @$_POST["recipient"];
+		$sCc = @$_POST["cc"];
+		$sBcc = @$_POST["bcc"];
+		$sContentType = @$_POST["contenttype"];
+
+		// Subject
+		$sSubject = ew_StripSlashes(@$_POST["subject"]);
+		$sEmailSubject = $sSubject;
+
+		// Message
+		$sContent = ew_StripSlashes(@$_POST["message"]);
+		$sEmailMessage = $sContent;
+
+		// Check sender
+		if ($sSender == "") {
+			return "<p class=\"text-danger\">" . $Language->Phrase("EnterSenderEmail") . "</p>";
+		}
+		if (!ew_CheckEmail($sSender)) {
+			return "<p class=\"text-danger\">" . $Language->Phrase("EnterProperSenderEmail") . "</p>";
+		}
+
+		// Check recipient
+		if (!ew_CheckEmailList($sRecipient, EW_MAX_EMAIL_RECIPIENT)) {
+			return "<p class=\"text-danger\">" . $Language->Phrase("EnterProperRecipientEmail") . "</p>";
+		}
+
+		// Check cc
+		if (!ew_CheckEmailList($sCc, EW_MAX_EMAIL_RECIPIENT)) {
+			return "<p class=\"text-danger\">" . $Language->Phrase("EnterProperCcEmail") . "</p>";
+		}
+
+		// Check bcc
+		if (!ew_CheckEmailList($sBcc, EW_MAX_EMAIL_RECIPIENT)) {
+			return "<p class=\"text-danger\">" . $Language->Phrase("EnterProperBccEmail") . "</p>";
+		}
+
+		// Check email sent count
+		if (!isset($_SESSION[EW_EXPORT_EMAIL_COUNTER]))
+			$_SESSION[EW_EXPORT_EMAIL_COUNTER] = 0;
+		if (intval($_SESSION[EW_EXPORT_EMAIL_COUNTER]) > EW_MAX_EMAIL_SENT_COUNT) {
+			return "<p class=\"text-danger\">" . $Language->Phrase("ExceedMaxEmailExport") . "</p>";
+		}
+
+		// Send email
+		$Email = new cEmail();
+		$Email->Sender = $sSender; // Sender
+		$Email->Recipient = $sRecipient; // Recipient
+		$Email->Cc = $sCc; // Cc
+		$Email->Bcc = $sBcc; // Bcc
+		$Email->Subject = $sEmailSubject; // Subject
+		$Email->Format = ($sContentType == "url") ? "text" : "html";
+		if ($sEmailMessage <> "") {
+			$sEmailMessage = ew_RemoveXSS($sEmailMessage);
+			$sEmailMessage .= ($sContentType == "url") ? "\r\n\r\n" : "<br><br>";
+		}
+		if ($sContentType == "url") {
+			$sUrl = ew_ConvertFullUrl(ew_CurrentPage() . "?" . $this->ExportQueryString());
+			$sEmailMessage .= $sUrl; // Send URL only
+		} else {
+			foreach ($gTmpImages as $tmpimage)
+				$Email->AddEmbeddedImage($tmpimage);
+			$sEmailMessage .= ew_CleanEmailContent($EmailContent); // Send HTML
+		}
+		$Email->Content = $sEmailMessage; // Content
+		$EventArgs = array();
+		if ($this->Recordset) {
+			$this->RecCnt = $this->StartRec - 1;
+			$this->Recordset->MoveFirst();
+			if ($this->StartRec > 1)
+				$this->Recordset->Move($this->StartRec - 1);
+			$EventArgs["rs"] = &$this->Recordset;
+		}
+		$bEmailSent = FALSE;
+		if ($this->Email_Sending($Email, $EventArgs))
+			$bEmailSent = $Email->Send();
+
+		// Check email sent status
+		if ($bEmailSent) {
+
+			// Update email sent count
+			$_SESSION[EW_EXPORT_EMAIL_COUNTER]++;
+
+			// Sent email success
+			return "<p class=\"text-success\">" . $Language->Phrase("SendEmailSuccess") . "</p>"; // Set up success message
+		} else {
+
+			// Sent email failure
+			return "<p class=\"text-danger\">" . $Email->SendErrDescription . "</p>";
+		}
+	}
+
+	// Export QueryString
+	function ExportQueryString() {
+
+		// Initialize
+		$sQry = "export=html";
+
+		// Add record key QueryString
+		$sQry .= "&" . substr($this->KeyUrl("", ""), 1);
+		return $sQry;
 	}
 
 	// Set up master/detail based on QueryString
@@ -975,6 +1432,7 @@ Page_Rendering();
 $t04_angsuran_view->Page_Render();
 ?>
 <?php include_once "header.php" ?>
+<?php if ($t04_angsuran->Export == "") { ?>
 <script type="text/javascript">
 
 // Form object
@@ -997,16 +1455,21 @@ ft04_angsuranview.ValidateRequired = false;
 <?php } ?>
 
 // Dynamic selection lists
-// Form object for search
+ft04_angsuranview.Lists["x_pinjamantitipan_id"] = {"LinkField":"x_id","Ajax":true,"AutoFill":false,"DisplayFields":["x_Sisa","","",""],"ParentFields":[],"ChildFields":[],"FilterFields":[],"Options":[],"Template":"","LinkTable":"t06_pinjamantitipan"};
 
+// Form object for search
 </script>
 <script type="text/javascript">
 
 // Write your client script here, no need to add script tags.
 </script>
+<?php } ?>
+<?php if ($t04_angsuran->Export == "") { ?>
 <div class="ewToolbar">
 <?php if (!$t04_angsuran_view->IsModal) { ?>
+<?php if ($t04_angsuran->Export == "") { ?>
 <?php $Breadcrumb->Render(); ?>
+<?php } ?>
 <?php } ?>
 <?php $t04_angsuran_view->ExportOptions->Render("body") ?>
 <?php
@@ -1014,14 +1477,64 @@ ft04_angsuranview.ValidateRequired = false;
 		$option->Render("body");
 ?>
 <?php if (!$t04_angsuran_view->IsModal) { ?>
+<?php if ($t04_angsuran->Export == "") { ?>
 <?php echo $Language->SelectionForm(); ?>
+<?php } ?>
 <?php } ?>
 <div class="clearfix"></div>
 </div>
+<?php } ?>
 <?php $t04_angsuran_view->ShowPageHeader(); ?>
 <?php
 $t04_angsuran_view->ShowMessage();
 ?>
+<?php if (!$t04_angsuran_view->IsModal) { ?>
+<?php if ($t04_angsuran->Export == "") { ?>
+<form name="ewPagerForm" class="form-inline ewForm ewPagerForm" action="<?php echo ew_CurrentPage() ?>">
+<?php if (!isset($t04_angsuran_view->Pager)) $t04_angsuran_view->Pager = new cPrevNextPager($t04_angsuran_view->StartRec, $t04_angsuran_view->DisplayRecs, $t04_angsuran_view->TotalRecs) ?>
+<?php if ($t04_angsuran_view->Pager->RecordCount > 0 && $t04_angsuran_view->Pager->Visible) { ?>
+<div class="ewPager">
+<span><?php echo $Language->Phrase("Page") ?>&nbsp;</span>
+<div class="ewPrevNext"><div class="input-group">
+<div class="input-group-btn">
+<!--first page button-->
+	<?php if ($t04_angsuran_view->Pager->FirstButton->Enabled) { ?>
+	<a class="btn btn-default btn-sm" title="<?php echo $Language->Phrase("PagerFirst") ?>" href="<?php echo $t04_angsuran_view->PageUrl() ?>start=<?php echo $t04_angsuran_view->Pager->FirstButton->Start ?>"><span class="icon-first ewIcon"></span></a>
+	<?php } else { ?>
+	<a class="btn btn-default btn-sm disabled" title="<?php echo $Language->Phrase("PagerFirst") ?>"><span class="icon-first ewIcon"></span></a>
+	<?php } ?>
+<!--previous page button-->
+	<?php if ($t04_angsuran_view->Pager->PrevButton->Enabled) { ?>
+	<a class="btn btn-default btn-sm" title="<?php echo $Language->Phrase("PagerPrevious") ?>" href="<?php echo $t04_angsuran_view->PageUrl() ?>start=<?php echo $t04_angsuran_view->Pager->PrevButton->Start ?>"><span class="icon-prev ewIcon"></span></a>
+	<?php } else { ?>
+	<a class="btn btn-default btn-sm disabled" title="<?php echo $Language->Phrase("PagerPrevious") ?>"><span class="icon-prev ewIcon"></span></a>
+	<?php } ?>
+</div>
+<!--current page number-->
+	<input class="form-control input-sm" type="text" name="<?php echo EW_TABLE_PAGE_NO ?>" value="<?php echo $t04_angsuran_view->Pager->CurrentPage ?>">
+<div class="input-group-btn">
+<!--next page button-->
+	<?php if ($t04_angsuran_view->Pager->NextButton->Enabled) { ?>
+	<a class="btn btn-default btn-sm" title="<?php echo $Language->Phrase("PagerNext") ?>" href="<?php echo $t04_angsuran_view->PageUrl() ?>start=<?php echo $t04_angsuran_view->Pager->NextButton->Start ?>"><span class="icon-next ewIcon"></span></a>
+	<?php } else { ?>
+	<a class="btn btn-default btn-sm disabled" title="<?php echo $Language->Phrase("PagerNext") ?>"><span class="icon-next ewIcon"></span></a>
+	<?php } ?>
+<!--last page button-->
+	<?php if ($t04_angsuran_view->Pager->LastButton->Enabled) { ?>
+	<a class="btn btn-default btn-sm" title="<?php echo $Language->Phrase("PagerLast") ?>" href="<?php echo $t04_angsuran_view->PageUrl() ?>start=<?php echo $t04_angsuran_view->Pager->LastButton->Start ?>"><span class="icon-last ewIcon"></span></a>
+	<?php } else { ?>
+	<a class="btn btn-default btn-sm disabled" title="<?php echo $Language->Phrase("PagerLast") ?>"><span class="icon-last ewIcon"></span></a>
+	<?php } ?>
+</div>
+</div>
+</div>
+<span>&nbsp;<?php echo $Language->Phrase("of") ?>&nbsp;<?php echo $t04_angsuran_view->Pager->PageCount ?></span>
+</div>
+<?php } ?>
+<div class="clearfix"></div>
+</form>
+<?php } ?>
+<?php } ?>
 <form name="ft04_angsuranview" id="ft04_angsuranview" class="form-inline ewForm ewViewForm" action="<?php echo ew_CurrentPage() ?>" method="post">
 <?php if ($t04_angsuran_view->CheckToken) { ?>
 <input type="hidden" name="<?php echo EW_TOKEN_NAME ?>" value="<?php echo $t04_angsuran_view->Token ?>">
@@ -1031,17 +1544,6 @@ $t04_angsuran_view->ShowMessage();
 <input type="hidden" name="modal" value="1">
 <?php } ?>
 <table class="table table-bordered table-striped ewViewTable">
-<?php if ($t04_angsuran->id->Visible) { // id ?>
-	<tr id="r_id">
-		<td><span id="elh_t04_angsuran_id"><?php echo $t04_angsuran->id->FldCaption() ?></span></td>
-		<td data-name="id"<?php echo $t04_angsuran->id->CellAttributes() ?>>
-<span id="el_t04_angsuran_id">
-<span<?php echo $t04_angsuran->id->ViewAttributes() ?>>
-<?php echo $t04_angsuran->id->ViewValue ?></span>
-</span>
-</td>
-	</tr>
-<?php } ?>
 <?php if ($t04_angsuran->pinjaman_id->Visible) { // pinjaman_id ?>
 	<tr id="r_pinjaman_id">
 		<td><span id="elh_t04_angsuran_pinjaman_id"><?php echo $t04_angsuran->pinjaman_id->FldCaption() ?></span></td>
@@ -1130,6 +1632,17 @@ $t04_angsuran_view->ShowMessage();
 </td>
 	</tr>
 <?php } ?>
+<?php if ($t04_angsuran->Terlambat->Visible) { // Terlambat ?>
+	<tr id="r_Terlambat">
+		<td><span id="elh_t04_angsuran_Terlambat"><?php echo $t04_angsuran->Terlambat->FldCaption() ?></span></td>
+		<td data-name="Terlambat"<?php echo $t04_angsuran->Terlambat->CellAttributes() ?>>
+<span id="el_t04_angsuran_Terlambat">
+<span<?php echo $t04_angsuran->Terlambat->ViewAttributes() ?>>
+<?php echo $t04_angsuran->Terlambat->ViewValue ?></span>
+</span>
+</td>
+	</tr>
+<?php } ?>
 <?php if ($t04_angsuran->TotalDenda->Visible) { // TotalDenda ?>
 	<tr id="r_TotalDenda">
 		<td><span id="elh_t04_angsuran_TotalDenda"><?php echo $t04_angsuran->TotalDenda->FldCaption() ?></span></td>
@@ -1141,13 +1654,35 @@ $t04_angsuran_view->ShowMessage();
 </td>
 	</tr>
 <?php } ?>
-<?php if ($t04_angsuran->Terlambat->Visible) { // Terlambat ?>
-	<tr id="r_Terlambat">
-		<td><span id="elh_t04_angsuran_Terlambat"><?php echo $t04_angsuran->Terlambat->FldCaption() ?></span></td>
-		<td data-name="Terlambat"<?php echo $t04_angsuran->Terlambat->CellAttributes() ?>>
-<span id="el_t04_angsuran_Terlambat">
-<span<?php echo $t04_angsuran->Terlambat->ViewAttributes() ?>>
-<?php echo $t04_angsuran->Terlambat->ViewValue ?></span>
+<?php if ($t04_angsuran->Bayar_Titipan->Visible) { // Bayar_Titipan ?>
+	<tr id="r_Bayar_Titipan">
+		<td><span id="elh_t04_angsuran_Bayar_Titipan"><?php echo $t04_angsuran->Bayar_Titipan->FldCaption() ?></span></td>
+		<td data-name="Bayar_Titipan"<?php echo $t04_angsuran->Bayar_Titipan->CellAttributes() ?>>
+<span id="el_t04_angsuran_Bayar_Titipan">
+<span<?php echo $t04_angsuran->Bayar_Titipan->ViewAttributes() ?>>
+<?php echo $t04_angsuran->Bayar_Titipan->ViewValue ?></span>
+</span>
+</td>
+	</tr>
+<?php } ?>
+<?php if ($t04_angsuran->Bayar_Non_Titipan->Visible) { // Bayar_Non_Titipan ?>
+	<tr id="r_Bayar_Non_Titipan">
+		<td><span id="elh_t04_angsuran_Bayar_Non_Titipan"><?php echo $t04_angsuran->Bayar_Non_Titipan->FldCaption() ?></span></td>
+		<td data-name="Bayar_Non_Titipan"<?php echo $t04_angsuran->Bayar_Non_Titipan->CellAttributes() ?>>
+<span id="el_t04_angsuran_Bayar_Non_Titipan">
+<span<?php echo $t04_angsuran->Bayar_Non_Titipan->ViewAttributes() ?>>
+<?php echo $t04_angsuran->Bayar_Non_Titipan->ViewValue ?></span>
+</span>
+</td>
+	</tr>
+<?php } ?>
+<?php if ($t04_angsuran->Bayar_Total->Visible) { // Bayar_Total ?>
+	<tr id="r_Bayar_Total">
+		<td><span id="elh_t04_angsuran_Bayar_Total"><?php echo $t04_angsuran->Bayar_Total->FldCaption() ?></span></td>
+		<td data-name="Bayar_Total"<?php echo $t04_angsuran->Bayar_Total->CellAttributes() ?>>
+<span id="el_t04_angsuran_Bayar_Total">
+<span<?php echo $t04_angsuran->Bayar_Total->ViewAttributes() ?>>
+<?php echo $t04_angsuran->Bayar_Total->ViewValue ?></span>
 </span>
 </td>
 	</tr>
@@ -1163,22 +1698,82 @@ $t04_angsuran_view->ShowMessage();
 </td>
 	</tr>
 <?php } ?>
+<?php if ($t04_angsuran->pinjamantitipan_id->Visible) { // pinjamantitipan_id ?>
+	<tr id="r_pinjamantitipan_id">
+		<td><span id="elh_t04_angsuran_pinjamantitipan_id"><?php echo $t04_angsuran->pinjamantitipan_id->FldCaption() ?></span></td>
+		<td data-name="pinjamantitipan_id"<?php echo $t04_angsuran->pinjamantitipan_id->CellAttributes() ?>>
+<span id="el_t04_angsuran_pinjamantitipan_id">
+<span<?php echo $t04_angsuran->pinjamantitipan_id->ViewAttributes() ?>>
+<?php echo $t04_angsuran->pinjamantitipan_id->ViewValue ?></span>
+</span>
+</td>
+	</tr>
+<?php } ?>
 </table>
+<?php if (!$t04_angsuran_view->IsModal) { ?>
+<?php if ($t04_angsuran->Export == "") { ?>
+<?php if (!isset($t04_angsuran_view->Pager)) $t04_angsuran_view->Pager = new cPrevNextPager($t04_angsuran_view->StartRec, $t04_angsuran_view->DisplayRecs, $t04_angsuran_view->TotalRecs) ?>
+<?php if ($t04_angsuran_view->Pager->RecordCount > 0 && $t04_angsuran_view->Pager->Visible) { ?>
+<div class="ewPager">
+<span><?php echo $Language->Phrase("Page") ?>&nbsp;</span>
+<div class="ewPrevNext"><div class="input-group">
+<div class="input-group-btn">
+<!--first page button-->
+	<?php if ($t04_angsuran_view->Pager->FirstButton->Enabled) { ?>
+	<a class="btn btn-default btn-sm" title="<?php echo $Language->Phrase("PagerFirst") ?>" href="<?php echo $t04_angsuran_view->PageUrl() ?>start=<?php echo $t04_angsuran_view->Pager->FirstButton->Start ?>"><span class="icon-first ewIcon"></span></a>
+	<?php } else { ?>
+	<a class="btn btn-default btn-sm disabled" title="<?php echo $Language->Phrase("PagerFirst") ?>"><span class="icon-first ewIcon"></span></a>
+	<?php } ?>
+<!--previous page button-->
+	<?php if ($t04_angsuran_view->Pager->PrevButton->Enabled) { ?>
+	<a class="btn btn-default btn-sm" title="<?php echo $Language->Phrase("PagerPrevious") ?>" href="<?php echo $t04_angsuran_view->PageUrl() ?>start=<?php echo $t04_angsuran_view->Pager->PrevButton->Start ?>"><span class="icon-prev ewIcon"></span></a>
+	<?php } else { ?>
+	<a class="btn btn-default btn-sm disabled" title="<?php echo $Language->Phrase("PagerPrevious") ?>"><span class="icon-prev ewIcon"></span></a>
+	<?php } ?>
+</div>
+<!--current page number-->
+	<input class="form-control input-sm" type="text" name="<?php echo EW_TABLE_PAGE_NO ?>" value="<?php echo $t04_angsuran_view->Pager->CurrentPage ?>">
+<div class="input-group-btn">
+<!--next page button-->
+	<?php if ($t04_angsuran_view->Pager->NextButton->Enabled) { ?>
+	<a class="btn btn-default btn-sm" title="<?php echo $Language->Phrase("PagerNext") ?>" href="<?php echo $t04_angsuran_view->PageUrl() ?>start=<?php echo $t04_angsuran_view->Pager->NextButton->Start ?>"><span class="icon-next ewIcon"></span></a>
+	<?php } else { ?>
+	<a class="btn btn-default btn-sm disabled" title="<?php echo $Language->Phrase("PagerNext") ?>"><span class="icon-next ewIcon"></span></a>
+	<?php } ?>
+<!--last page button-->
+	<?php if ($t04_angsuran_view->Pager->LastButton->Enabled) { ?>
+	<a class="btn btn-default btn-sm" title="<?php echo $Language->Phrase("PagerLast") ?>" href="<?php echo $t04_angsuran_view->PageUrl() ?>start=<?php echo $t04_angsuran_view->Pager->LastButton->Start ?>"><span class="icon-last ewIcon"></span></a>
+	<?php } else { ?>
+	<a class="btn btn-default btn-sm disabled" title="<?php echo $Language->Phrase("PagerLast") ?>"><span class="icon-last ewIcon"></span></a>
+	<?php } ?>
+</div>
+</div>
+</div>
+<span>&nbsp;<?php echo $Language->Phrase("of") ?>&nbsp;<?php echo $t04_angsuran_view->Pager->PageCount ?></span>
+</div>
+<?php } ?>
+<div class="clearfix"></div>
+<?php } ?>
+<?php } ?>
 </form>
+<?php if ($t04_angsuran->Export == "") { ?>
 <script type="text/javascript">
 ft04_angsuranview.Init();
 </script>
+<?php } ?>
 <?php
 $t04_angsuran_view->ShowPageFooter();
 if (EW_DEBUG_ENABLED)
 	echo ew_DebugMsg();
 ?>
+<?php if ($t04_angsuran->Export == "") { ?>
 <script type="text/javascript">
 
 // Write your table-specific startup script here
 // document.write("page loaded");
 
 </script>
+<?php } ?>
 <?php include_once "footer.php" ?>
 <?php
 $t04_angsuran_view->Page_Terminate();

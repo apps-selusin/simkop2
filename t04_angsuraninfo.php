@@ -67,8 +67,10 @@ class ct04_angsuran extends cTable {
 		$this->fields['id'] = &$this->id;
 
 		// pinjaman_id
-		$this->pinjaman_id = new cField('t04_angsuran', 't04_angsuran', 'x_pinjaman_id', 'pinjaman_id', '`pinjaman_id`', '`pinjaman_id`', 3, -1, FALSE, '`pinjaman_id`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXT');
+		$this->pinjaman_id = new cField('t04_angsuran', 't04_angsuran', 'x_pinjaman_id', 'pinjaman_id', '`pinjaman_id`', '`pinjaman_id`', 3, -1, FALSE, '`pinjaman_id`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'SELECT');
 		$this->pinjaman_id->Sortable = TRUE; // Allow sort
+		$this->pinjaman_id->UsePleaseSelect = TRUE; // Use PleaseSelect by default
+		$this->pinjaman_id->PleaseSelectText = $Language->Phrase("PleaseSelect"); // PleaseSelect text
 		$this->pinjaman_id->FldDefaultErrMsg = $Language->Phrase("IncorrectInteger");
 		$this->fields['pinjaman_id'] = &$this->pinjaman_id;
 
@@ -127,10 +129,8 @@ class ct04_angsuran extends cTable {
 		$this->fields['TotalDenda'] = &$this->TotalDenda;
 
 		// Bayar_Titipan
-		$this->Bayar_Titipan = new cField('t04_angsuran', 't04_angsuran', 'x_Bayar_Titipan', 'Bayar_Titipan', '`Bayar_Titipan`', '`Bayar_Titipan`', 4, -1, FALSE, '`Bayar_Titipan`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'SELECT');
+		$this->Bayar_Titipan = new cField('t04_angsuran', 't04_angsuran', 'x_Bayar_Titipan', 'Bayar_Titipan', '`Bayar_Titipan`', '`Bayar_Titipan`', 4, -1, FALSE, '`Bayar_Titipan`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXT');
 		$this->Bayar_Titipan->Sortable = TRUE; // Allow sort
-		$this->Bayar_Titipan->UsePleaseSelect = TRUE; // Use PleaseSelect by default
-		$this->Bayar_Titipan->PleaseSelectText = $Language->Phrase("PleaseSelect"); // PleaseSelect text
 		$this->Bayar_Titipan->FldDefaultErrMsg = $Language->Phrase("IncorrectFloat");
 		$this->fields['Bayar_Titipan'] = &$this->Bayar_Titipan;
 
@@ -152,8 +152,10 @@ class ct04_angsuran extends cTable {
 		$this->fields['Keterangan'] = &$this->Keterangan;
 
 		// pinjamantitipan_id
-		$this->pinjamantitipan_id = new cField('t04_angsuran', 't04_angsuran', 'x_pinjamantitipan_id', 'pinjamantitipan_id', '`pinjamantitipan_id`', '`pinjamantitipan_id`', 3, -1, FALSE, '`pinjamantitipan_id`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXT');
+		$this->pinjamantitipan_id = new cField('t04_angsuran', 't04_angsuran', 'x_pinjamantitipan_id', 'pinjamantitipan_id', '`pinjamantitipan_id`', '`pinjamantitipan_id`', 3, -1, FALSE, '`pinjamantitipan_id`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'SELECT');
 		$this->pinjamantitipan_id->Sortable = TRUE; // Allow sort
+		$this->pinjamantitipan_id->UsePleaseSelect = TRUE; // Use PleaseSelect by default
+		$this->pinjamantitipan_id->PleaseSelectText = $Language->Phrase("PleaseSelect"); // PleaseSelect text
 		$this->pinjamantitipan_id->FldDefaultErrMsg = $Language->Phrase("IncorrectInteger");
 		$this->fields['pinjamantitipan_id'] = &$this->pinjamantitipan_id;
 	}
@@ -770,7 +772,6 @@ class ct04_angsuran extends cTable {
 		$this->id->ViewCustomAttributes = "";
 
 		// pinjaman_id
-		$this->pinjaman_id->ViewValue = $this->pinjaman_id->CurrentValue;
 		$this->pinjaman_id->ViewCustomAttributes = "";
 
 		// AngsuranKe
@@ -822,26 +823,7 @@ class ct04_angsuran extends cTable {
 		$this->TotalDenda->ViewCustomAttributes = "";
 
 		// Bayar_Titipan
-		if (strval($this->Bayar_Titipan->CurrentValue) <> "") {
-			$sFilterWrk = "`id`" . ew_SearchString("=", $this->Bayar_Titipan->CurrentValue, EW_DATATYPE_NUMBER, "");
-		$sSqlWrk = "SELECT `id`, `Sisa` AS `DispFld`, '' AS `Disp2Fld`, '' AS `Disp3Fld`, '' AS `Disp4Fld` FROM `t06_pinjamantitipan`";
-		$sWhereWrk = "";
-		$this->Bayar_Titipan->LookupFilters = array();
-		ew_AddFilter($sWhereWrk, $sFilterWrk);
-		$this->Lookup_Selecting($this->Bayar_Titipan, $sWhereWrk); // Call Lookup selecting
-		if ($sWhereWrk <> "") $sSqlWrk .= " WHERE " . $sWhereWrk;
-			$rswrk = Conn()->Execute($sSqlWrk);
-			if ($rswrk && !$rswrk->EOF) { // Lookup values found
-				$arwrk = array();
-				$arwrk[1] = ew_FormatNumber($rswrk->fields('DispFld'), 2, -2, -2, -2);
-				$this->Bayar_Titipan->ViewValue = $this->Bayar_Titipan->DisplayValue($arwrk);
-				$rswrk->Close();
-			} else {
-				$this->Bayar_Titipan->ViewValue = $this->Bayar_Titipan->CurrentValue;
-			}
-		} else {
-			$this->Bayar_Titipan->ViewValue = NULL;
-		}
+		$this->Bayar_Titipan->ViewValue = $this->Bayar_Titipan->CurrentValue;
 		$this->Bayar_Titipan->ViewValue = ew_FormatNumber($this->Bayar_Titipan->ViewValue, 2, -2, -2, -2);
 		$this->Bayar_Titipan->CellCssStyle .= "text-align: right;";
 		$this->Bayar_Titipan->ViewCustomAttributes = "";
@@ -863,7 +845,26 @@ class ct04_angsuran extends cTable {
 		$this->Keterangan->ViewCustomAttributes = "";
 
 		// pinjamantitipan_id
-		$this->pinjamantitipan_id->ViewValue = $this->pinjamantitipan_id->CurrentValue;
+		if (strval($this->pinjamantitipan_id->CurrentValue) <> "") {
+			$sFilterWrk = "`id`" . ew_SearchString("=", $this->pinjamantitipan_id->CurrentValue, EW_DATATYPE_NUMBER, "");
+		$sSqlWrk = "SELECT `id`, `Sisa` AS `DispFld`, '' AS `Disp2Fld`, '' AS `Disp3Fld`, '' AS `Disp4Fld` FROM `t06_pinjamantitipan`";
+		$sWhereWrk = "";
+		$this->pinjamantitipan_id->LookupFilters = array();
+		ew_AddFilter($sWhereWrk, $sFilterWrk);
+		$this->Lookup_Selecting($this->pinjamantitipan_id, $sWhereWrk); // Call Lookup selecting
+		if ($sWhereWrk <> "") $sSqlWrk .= " WHERE " . $sWhereWrk;
+			$rswrk = Conn()->Execute($sSqlWrk);
+			if ($rswrk && !$rswrk->EOF) { // Lookup values found
+				$arwrk = array();
+				$arwrk[1] = ew_FormatNumber($rswrk->fields('DispFld'), 2, -2, -2, -2);
+				$this->pinjamantitipan_id->ViewValue = $this->pinjamantitipan_id->DisplayValue($arwrk);
+				$rswrk->Close();
+			} else {
+				$this->pinjamantitipan_id->ViewValue = $this->pinjamantitipan_id->CurrentValue;
+			}
+		} else {
+			$this->pinjamantitipan_id->ViewValue = NULL;
+		}
 		$this->pinjamantitipan_id->ViewCustomAttributes = "";
 
 		// id
@@ -968,11 +969,8 @@ class ct04_angsuran extends cTable {
 		$this->pinjaman_id->EditCustomAttributes = "";
 		if ($this->pinjaman_id->getSessionValue() <> "") {
 			$this->pinjaman_id->CurrentValue = $this->pinjaman_id->getSessionValue();
-		$this->pinjaman_id->ViewValue = $this->pinjaman_id->CurrentValue;
 		$this->pinjaman_id->ViewCustomAttributes = "";
 		} else {
-		$this->pinjaman_id->EditValue = $this->pinjaman_id->CurrentValue;
-		$this->pinjaman_id->PlaceHolder = ew_RemoveHtml($this->pinjaman_id->FldCaption());
 		}
 
 		// AngsuranKe
@@ -1042,6 +1040,9 @@ class ct04_angsuran extends cTable {
 		// Bayar_Titipan
 		$this->Bayar_Titipan->EditAttrs["class"] = "form-control";
 		$this->Bayar_Titipan->EditCustomAttributes = "";
+		$this->Bayar_Titipan->EditValue = $this->Bayar_Titipan->CurrentValue;
+		$this->Bayar_Titipan->PlaceHolder = ew_RemoveHtml($this->Bayar_Titipan->FldCaption());
+		if (strval($this->Bayar_Titipan->EditValue) <> "" && is_numeric($this->Bayar_Titipan->EditValue)) $this->Bayar_Titipan->EditValue = ew_FormatNumber($this->Bayar_Titipan->EditValue, -2, -2, -2, -2);
 
 		// Bayar_Non_Titipan
 		$this->Bayar_Non_Titipan->EditAttrs["class"] = "form-control";
@@ -1066,8 +1067,6 @@ class ct04_angsuran extends cTable {
 		// pinjamantitipan_id
 		$this->pinjamantitipan_id->EditAttrs["class"] = "form-control";
 		$this->pinjamantitipan_id->EditCustomAttributes = "";
-		$this->pinjamantitipan_id->EditValue = $this->pinjamantitipan_id->CurrentValue;
-		$this->pinjamantitipan_id->PlaceHolder = ew_RemoveHtml($this->pinjamantitipan_id->FldCaption());
 
 		// Call Row Rendered event
 		$this->Row_Rendered();
