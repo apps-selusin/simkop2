@@ -1791,8 +1791,8 @@ class ct04_angsuran_list extends ct04_angsuran {
 
 		// Bayar_Titipan
 		if (strval($this->Bayar_Titipan->CurrentValue) <> "") {
-			$sFilterWrk = "`pinjaman_id`" . ew_SearchString("=", $this->Bayar_Titipan->CurrentValue, EW_DATATYPE_NUMBER, "");
-		$sSqlWrk = "SELECT `pinjaman_id`, `Sisa` AS `DispFld`, '' AS `Disp2Fld`, '' AS `Disp3Fld`, '' AS `Disp4Fld` FROM `t06_pinjamantitipan`";
+			$sFilterWrk = "`id`" . ew_SearchString("=", $this->Bayar_Titipan->CurrentValue, EW_DATATYPE_NUMBER, "");
+		$sSqlWrk = "SELECT `id`, `Sisa` AS `DispFld`, '' AS `Disp2Fld`, '' AS `Disp3Fld`, '' AS `Disp4Fld` FROM `t06_pinjamantitipan`";
 		$sWhereWrk = "";
 		$this->Bayar_Titipan->LookupFilters = array();
 		ew_AddFilter($sWhereWrk, $sFilterWrk);
@@ -2462,7 +2462,7 @@ ft04_angsuranlist.ValidateRequired = false;
 <?php } ?>
 
 // Dynamic selection lists
-ft04_angsuranlist.Lists["x_Bayar_Titipan"] = {"LinkField":"x_pinjaman_id","Ajax":true,"AutoFill":false,"DisplayFields":["x_Sisa","","",""],"ParentFields":[],"ChildFields":[],"FilterFields":[],"Options":[],"Template":"","LinkTable":"t06_pinjamantitipan"};
+ft04_angsuranlist.Lists["x_Bayar_Titipan"] = {"LinkField":"x_id","Ajax":true,"AutoFill":false,"DisplayFields":["x_Sisa","","",""],"ParentFields":[],"ChildFields":[],"FilterFields":[],"Options":[],"Template":"","LinkTable":"t06_pinjamantitipan"};
 
 // Form object for search
 var CurrentSearchForm = ft04_angsuranlistsrch = new ew_Form("ft04_angsuranlistsrch");

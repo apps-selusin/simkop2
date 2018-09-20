@@ -1503,8 +1503,8 @@ class ct04_angsuran_grid extends ct04_angsuran {
 
 		// Bayar_Titipan
 		if (strval($this->Bayar_Titipan->CurrentValue) <> "") {
-			$sFilterWrk = "`pinjaman_id`" . ew_SearchString("=", $this->Bayar_Titipan->CurrentValue, EW_DATATYPE_NUMBER, "");
-		$sSqlWrk = "SELECT `pinjaman_id`, `Sisa` AS `DispFld`, '' AS `Disp2Fld`, '' AS `Disp3Fld`, '' AS `Disp4Fld` FROM `t06_pinjamantitipan`";
+			$sFilterWrk = "`id`" . ew_SearchString("=", $this->Bayar_Titipan->CurrentValue, EW_DATATYPE_NUMBER, "");
+		$sSqlWrk = "SELECT `id`, `Sisa` AS `DispFld`, '' AS `Disp2Fld`, '' AS `Disp3Fld`, '' AS `Disp4Fld` FROM `t06_pinjamantitipan`";
 		$sWhereWrk = "";
 		$this->Bayar_Titipan->LookupFilters = array();
 		ew_AddFilter($sWhereWrk, $sFilterWrk);
@@ -1715,9 +1715,9 @@ class ct04_angsuran_grid extends ct04_angsuran {
 			if (trim(strval($this->Bayar_Titipan->CurrentValue)) == "") {
 				$sFilterWrk = "0=1";
 			} else {
-				$sFilterWrk = "`pinjaman_id`" . ew_SearchString("=", $this->Bayar_Titipan->CurrentValue, EW_DATATYPE_NUMBER, "");
+				$sFilterWrk = "`id`" . ew_SearchString("=", $this->Bayar_Titipan->CurrentValue, EW_DATATYPE_NUMBER, "");
 			}
-			$sSqlWrk = "SELECT `pinjaman_id`, `Sisa` AS `DispFld`, '' AS `Disp2Fld`, '' AS `Disp3Fld`, '' AS `Disp4Fld`, `pinjaman_id` AS `SelectFilterFld`, '' AS `SelectFilterFld2`, '' AS `SelectFilterFld3`, '' AS `SelectFilterFld4` FROM `t06_pinjamantitipan`";
+			$sSqlWrk = "SELECT `id`, `Sisa` AS `DispFld`, '' AS `Disp2Fld`, '' AS `Disp3Fld`, '' AS `Disp4Fld`, `pinjaman_id` AS `SelectFilterFld`, `pinjaman_id` AS `SelectFilterFld2`, '' AS `SelectFilterFld3`, '' AS `SelectFilterFld4` FROM `t06_pinjamantitipan`";
 			$sWhereWrk = "";
 			$this->Bayar_Titipan->LookupFilters = array();
 			ew_AddFilter($sWhereWrk, $sFilterWrk);
@@ -1913,9 +1913,9 @@ class ct04_angsuran_grid extends ct04_angsuran {
 			if (trim(strval($this->Bayar_Titipan->CurrentValue)) == "") {
 				$sFilterWrk = "0=1";
 			} else {
-				$sFilterWrk = "`pinjaman_id`" . ew_SearchString("=", $this->Bayar_Titipan->CurrentValue, EW_DATATYPE_NUMBER, "");
+				$sFilterWrk = "`id`" . ew_SearchString("=", $this->Bayar_Titipan->CurrentValue, EW_DATATYPE_NUMBER, "");
 			}
-			$sSqlWrk = "SELECT `pinjaman_id`, `Sisa` AS `DispFld`, '' AS `Disp2Fld`, '' AS `Disp3Fld`, '' AS `Disp4Fld`, `pinjaman_id` AS `SelectFilterFld`, '' AS `SelectFilterFld2`, '' AS `SelectFilterFld3`, '' AS `SelectFilterFld4` FROM `t06_pinjamantitipan`";
+			$sSqlWrk = "SELECT `id`, `Sisa` AS `DispFld`, '' AS `Disp2Fld`, '' AS `Disp3Fld`, '' AS `Disp4Fld`, `pinjaman_id` AS `SelectFilterFld`, `pinjaman_id` AS `SelectFilterFld2`, '' AS `SelectFilterFld3`, '' AS `SelectFilterFld4` FROM `t06_pinjamantitipan`";
 			$sWhereWrk = "";
 			$this->Bayar_Titipan->LookupFilters = array();
 			ew_AddFilter($sWhereWrk, $sFilterWrk);
@@ -2420,10 +2420,10 @@ class ct04_angsuran_grid extends ct04_angsuran {
 		switch ($fld->FldVar) {
 		case "x_Bayar_Titipan":
 			$sSqlWrk = "";
-			$sSqlWrk = "SELECT `pinjaman_id` AS `LinkFld`, `Sisa` AS `DispFld`, '' AS `Disp2Fld`, '' AS `Disp3Fld`, '' AS `Disp4Fld` FROM `t06_pinjamantitipan`";
+			$sSqlWrk = "SELECT `id` AS `LinkFld`, `Sisa` AS `DispFld`, '' AS `Disp2Fld`, '' AS `Disp3Fld`, '' AS `Disp4Fld` FROM `t06_pinjamantitipan`";
 			$sWhereWrk = "";
 			$this->Bayar_Titipan->LookupFilters = array();
-			$fld->LookupFilters += array("s" => $sSqlWrk, "d" => "", "f0" => '`pinjaman_id` = {filter_value}', "t0" => "3", "fn0" => "");
+			$fld->LookupFilters += array("s" => $sSqlWrk, "d" => "", "f0" => '`id` = {filter_value}', "t0" => "3", "fn0" => "");
 			$sSqlWrk = "";
 			$this->Lookup_Selecting($this->Bayar_Titipan, $sWhereWrk); // Call Lookup selecting
 			if ($sWhereWrk <> "") $sSqlWrk .= " WHERE " . $sWhereWrk;

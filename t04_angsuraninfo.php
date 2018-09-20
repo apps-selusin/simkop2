@@ -823,8 +823,8 @@ class ct04_angsuran extends cTable {
 
 		// Bayar_Titipan
 		if (strval($this->Bayar_Titipan->CurrentValue) <> "") {
-			$sFilterWrk = "`pinjaman_id`" . ew_SearchString("=", $this->Bayar_Titipan->CurrentValue, EW_DATATYPE_NUMBER, "");
-		$sSqlWrk = "SELECT `pinjaman_id`, `Sisa` AS `DispFld`, '' AS `Disp2Fld`, '' AS `Disp3Fld`, '' AS `Disp4Fld` FROM `t06_pinjamantitipan`";
+			$sFilterWrk = "`id`" . ew_SearchString("=", $this->Bayar_Titipan->CurrentValue, EW_DATATYPE_NUMBER, "");
+		$sSqlWrk = "SELECT `id`, `Sisa` AS `DispFld`, '' AS `Disp2Fld`, '' AS `Disp3Fld`, '' AS `Disp4Fld` FROM `t06_pinjamantitipan`";
 		$sWhereWrk = "";
 		$this->Bayar_Titipan->LookupFilters = array();
 		ew_AddFilter($sWhereWrk, $sFilterWrk);

@@ -129,7 +129,7 @@ ft04_angsurangrid.ValidateRequired = false;
 <?php } ?>
 
 // Dynamic selection lists
-ft04_angsurangrid.Lists["x_Bayar_Titipan"] = {"LinkField":"x_pinjaman_id","Ajax":true,"AutoFill":false,"DisplayFields":["x_Sisa","","",""],"ParentFields":[],"ChildFields":[],"FilterFields":[],"Options":[],"Template":"","LinkTable":"t06_pinjamantitipan"};
+ft04_angsurangrid.Lists["x_Bayar_Titipan"] = {"LinkField":"x_id","Ajax":true,"AutoFill":false,"DisplayFields":["x_Sisa","","",""],"ParentFields":[],"ChildFields":[],"FilterFields":[],"Options":[],"Template":"","LinkTable":"t06_pinjamantitipan"};
 
 // Form object for search
 </script>
