@@ -422,9 +422,13 @@ class ct04_angsuran_list extends ct04_angsuran {
 		$this->AngsuranTotal->SetVisibility();
 		$this->SisaHutang->SetVisibility();
 		$this->TanggalBayar->SetVisibility();
-		$this->TotalDenda->SetVisibility();
 		$this->Terlambat->SetVisibility();
+		$this->TotalDenda->SetVisibility();
+		$this->Bayar_Titipan->SetVisibility();
+		$this->Bayar_Non_Titipan->SetVisibility();
+		$this->Bayar_Total->SetVisibility();
 		$this->Keterangan->SetVisibility();
+		$this->pinjamantitipan_id->SetVisibility();
 
 		// Global Page Loading event (in userfn*.php)
 		Page_Loading();
@@ -782,9 +786,13 @@ class ct04_angsuran_list extends ct04_angsuran {
 		$sFilterList = ew_Concat($sFilterList, $this->AngsuranTotal->AdvancedSearch->ToJSON(), ","); // Field AngsuranTotal
 		$sFilterList = ew_Concat($sFilterList, $this->SisaHutang->AdvancedSearch->ToJSON(), ","); // Field SisaHutang
 		$sFilterList = ew_Concat($sFilterList, $this->TanggalBayar->AdvancedSearch->ToJSON(), ","); // Field TanggalBayar
-		$sFilterList = ew_Concat($sFilterList, $this->TotalDenda->AdvancedSearch->ToJSON(), ","); // Field TotalDenda
 		$sFilterList = ew_Concat($sFilterList, $this->Terlambat->AdvancedSearch->ToJSON(), ","); // Field Terlambat
+		$sFilterList = ew_Concat($sFilterList, $this->TotalDenda->AdvancedSearch->ToJSON(), ","); // Field TotalDenda
+		$sFilterList = ew_Concat($sFilterList, $this->Bayar_Titipan->AdvancedSearch->ToJSON(), ","); // Field Bayar_Titipan
+		$sFilterList = ew_Concat($sFilterList, $this->Bayar_Non_Titipan->AdvancedSearch->ToJSON(), ","); // Field Bayar_Non_Titipan
+		$sFilterList = ew_Concat($sFilterList, $this->Bayar_Total->AdvancedSearch->ToJSON(), ","); // Field Bayar_Total
 		$sFilterList = ew_Concat($sFilterList, $this->Keterangan->AdvancedSearch->ToJSON(), ","); // Field Keterangan
+		$sFilterList = ew_Concat($sFilterList, $this->pinjamantitipan_id->AdvancedSearch->ToJSON(), ","); // Field pinjamantitipan_id
 		if ($this->BasicSearch->Keyword <> "") {
 			$sWrk = "\"" . EW_TABLE_BASIC_SEARCH . "\":\"" . ew_JsEncode2($this->BasicSearch->Keyword) . "\",\"" . EW_TABLE_BASIC_SEARCH_TYPE . "\":\"" . ew_JsEncode2($this->BasicSearch->Type) . "\"";
 			$sFilterList = ew_Concat($sFilterList, $sWrk, ",");
@@ -901,14 +909,6 @@ class ct04_angsuran_list extends ct04_angsuran {
 		$this->TanggalBayar->AdvancedSearch->SearchOperator2 = @$filter["w_TanggalBayar"];
 		$this->TanggalBayar->AdvancedSearch->Save();
 
-		// Field TotalDenda
-		$this->TotalDenda->AdvancedSearch->SearchValue = @$filter["x_TotalDenda"];
-		$this->TotalDenda->AdvancedSearch->SearchOperator = @$filter["z_TotalDenda"];
-		$this->TotalDenda->AdvancedSearch->SearchCondition = @$filter["v_TotalDenda"];
-		$this->TotalDenda->AdvancedSearch->SearchValue2 = @$filter["y_TotalDenda"];
-		$this->TotalDenda->AdvancedSearch->SearchOperator2 = @$filter["w_TotalDenda"];
-		$this->TotalDenda->AdvancedSearch->Save();
-
 		// Field Terlambat
 		$this->Terlambat->AdvancedSearch->SearchValue = @$filter["x_Terlambat"];
 		$this->Terlambat->AdvancedSearch->SearchOperator = @$filter["z_Terlambat"];
@@ -917,6 +917,38 @@ class ct04_angsuran_list extends ct04_angsuran {
 		$this->Terlambat->AdvancedSearch->SearchOperator2 = @$filter["w_Terlambat"];
 		$this->Terlambat->AdvancedSearch->Save();
 
+		// Field TotalDenda
+		$this->TotalDenda->AdvancedSearch->SearchValue = @$filter["x_TotalDenda"];
+		$this->TotalDenda->AdvancedSearch->SearchOperator = @$filter["z_TotalDenda"];
+		$this->TotalDenda->AdvancedSearch->SearchCondition = @$filter["v_TotalDenda"];
+		$this->TotalDenda->AdvancedSearch->SearchValue2 = @$filter["y_TotalDenda"];
+		$this->TotalDenda->AdvancedSearch->SearchOperator2 = @$filter["w_TotalDenda"];
+		$this->TotalDenda->AdvancedSearch->Save();
+
+		// Field Bayar_Titipan
+		$this->Bayar_Titipan->AdvancedSearch->SearchValue = @$filter["x_Bayar_Titipan"];
+		$this->Bayar_Titipan->AdvancedSearch->SearchOperator = @$filter["z_Bayar_Titipan"];
+		$this->Bayar_Titipan->AdvancedSearch->SearchCondition = @$filter["v_Bayar_Titipan"];
+		$this->Bayar_Titipan->AdvancedSearch->SearchValue2 = @$filter["y_Bayar_Titipan"];
+		$this->Bayar_Titipan->AdvancedSearch->SearchOperator2 = @$filter["w_Bayar_Titipan"];
+		$this->Bayar_Titipan->AdvancedSearch->Save();
+
+		// Field Bayar_Non_Titipan
+		$this->Bayar_Non_Titipan->AdvancedSearch->SearchValue = @$filter["x_Bayar_Non_Titipan"];
+		$this->Bayar_Non_Titipan->AdvancedSearch->SearchOperator = @$filter["z_Bayar_Non_Titipan"];
+		$this->Bayar_Non_Titipan->AdvancedSearch->SearchCondition = @$filter["v_Bayar_Non_Titipan"];
+		$this->Bayar_Non_Titipan->AdvancedSearch->SearchValue2 = @$filter["y_Bayar_Non_Titipan"];
+		$this->Bayar_Non_Titipan->AdvancedSearch->SearchOperator2 = @$filter["w_Bayar_Non_Titipan"];
+		$this->Bayar_Non_Titipan->AdvancedSearch->Save();
+
+		// Field Bayar_Total
+		$this->Bayar_Total->AdvancedSearch->SearchValue = @$filter["x_Bayar_Total"];
+		$this->Bayar_Total->AdvancedSearch->SearchOperator = @$filter["z_Bayar_Total"];
+		$this->Bayar_Total->AdvancedSearch->SearchCondition = @$filter["v_Bayar_Total"];
+		$this->Bayar_Total->AdvancedSearch->SearchValue2 = @$filter["y_Bayar_Total"];
+		$this->Bayar_Total->AdvancedSearch->SearchOperator2 = @$filter["w_Bayar_Total"];
+		$this->Bayar_Total->AdvancedSearch->Save();
+
 		// Field Keterangan
 		$this->Keterangan->AdvancedSearch->SearchValue = @$filter["x_Keterangan"];
 		$this->Keterangan->AdvancedSearch->SearchOperator = @$filter["z_Keterangan"];
@@ -924,6 +956,14 @@ class ct04_angsuran_list extends ct04_angsuran {
 		$this->Keterangan->AdvancedSearch->SearchValue2 = @$filter["y_Keterangan"];
 		$this->Keterangan->AdvancedSearch->SearchOperator2 = @$filter["w_Keterangan"];
 		$this->Keterangan->AdvancedSearch->Save();
+
+		// Field pinjamantitipan_id
+		$this->pinjamantitipan_id->AdvancedSearch->SearchValue = @$filter["x_pinjamantitipan_id"];
+		$this->pinjamantitipan_id->AdvancedSearch->SearchOperator = @$filter["z_pinjamantitipan_id"];
+		$this->pinjamantitipan_id->AdvancedSearch->SearchCondition = @$filter["v_pinjamantitipan_id"];
+		$this->pinjamantitipan_id->AdvancedSearch->SearchValue2 = @$filter["y_pinjamantitipan_id"];
+		$this->pinjamantitipan_id->AdvancedSearch->SearchOperator2 = @$filter["w_pinjamantitipan_id"];
+		$this->pinjamantitipan_id->AdvancedSearch->Save();
 		$this->BasicSearch->setKeyword(@$filter[EW_TABLE_BASIC_SEARCH]);
 		$this->BasicSearch->setType(@$filter[EW_TABLE_BASIC_SEARCH_TYPE]);
 	}
@@ -1108,9 +1148,13 @@ class ct04_angsuran_list extends ct04_angsuran {
 			$this->UpdateSort($this->AngsuranTotal, $bCtrl); // AngsuranTotal
 			$this->UpdateSort($this->SisaHutang, $bCtrl); // SisaHutang
 			$this->UpdateSort($this->TanggalBayar, $bCtrl); // TanggalBayar
-			$this->UpdateSort($this->TotalDenda, $bCtrl); // TotalDenda
 			$this->UpdateSort($this->Terlambat, $bCtrl); // Terlambat
+			$this->UpdateSort($this->TotalDenda, $bCtrl); // TotalDenda
+			$this->UpdateSort($this->Bayar_Titipan, $bCtrl); // Bayar_Titipan
+			$this->UpdateSort($this->Bayar_Non_Titipan, $bCtrl); // Bayar_Non_Titipan
+			$this->UpdateSort($this->Bayar_Total, $bCtrl); // Bayar_Total
 			$this->UpdateSort($this->Keterangan, $bCtrl); // Keterangan
+			$this->UpdateSort($this->pinjamantitipan_id, $bCtrl); // pinjamantitipan_id
 			$this->setStartRecordNumber(1); // Reset start position
 		}
 	}
@@ -1159,9 +1203,13 @@ class ct04_angsuran_list extends ct04_angsuran {
 				$this->AngsuranTotal->setSort("");
 				$this->SisaHutang->setSort("");
 				$this->TanggalBayar->setSort("");
-				$this->TotalDenda->setSort("");
 				$this->Terlambat->setSort("");
+				$this->TotalDenda->setSort("");
+				$this->Bayar_Titipan->setSort("");
+				$this->Bayar_Non_Titipan->setSort("");
+				$this->Bayar_Total->setSort("");
 				$this->Keterangan->setSort("");
+				$this->pinjamantitipan_id->setSort("");
 			}
 
 			// Reset start position
@@ -1565,9 +1613,13 @@ class ct04_angsuran_list extends ct04_angsuran {
 		$this->AngsuranTotal->setDbValue($rs->fields('AngsuranTotal'));
 		$this->SisaHutang->setDbValue($rs->fields('SisaHutang'));
 		$this->TanggalBayar->setDbValue($rs->fields('TanggalBayar'));
-		$this->TotalDenda->setDbValue($rs->fields('TotalDenda'));
 		$this->Terlambat->setDbValue($rs->fields('Terlambat'));
+		$this->TotalDenda->setDbValue($rs->fields('TotalDenda'));
+		$this->Bayar_Titipan->setDbValue($rs->fields('Bayar_Titipan'));
+		$this->Bayar_Non_Titipan->setDbValue($rs->fields('Bayar_Non_Titipan'));
+		$this->Bayar_Total->setDbValue($rs->fields('Bayar_Total'));
 		$this->Keterangan->setDbValue($rs->fields('Keterangan'));
+		$this->pinjamantitipan_id->setDbValue($rs->fields('pinjamantitipan_id'));
 	}
 
 	// Load DbValue from recordset
@@ -1583,9 +1635,13 @@ class ct04_angsuran_list extends ct04_angsuran {
 		$this->AngsuranTotal->DbValue = $row['AngsuranTotal'];
 		$this->SisaHutang->DbValue = $row['SisaHutang'];
 		$this->TanggalBayar->DbValue = $row['TanggalBayar'];
-		$this->TotalDenda->DbValue = $row['TotalDenda'];
 		$this->Terlambat->DbValue = $row['Terlambat'];
+		$this->TotalDenda->DbValue = $row['TotalDenda'];
+		$this->Bayar_Titipan->DbValue = $row['Bayar_Titipan'];
+		$this->Bayar_Non_Titipan->DbValue = $row['Bayar_Non_Titipan'];
+		$this->Bayar_Total->DbValue = $row['Bayar_Total'];
 		$this->Keterangan->DbValue = $row['Keterangan'];
+		$this->pinjamantitipan_id->DbValue = $row['pinjamantitipan_id'];
 	}
 
 	// Load old record
@@ -1643,6 +1699,14 @@ class ct04_angsuran_list extends ct04_angsuran {
 		if ($this->TotalDenda->FormValue == $this->TotalDenda->CurrentValue && is_numeric(ew_StrToFloat($this->TotalDenda->CurrentValue)))
 			$this->TotalDenda->CurrentValue = ew_StrToFloat($this->TotalDenda->CurrentValue);
 
+		// Convert decimal values if posted back
+		if ($this->Bayar_Non_Titipan->FormValue == $this->Bayar_Non_Titipan->CurrentValue && is_numeric(ew_StrToFloat($this->Bayar_Non_Titipan->CurrentValue)))
+			$this->Bayar_Non_Titipan->CurrentValue = ew_StrToFloat($this->Bayar_Non_Titipan->CurrentValue);
+
+		// Convert decimal values if posted back
+		if ($this->Bayar_Total->FormValue == $this->Bayar_Total->CurrentValue && is_numeric(ew_StrToFloat($this->Bayar_Total->CurrentValue)))
+			$this->Bayar_Total->CurrentValue = ew_StrToFloat($this->Bayar_Total->CurrentValue);
+
 		// Call Row_Rendering event
 		$this->Row_Rendering();
 
@@ -1659,9 +1723,13 @@ class ct04_angsuran_list extends ct04_angsuran {
 		// AngsuranTotal
 		// SisaHutang
 		// TanggalBayar
-		// TotalDenda
 		// Terlambat
+		// TotalDenda
+		// Bayar_Titipan
+		// Bayar_Non_Titipan
+		// Bayar_Total
 		// Keterangan
+		// pinjamantitipan_id
 
 		if ($this->RowType == EW_ROWTYPE_VIEW) { // View row
 
@@ -1711,17 +1779,60 @@ class ct04_angsuran_list extends ct04_angsuran {
 		$this->TanggalBayar->ViewValue = ew_FormatDateTime($this->TanggalBayar->ViewValue, 7);
 		$this->TanggalBayar->ViewCustomAttributes = "";
 
-		// TotalDenda
-		$this->TotalDenda->ViewValue = $this->TotalDenda->CurrentValue;
-		$this->TotalDenda->ViewCustomAttributes = "";
-
 		// Terlambat
 		$this->Terlambat->ViewValue = $this->Terlambat->CurrentValue;
 		$this->Terlambat->ViewCustomAttributes = "";
 
+		// TotalDenda
+		$this->TotalDenda->ViewValue = $this->TotalDenda->CurrentValue;
+		$this->TotalDenda->ViewValue = ew_FormatNumber($this->TotalDenda->ViewValue, 2, -2, -2, -2);
+		$this->TotalDenda->CellCssStyle .= "text-align: right;";
+		$this->TotalDenda->ViewCustomAttributes = "";
+
+		// Bayar_Titipan
+		if (strval($this->Bayar_Titipan->CurrentValue) <> "") {
+			$sFilterWrk = "`pinjaman_id`" . ew_SearchString("=", $this->Bayar_Titipan->CurrentValue, EW_DATATYPE_NUMBER, "");
+		$sSqlWrk = "SELECT `pinjaman_id`, `Sisa` AS `DispFld`, '' AS `Disp2Fld`, '' AS `Disp3Fld`, '' AS `Disp4Fld` FROM `t06_pinjamantitipan`";
+		$sWhereWrk = "";
+		$this->Bayar_Titipan->LookupFilters = array();
+		ew_AddFilter($sWhereWrk, $sFilterWrk);
+		$this->Lookup_Selecting($this->Bayar_Titipan, $sWhereWrk); // Call Lookup selecting
+		if ($sWhereWrk <> "") $sSqlWrk .= " WHERE " . $sWhereWrk;
+			$rswrk = Conn()->Execute($sSqlWrk);
+			if ($rswrk && !$rswrk->EOF) { // Lookup values found
+				$arwrk = array();
+				$arwrk[1] = ew_FormatNumber($rswrk->fields('DispFld'), 2, -2, -2, -2);
+				$this->Bayar_Titipan->ViewValue = $this->Bayar_Titipan->DisplayValue($arwrk);
+				$rswrk->Close();
+			} else {
+				$this->Bayar_Titipan->ViewValue = $this->Bayar_Titipan->CurrentValue;
+			}
+		} else {
+			$this->Bayar_Titipan->ViewValue = NULL;
+		}
+		$this->Bayar_Titipan->ViewValue = ew_FormatNumber($this->Bayar_Titipan->ViewValue, 2, -2, -2, -2);
+		$this->Bayar_Titipan->CellCssStyle .= "text-align: right;";
+		$this->Bayar_Titipan->ViewCustomAttributes = "";
+
+		// Bayar_Non_Titipan
+		$this->Bayar_Non_Titipan->ViewValue = $this->Bayar_Non_Titipan->CurrentValue;
+		$this->Bayar_Non_Titipan->ViewValue = ew_FormatNumber($this->Bayar_Non_Titipan->ViewValue, 2, -2, -2, -2);
+		$this->Bayar_Non_Titipan->CellCssStyle .= "text-align: right;";
+		$this->Bayar_Non_Titipan->ViewCustomAttributes = "";
+
+		// Bayar_Total
+		$this->Bayar_Total->ViewValue = $this->Bayar_Total->CurrentValue;
+		$this->Bayar_Total->ViewValue = ew_FormatNumber($this->Bayar_Total->ViewValue, 2, -2, -2, -2);
+		$this->Bayar_Total->CellCssStyle .= "text-align: right;";
+		$this->Bayar_Total->ViewCustomAttributes = "";
+
 		// Keterangan
 		$this->Keterangan->ViewValue = $this->Keterangan->CurrentValue;
 		$this->Keterangan->ViewCustomAttributes = "";
+
+		// pinjamantitipan_id
+		$this->pinjamantitipan_id->ViewValue = $this->pinjamantitipan_id->CurrentValue;
+		$this->pinjamantitipan_id->ViewCustomAttributes = "";
 
 			// pinjaman_id
 			$this->pinjaman_id->LinkCustomAttributes = "";
@@ -1763,20 +1874,40 @@ class ct04_angsuran_list extends ct04_angsuran {
 			$this->TanggalBayar->HrefValue = "";
 			$this->TanggalBayar->TooltipValue = "";
 
-			// TotalDenda
-			$this->TotalDenda->LinkCustomAttributes = "";
-			$this->TotalDenda->HrefValue = "";
-			$this->TotalDenda->TooltipValue = "";
-
 			// Terlambat
 			$this->Terlambat->LinkCustomAttributes = "";
 			$this->Terlambat->HrefValue = "";
 			$this->Terlambat->TooltipValue = "";
 
+			// TotalDenda
+			$this->TotalDenda->LinkCustomAttributes = "";
+			$this->TotalDenda->HrefValue = "";
+			$this->TotalDenda->TooltipValue = "";
+
+			// Bayar_Titipan
+			$this->Bayar_Titipan->LinkCustomAttributes = "";
+			$this->Bayar_Titipan->HrefValue = "";
+			$this->Bayar_Titipan->TooltipValue = "";
+
+			// Bayar_Non_Titipan
+			$this->Bayar_Non_Titipan->LinkCustomAttributes = "";
+			$this->Bayar_Non_Titipan->HrefValue = "";
+			$this->Bayar_Non_Titipan->TooltipValue = "";
+
+			// Bayar_Total
+			$this->Bayar_Total->LinkCustomAttributes = "";
+			$this->Bayar_Total->HrefValue = "";
+			$this->Bayar_Total->TooltipValue = "";
+
 			// Keterangan
 			$this->Keterangan->LinkCustomAttributes = "";
 			$this->Keterangan->HrefValue = "";
 			$this->Keterangan->TooltipValue = "";
+
+			// pinjamantitipan_id
+			$this->pinjamantitipan_id->LinkCustomAttributes = "";
+			$this->pinjamantitipan_id->HrefValue = "";
+			$this->pinjamantitipan_id->TooltipValue = "";
 		}
 
 		// Call Row Rendered event
@@ -2331,8 +2462,9 @@ ft04_angsuranlist.ValidateRequired = false;
 <?php } ?>
 
 // Dynamic selection lists
-// Form object for search
+ft04_angsuranlist.Lists["x_Bayar_Titipan"] = {"LinkField":"x_pinjaman_id","Ajax":true,"AutoFill":false,"DisplayFields":["x_Sisa","","",""],"ParentFields":[],"ChildFields":[],"FilterFields":[],"Options":[],"Template":"","LinkTable":"t06_pinjamantitipan"};
 
+// Form object for search
 var CurrentSearchForm = ft04_angsuranlistsrch = new ew_Form("ft04_angsuranlistsrch");
 </script>
 <script type="text/javascript">
@@ -2597,15 +2729,6 @@ $t04_angsuran_list->ListOptions->Render("header", "left");
         </div></div></th>
 	<?php } ?>
 <?php } ?>		
-<?php if ($t04_angsuran->TotalDenda->Visible) { // TotalDenda ?>
-	<?php if ($t04_angsuran->SortUrl($t04_angsuran->TotalDenda) == "") { ?>
-		<th data-name="TotalDenda"><div id="elh_t04_angsuran_TotalDenda" class="t04_angsuran_TotalDenda"><div class="ewTableHeaderCaption"><?php echo $t04_angsuran->TotalDenda->FldCaption() ?></div></div></th>
-	<?php } else { ?>
-		<th data-name="TotalDenda"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t04_angsuran->SortUrl($t04_angsuran->TotalDenda) ?>',2);"><div id="elh_t04_angsuran_TotalDenda" class="t04_angsuran_TotalDenda">
-			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t04_angsuran->TotalDenda->FldCaption() ?></span><span class="ewTableHeaderSort"><?php if ($t04_angsuran->TotalDenda->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t04_angsuran->TotalDenda->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
-        </div></div></th>
-	<?php } ?>
-<?php } ?>		
 <?php if ($t04_angsuran->Terlambat->Visible) { // Terlambat ?>
 	<?php if ($t04_angsuran->SortUrl($t04_angsuran->Terlambat) == "") { ?>
 		<th data-name="Terlambat"><div id="elh_t04_angsuran_Terlambat" class="t04_angsuran_Terlambat"><div class="ewTableHeaderCaption"><?php echo $t04_angsuran->Terlambat->FldCaption() ?></div></div></th>
@@ -2615,12 +2738,57 @@ $t04_angsuran_list->ListOptions->Render("header", "left");
         </div></div></th>
 	<?php } ?>
 <?php } ?>		
+<?php if ($t04_angsuran->TotalDenda->Visible) { // TotalDenda ?>
+	<?php if ($t04_angsuran->SortUrl($t04_angsuran->TotalDenda) == "") { ?>
+		<th data-name="TotalDenda"><div id="elh_t04_angsuran_TotalDenda" class="t04_angsuran_TotalDenda"><div class="ewTableHeaderCaption"><?php echo $t04_angsuran->TotalDenda->FldCaption() ?></div></div></th>
+	<?php } else { ?>
+		<th data-name="TotalDenda"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t04_angsuran->SortUrl($t04_angsuran->TotalDenda) ?>',2);"><div id="elh_t04_angsuran_TotalDenda" class="t04_angsuran_TotalDenda">
+			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t04_angsuran->TotalDenda->FldCaption() ?></span><span class="ewTableHeaderSort"><?php if ($t04_angsuran->TotalDenda->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t04_angsuran->TotalDenda->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
+        </div></div></th>
+	<?php } ?>
+<?php } ?>		
+<?php if ($t04_angsuran->Bayar_Titipan->Visible) { // Bayar_Titipan ?>
+	<?php if ($t04_angsuran->SortUrl($t04_angsuran->Bayar_Titipan) == "") { ?>
+		<th data-name="Bayar_Titipan"><div id="elh_t04_angsuran_Bayar_Titipan" class="t04_angsuran_Bayar_Titipan"><div class="ewTableHeaderCaption"><?php echo $t04_angsuran->Bayar_Titipan->FldCaption() ?></div></div></th>
+	<?php } else { ?>
+		<th data-name="Bayar_Titipan"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t04_angsuran->SortUrl($t04_angsuran->Bayar_Titipan) ?>',2);"><div id="elh_t04_angsuran_Bayar_Titipan" class="t04_angsuran_Bayar_Titipan">
+			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t04_angsuran->Bayar_Titipan->FldCaption() ?></span><span class="ewTableHeaderSort"><?php if ($t04_angsuran->Bayar_Titipan->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t04_angsuran->Bayar_Titipan->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
+        </div></div></th>
+	<?php } ?>
+<?php } ?>		
+<?php if ($t04_angsuran->Bayar_Non_Titipan->Visible) { // Bayar_Non_Titipan ?>
+	<?php if ($t04_angsuran->SortUrl($t04_angsuran->Bayar_Non_Titipan) == "") { ?>
+		<th data-name="Bayar_Non_Titipan"><div id="elh_t04_angsuran_Bayar_Non_Titipan" class="t04_angsuran_Bayar_Non_Titipan"><div class="ewTableHeaderCaption"><?php echo $t04_angsuran->Bayar_Non_Titipan->FldCaption() ?></div></div></th>
+	<?php } else { ?>
+		<th data-name="Bayar_Non_Titipan"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t04_angsuran->SortUrl($t04_angsuran->Bayar_Non_Titipan) ?>',2);"><div id="elh_t04_angsuran_Bayar_Non_Titipan" class="t04_angsuran_Bayar_Non_Titipan">
+			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t04_angsuran->Bayar_Non_Titipan->FldCaption() ?></span><span class="ewTableHeaderSort"><?php if ($t04_angsuran->Bayar_Non_Titipan->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t04_angsuran->Bayar_Non_Titipan->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
+        </div></div></th>
+	<?php } ?>
+<?php } ?>		
+<?php if ($t04_angsuran->Bayar_Total->Visible) { // Bayar_Total ?>
+	<?php if ($t04_angsuran->SortUrl($t04_angsuran->Bayar_Total) == "") { ?>
+		<th data-name="Bayar_Total"><div id="elh_t04_angsuran_Bayar_Total" class="t04_angsuran_Bayar_Total"><div class="ewTableHeaderCaption"><?php echo $t04_angsuran->Bayar_Total->FldCaption() ?></div></div></th>
+	<?php } else { ?>
+		<th data-name="Bayar_Total"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t04_angsuran->SortUrl($t04_angsuran->Bayar_Total) ?>',2);"><div id="elh_t04_angsuran_Bayar_Total" class="t04_angsuran_Bayar_Total">
+			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t04_angsuran->Bayar_Total->FldCaption() ?></span><span class="ewTableHeaderSort"><?php if ($t04_angsuran->Bayar_Total->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t04_angsuran->Bayar_Total->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
+        </div></div></th>
+	<?php } ?>
+<?php } ?>		
 <?php if ($t04_angsuran->Keterangan->Visible) { // Keterangan ?>
 	<?php if ($t04_angsuran->SortUrl($t04_angsuran->Keterangan) == "") { ?>
 		<th data-name="Keterangan"><div id="elh_t04_angsuran_Keterangan" class="t04_angsuran_Keterangan"><div class="ewTableHeaderCaption"><?php echo $t04_angsuran->Keterangan->FldCaption() ?></div></div></th>
 	<?php } else { ?>
 		<th data-name="Keterangan"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t04_angsuran->SortUrl($t04_angsuran->Keterangan) ?>',2);"><div id="elh_t04_angsuran_Keterangan" class="t04_angsuran_Keterangan">
 			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t04_angsuran->Keterangan->FldCaption() ?><?php echo $Language->Phrase("SrchLegend") ?></span><span class="ewTableHeaderSort"><?php if ($t04_angsuran->Keterangan->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t04_angsuran->Keterangan->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
+        </div></div></th>
+	<?php } ?>
+<?php } ?>		
+<?php if ($t04_angsuran->pinjamantitipan_id->Visible) { // pinjamantitipan_id ?>
+	<?php if ($t04_angsuran->SortUrl($t04_angsuran->pinjamantitipan_id) == "") { ?>
+		<th data-name="pinjamantitipan_id"><div id="elh_t04_angsuran_pinjamantitipan_id" class="t04_angsuran_pinjamantitipan_id"><div class="ewTableHeaderCaption"><?php echo $t04_angsuran->pinjamantitipan_id->FldCaption() ?></div></div></th>
+	<?php } else { ?>
+		<th data-name="pinjamantitipan_id"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t04_angsuran->SortUrl($t04_angsuran->pinjamantitipan_id) ?>',2);"><div id="elh_t04_angsuran_pinjamantitipan_id" class="t04_angsuran_pinjamantitipan_id">
+			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t04_angsuran->pinjamantitipan_id->FldCaption() ?></span><span class="ewTableHeaderSort"><?php if ($t04_angsuran->pinjamantitipan_id->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t04_angsuran->pinjamantitipan_id->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
         </div></div></th>
 	<?php } ?>
 <?php } ?>		
@@ -2753,14 +2921,6 @@ $t04_angsuran_list->ListOptions->Render("body", "left", $t04_angsuran_list->RowC
 </span>
 </td>
 	<?php } ?>
-	<?php if ($t04_angsuran->TotalDenda->Visible) { // TotalDenda ?>
-		<td data-name="TotalDenda"<?php echo $t04_angsuran->TotalDenda->CellAttributes() ?>>
-<span id="el<?php echo $t04_angsuran_list->RowCnt ?>_t04_angsuran_TotalDenda" class="t04_angsuran_TotalDenda">
-<span<?php echo $t04_angsuran->TotalDenda->ViewAttributes() ?>>
-<?php echo $t04_angsuran->TotalDenda->ListViewValue() ?></span>
-</span>
-</td>
-	<?php } ?>
 	<?php if ($t04_angsuran->Terlambat->Visible) { // Terlambat ?>
 		<td data-name="Terlambat"<?php echo $t04_angsuran->Terlambat->CellAttributes() ?>>
 <span id="el<?php echo $t04_angsuran_list->RowCnt ?>_t04_angsuran_Terlambat" class="t04_angsuran_Terlambat">
@@ -2769,11 +2929,51 @@ $t04_angsuran_list->ListOptions->Render("body", "left", $t04_angsuran_list->RowC
 </span>
 </td>
 	<?php } ?>
+	<?php if ($t04_angsuran->TotalDenda->Visible) { // TotalDenda ?>
+		<td data-name="TotalDenda"<?php echo $t04_angsuran->TotalDenda->CellAttributes() ?>>
+<span id="el<?php echo $t04_angsuran_list->RowCnt ?>_t04_angsuran_TotalDenda" class="t04_angsuran_TotalDenda">
+<span<?php echo $t04_angsuran->TotalDenda->ViewAttributes() ?>>
+<?php echo $t04_angsuran->TotalDenda->ListViewValue() ?></span>
+</span>
+</td>
+	<?php } ?>
+	<?php if ($t04_angsuran->Bayar_Titipan->Visible) { // Bayar_Titipan ?>
+		<td data-name="Bayar_Titipan"<?php echo $t04_angsuran->Bayar_Titipan->CellAttributes() ?>>
+<span id="el<?php echo $t04_angsuran_list->RowCnt ?>_t04_angsuran_Bayar_Titipan" class="t04_angsuran_Bayar_Titipan">
+<span<?php echo $t04_angsuran->Bayar_Titipan->ViewAttributes() ?>>
+<?php echo $t04_angsuran->Bayar_Titipan->ListViewValue() ?></span>
+</span>
+</td>
+	<?php } ?>
+	<?php if ($t04_angsuran->Bayar_Non_Titipan->Visible) { // Bayar_Non_Titipan ?>
+		<td data-name="Bayar_Non_Titipan"<?php echo $t04_angsuran->Bayar_Non_Titipan->CellAttributes() ?>>
+<span id="el<?php echo $t04_angsuran_list->RowCnt ?>_t04_angsuran_Bayar_Non_Titipan" class="t04_angsuran_Bayar_Non_Titipan">
+<span<?php echo $t04_angsuran->Bayar_Non_Titipan->ViewAttributes() ?>>
+<?php echo $t04_angsuran->Bayar_Non_Titipan->ListViewValue() ?></span>
+</span>
+</td>
+	<?php } ?>
+	<?php if ($t04_angsuran->Bayar_Total->Visible) { // Bayar_Total ?>
+		<td data-name="Bayar_Total"<?php echo $t04_angsuran->Bayar_Total->CellAttributes() ?>>
+<span id="el<?php echo $t04_angsuran_list->RowCnt ?>_t04_angsuran_Bayar_Total" class="t04_angsuran_Bayar_Total">
+<span<?php echo $t04_angsuran->Bayar_Total->ViewAttributes() ?>>
+<?php echo $t04_angsuran->Bayar_Total->ListViewValue() ?></span>
+</span>
+</td>
+	<?php } ?>
 	<?php if ($t04_angsuran->Keterangan->Visible) { // Keterangan ?>
 		<td data-name="Keterangan"<?php echo $t04_angsuran->Keterangan->CellAttributes() ?>>
 <span id="el<?php echo $t04_angsuran_list->RowCnt ?>_t04_angsuran_Keterangan" class="t04_angsuran_Keterangan">
 <span<?php echo $t04_angsuran->Keterangan->ViewAttributes() ?>>
 <?php echo $t04_angsuran->Keterangan->ListViewValue() ?></span>
+</span>
+</td>
+	<?php } ?>
+	<?php if ($t04_angsuran->pinjamantitipan_id->Visible) { // pinjamantitipan_id ?>
+		<td data-name="pinjamantitipan_id"<?php echo $t04_angsuran->pinjamantitipan_id->CellAttributes() ?>>
+<span id="el<?php echo $t04_angsuran_list->RowCnt ?>_t04_angsuran_pinjamantitipan_id" class="t04_angsuran_pinjamantitipan_id">
+<span<?php echo $t04_angsuran->pinjamantitipan_id->ViewAttributes() ?>>
+<?php echo $t04_angsuran->pinjamantitipan_id->ListViewValue() ?></span>
 </span>
 </td>
 	<?php } ?>

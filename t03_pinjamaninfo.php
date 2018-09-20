@@ -215,6 +215,10 @@ class ct03_pinjaman extends cTable {
 			$sDetailUrl = $GLOBALS["t05_pinjamanjaminan"]->GetListUrl() . "?" . EW_TABLE_SHOW_MASTER . "=" . $this->TableVar;
 			$sDetailUrl .= "&fk_id=" . urlencode($this->id->CurrentValue);
 		}
+		if ($this->getCurrentDetailTable() == "t06_pinjamantitipan") {
+			$sDetailUrl = $GLOBALS["t06_pinjamantitipan"]->GetListUrl() . "?" . EW_TABLE_SHOW_MASTER . "=" . $this->TableVar;
+			$sDetailUrl .= "&fk_id=" . urlencode($this->id->CurrentValue);
+		}
 		if ($sDetailUrl == "") {
 			$sDetailUrl = "t03_pinjamanlist.php";
 		}
@@ -558,6 +562,26 @@ class ct03_pinjaman extends cTable {
 				$rswrk->MoveNext();
 			}
 		}
+
+		// Cascade Update detail table 't06_pinjamantitipan'
+		$bCascadeUpdate = FALSE;
+		$rscascade = array();
+		if (!is_null($rsold) && (isset($rs['id']) && $rsold['id'] <> $rs['id'])) { // Update detail field 'pinjaman_id'
+			$bCascadeUpdate = TRUE;
+			$rscascade['pinjaman_id'] = $rs['id']; 
+		}
+		if ($bCascadeUpdate) {
+			if (!isset($GLOBALS["t06_pinjamantitipan"])) $GLOBALS["t06_pinjamantitipan"] = new ct06_pinjamantitipan();
+			$rswrk = $GLOBALS["t06_pinjamantitipan"]->LoadRs("`pinjaman_id` = " . ew_QuotedValue($rsold['id'], EW_DATATYPE_NUMBER, 'DB')); 
+			while ($rswrk && !$rswrk->EOF) {
+				$rskey = array();
+				$fldname = 'id';
+				$rskey[$fldname] = $rswrk->fields[$fldname];
+				$bUpdate = $GLOBALS["t06_pinjamantitipan"]->Update($rscascade, $rskey, $rswrk->fields);
+				if (!$bUpdate) return FALSE;
+				$rswrk->MoveNext();
+			}
+		}
 		$bUpdate = $conn->Execute($this->UpdateSQL($rs, $where, $curfilter));
 		if ($bUpdate && $this->AuditTrailOnEdit) {
 			$rsaudit = $rs;
@@ -603,6 +627,14 @@ class ct03_pinjaman extends cTable {
 		$rscascade = $GLOBALS["t05_pinjamanjaminan"]->LoadRs("`pinjaman_id` = " . ew_QuotedValue($rs['id'], EW_DATATYPE_NUMBER, "DB")); 
 		while ($rscascade && !$rscascade->EOF) {
 			$GLOBALS["t05_pinjamanjaminan"]->Delete($rscascade->fields);
+			$rscascade->MoveNext();
+		}
+
+		// Cascade delete detail table 't06_pinjamantitipan'
+		if (!isset($GLOBALS["t06_pinjamantitipan"])) $GLOBALS["t06_pinjamantitipan"] = new ct06_pinjamantitipan();
+		$rscascade = $GLOBALS["t06_pinjamantitipan"]->LoadRs("`pinjaman_id` = " . ew_QuotedValue($rs['id'], EW_DATATYPE_NUMBER, "DB")); 
+		while ($rscascade && !$rscascade->EOF) {
+			$GLOBALS["t06_pinjamantitipan"]->Delete($rscascade->fields);
 			$rscascade->MoveNext();
 		}
 		$bDelete = $conn->Execute($this->DeleteSQL($rs, $where, $curfilter));
@@ -1475,8 +1507,17 @@ class ct03_pinjaman extends cTable {
 			and TanggalBayar is not null"; //echo $q; exit;
 		$t04_reccount = ew_ExecuteScalar($q);
 		if ($t04_reccount > 0) {
-			$this->setFailureMessage("Sudah ada Transaksi Pembayaran Angsuran, tidak bisa diubah !");
-			return FALSE;
+			if (
+				$rsold["LamaAngsuran"] == $rsnew["LamaAngsuran"] and
+				$rsold["AngsuranPokok"] == $rsnew["AngsuranPokok"] and
+				$rsold["AngsuranBunga"] == $rsnew["AngsuranBunga"] and
+				$rsold["AngsuranTotal"] == $rsnew["AngsuranTotal"]
+			) {
+			}
+			else {
+				$this->setFailureMessage("Sudah ada Transaksi Pembayaran Angsuran, data tidak bisa diubah !");
+				return FALSE;
+			}
 		}
 		return TRUE;
 	}
@@ -1485,8 +1526,23 @@ class ct03_pinjaman extends cTable {
 	function Row_Updated($rsold, &$rsnew) {
 
 		//echo "Row Updated";
-		// hapus data rincian angsuran yang lama
+		// check apakah ada perubahan data pada field
+		// lama angsuran
+		// angs. pokok
+		// angs. bunga
+		// angs. total
+		// jika ada perubahan :: maka detail angsuran diperbarui
 
+		if (
+			$rsold["LamaAngsuran"] == $rsnew["LamaAngsuran"] and
+			$rsold["AngsuranPokok"] == $rsnew["AngsuranPokok"] and
+			$rsold["AngsuranBunga"] == $rsnew["AngsuranBunga"] and
+			$rsold["AngsuranTotal"] == $rsnew["AngsuranTotal"]
+			) {
+		}
+		else {
+
+		// hapus data rincian angsuran yang lama
 		$q = "delete from t04_angsuran where pinjaman_id = ".$rsold["id"].""; //echo $q; exit;
 		ew_Execute($q);
 
@@ -1536,6 +1592,7 @@ class ct03_pinjaman extends cTable {
 				".$SisaHutang."
 				)";
 			ew_Execute($q); //echo $q; exit;
+		}
 		}
 	}
 

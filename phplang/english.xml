@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<ew-language date="2018/9/18" version="13.0.0" id="en" name="English" desc="English" author="e.World Technology Ltd.">
+<ew-language date="2018/9/20" version="13.0.0" id="en" name="English" desc="English" author="e.World Technology Ltd.">
   <!-- 
 	*** Important Notes:
 	1. Language ID should follow: https://developers.google.com/recaptcha/docs/language,
@@ -623,7 +623,7 @@
       <phrase id="menutext" value="Jaminan" />
     </menu>
     <menu id="6">
-      <phrase id="menutext" value="t 06 pinjamantitipan" />
+      <phrase id="menutext" value="Titipan" />
     </menu>
     <menu id="10001">
       <phrase id="menutext" value="t 01 nasabah" />
@@ -771,14 +771,26 @@
       <field id="tanggalbayar">
         <phrase id="fldcaption" value="Tanggal Bayar" />
       </field>
-      <field id="totaldenda">
-        <phrase id="fldcaption" value="Total Denda" />
-      </field>
       <field id="terlambat">
         <phrase id="fldcaption" value="Terlambat" />
       </field>
+      <field id="totaldenda">
+        <phrase id="fldcaption" value="Bayar Denda" />
+      </field>
+      <field id="bayar_titipan">
+        <phrase id="fldcaption" value="Bayar Titipan" />
+      </field>
+      <field id="bayar_non_titipan">
+        <phrase id="fldcaption" value="Bayar Non Titipan" />
+      </field>
+      <field id="bayar_total">
+        <phrase id="fldcaption" value="Total Pembayaran" />
+      </field>
       <field id="keterangan">
         <phrase id="fldcaption" value="Keterangan" />
+      </field>
+      <field id="pinjamantitipan_id">
+        <phrase id="fldcaption" value="pinjamantitipan id" />
       </field>
     </table>
     <table id="t05_pinjamanjaminan">
@@ -794,7 +806,7 @@
       </field>
     </table>
     <table id="t06_pinjamantitipan">
-      <phrase id="tblcaption" value="t 06 pinjamantitipan" />
+      <phrase id="tblcaption" value="Titipan" />
       <field id="id">
         <phrase id="fldcaption" value="id" />
       </field>

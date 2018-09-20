@@ -9,6 +9,7 @@ ob_start(); // Turn on output buffering
 <?php include_once "t96_employeesinfo.php" ?>
 <?php include_once "t04_angsurangridcls.php" ?>
 <?php include_once "t05_pinjamanjaminangridcls.php" ?>
+<?php include_once "t06_pinjamantitipangridcls.php" ?>
 <?php include_once "userfn13.php" ?>
 <?php
 
@@ -334,6 +335,14 @@ class ct03_pinjaman_edit extends ct03_pinjaman {
 				$this->Page_Terminate();
 				exit();
 			}
+
+			// Process auto fill for detail table 't06_pinjamantitipan'
+			if (@$_POST["grid"] == "ft06_pinjamantitipangrid") {
+				if (!isset($GLOBALS["t06_pinjamantitipan_grid"])) $GLOBALS["t06_pinjamantitipan_grid"] = new ct06_pinjamantitipan_grid;
+				$GLOBALS["t06_pinjamantitipan_grid"]->Page_Init();
+				$this->Page_Terminate();
+				exit();
+			}
 			$results = $this->GetAutoFill(@$_POST["name"], @$_POST["q"]);
 			if ($results) {
 
@@ -503,10 +512,7 @@ class ct03_pinjaman_edit extends ct03_pinjaman {
 				$this->SetUpDetailParms();
 				break;
 			Case "U": // Update
-				if ($this->getCurrentDetailTable() <> "") // Master/detail edit
-					$sReturnUrl = $this->GetViewUrl(EW_TABLE_SHOW_DETAIL . "=" . $this->getCurrentDetailTable()); // Master/Detail view page
-				else
-					$sReturnUrl = $this->getReturnUrl();
+				$sReturnUrl = "t03_pinjamanedit.php?showdetail=t04_angsuran,t05_pinjamanjaminan,t06_pinjamantitipan&id=".urlencode($this->id->CurrentValue);
 				if (ew_GetPageName($sReturnUrl) == "t03_pinjamanlist.php")
 					$sReturnUrl = $this->AddMasterUrl($sReturnUrl); // List page, return to list page with correct master key if necessary
 				$this->SendEmail = TRUE; // Send email on update success
@@ -1186,6 +1192,10 @@ class ct03_pinjaman_edit extends ct03_pinjaman {
 			if (!isset($GLOBALS["t05_pinjamanjaminan_grid"])) $GLOBALS["t05_pinjamanjaminan_grid"] = new ct05_pinjamanjaminan_grid(); // get detail page object
 			$GLOBALS["t05_pinjamanjaminan_grid"]->ValidateGridForm();
 		}
+		if (in_array("t06_pinjamantitipan", $DetailTblVar) && $GLOBALS["t06_pinjamantitipan"]->DetailEdit) {
+			if (!isset($GLOBALS["t06_pinjamantitipan_grid"])) $GLOBALS["t06_pinjamantitipan_grid"] = new ct06_pinjamantitipan_grid(); // get detail page object
+			$GLOBALS["t06_pinjamantitipan_grid"]->ValidateGridForm();
+		}
 
 		// Return validate result
 		$ValidateForm = ($gsFormError == "");
@@ -1292,6 +1302,14 @@ class ct03_pinjaman_edit extends ct03_pinjaman {
 						$Security->LoadCurrentUserLevel($this->ProjectID . $this->TableName); // Restore user level of master table
 					}
 				}
+				if ($EditRow) {
+					if (in_array("t06_pinjamantitipan", $DetailTblVar) && $GLOBALS["t06_pinjamantitipan"]->DetailEdit) {
+						if (!isset($GLOBALS["t06_pinjamantitipan_grid"])) $GLOBALS["t06_pinjamantitipan_grid"] = new ct06_pinjamantitipan_grid(); // Get detail page object
+						$Security->LoadCurrentUserLevel($this->ProjectID . "t06_pinjamantitipan"); // Load user level of detail table
+						$EditRow = $GLOBALS["t06_pinjamantitipan_grid"]->GridUpdate();
+						$Security->LoadCurrentUserLevel($this->ProjectID . $this->TableName); // Restore user level of master table
+					}
+				}
 
 				// Commit/Rollback transaction
 				if ($this->getCurrentDetailTable() <> "") {
@@ -1364,6 +1382,21 @@ class ct03_pinjaman_edit extends ct03_pinjaman {
 					$GLOBALS["t05_pinjamanjaminan_grid"]->pinjaman_id->setSessionValue($GLOBALS["t05_pinjamanjaminan_grid"]->pinjaman_id->CurrentValue);
 				}
 			}
+			if (in_array("t06_pinjamantitipan", $DetailTblVar)) {
+				if (!isset($GLOBALS["t06_pinjamantitipan_grid"]))
+					$GLOBALS["t06_pinjamantitipan_grid"] = new ct06_pinjamantitipan_grid;
+				if ($GLOBALS["t06_pinjamantitipan_grid"]->DetailEdit) {
+					$GLOBALS["t06_pinjamantitipan_grid"]->CurrentMode = "edit";
+					$GLOBALS["t06_pinjamantitipan_grid"]->CurrentAction = "gridedit";
+
+					// Save current master table to detail table
+					$GLOBALS["t06_pinjamantitipan_grid"]->setCurrentMasterTable($this->TableVar);
+					$GLOBALS["t06_pinjamantitipan_grid"]->setStartRecordNumber(1);
+					$GLOBALS["t06_pinjamantitipan_grid"]->pinjaman_id->FldIsDetailKey = TRUE;
+					$GLOBALS["t06_pinjamantitipan_grid"]->pinjaman_id->CurrentValue = $this->id->CurrentValue;
+					$GLOBALS["t06_pinjamantitipan_grid"]->pinjaman_id->setSessionValue($GLOBALS["t06_pinjamantitipan_grid"]->pinjaman_id->CurrentValue);
+				}
+			}
 		}
 	}
 
@@ -1383,6 +1416,7 @@ class ct03_pinjaman_edit extends ct03_pinjaman {
 		$pages->Style = "tabs";
 		$pages->Add('t04_angsuran');
 		$pages->Add('t05_pinjamanjaminan');
+		$pages->Add('t06_pinjamantitipan');
 		$this->DetailPages = $pages;
 	}
 
@@ -1857,6 +1891,16 @@ ew_CreateCalendar("ft03_pinjamanedit", "x_TglKontrak", 7);
 <?php
 	}
 ?>
+<?php
+	if (in_array("t06_pinjamantitipan", explode(",", $t03_pinjaman->getCurrentDetailTable())) && $t06_pinjamantitipan->DetailEdit) {
+		if ($FirstActiveDetailTable == "" || $FirstActiveDetailTable == "t06_pinjamantitipan") {
+			$FirstActiveDetailTable = "t06_pinjamantitipan";
+		}
+?>
+		<li<?php echo $t03_pinjaman_edit->DetailPages->TabStyle("t06_pinjamantitipan") ?>><a href="#tab_t06_pinjamantitipan" data-toggle="tab"><?php echo $Language->TablePhrase("t06_pinjamantitipan", "TblCaption") ?></a></li>
+<?php
+	}
+?>
 	</ul>
 	<div class="tab-content">
 <?php
@@ -1877,6 +1921,16 @@ ew_CreateCalendar("ft03_pinjamanedit", "x_TglKontrak", 7);
 ?>
 		<div class="tab-pane<?php echo $t03_pinjaman_edit->DetailPages->PageStyle("t05_pinjamanjaminan") ?>" id="tab_t05_pinjamanjaminan">
 <?php include_once "t05_pinjamanjaminangrid.php" ?>
+		</div>
+<?php } ?>
+<?php
+	if (in_array("t06_pinjamantitipan", explode(",", $t03_pinjaman->getCurrentDetailTable())) && $t06_pinjamantitipan->DetailEdit) {
+		if ($FirstActiveDetailTable == "" || $FirstActiveDetailTable == "t06_pinjamantitipan") {
+			$FirstActiveDetailTable = "t06_pinjamantitipan";
+		}
+?>
+		<div class="tab-pane<?php echo $t03_pinjaman_edit->DetailPages->PageStyle("t06_pinjamantitipan") ?>" id="tab_t06_pinjamantitipan">
+<?php include_once "t06_pinjamantitipangrid.php" ?>
 		</div>
 <?php } ?>
 	</div>

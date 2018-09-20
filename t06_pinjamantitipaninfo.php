@@ -42,9 +42,9 @@ class ct06_pinjamantitipan extends cTable {
 		$this->ExportPageSize = "a4"; // Page size (PDF only)
 		$this->ExportExcelPageOrientation = ""; // Page orientation (PHPExcel only)
 		$this->ExportExcelPageSize = ""; // Page size (PHPExcel only)
-		$this->DetailAdd = FALSE; // Allow detail add
-		$this->DetailEdit = FALSE; // Allow detail edit
-		$this->DetailView = FALSE; // Allow detail view
+		$this->DetailAdd = TRUE; // Allow detail add
+		$this->DetailEdit = TRUE; // Allow detail edit
+		$this->DetailView = TRUE; // Allow detail view
 		$this->ShowMultipleDetails = FALSE; // Show multiple details
 		$this->GridAddRowCount = 5;
 		$this->AllowAddDeleteRow = ew_AllowAddDeleteRow(); // Allow add/delete row
@@ -64,9 +64,9 @@ class ct06_pinjamantitipan extends cTable {
 		$this->fields['pinjaman_id'] = &$this->pinjaman_id;
 
 		// Tanggal
-		$this->Tanggal = new cField('t06_pinjamantitipan', 't06_pinjamantitipan', 'x_Tanggal', 'Tanggal', '`Tanggal`', ew_CastDateFieldForLike('`Tanggal`', 0, "DB"), 133, 0, FALSE, '`Tanggal`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXT');
+		$this->Tanggal = new cField('t06_pinjamantitipan', 't06_pinjamantitipan', 'x_Tanggal', 'Tanggal', '`Tanggal`', ew_CastDateFieldForLike('`Tanggal`', 7, "DB"), 133, 7, FALSE, '`Tanggal`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXT');
 		$this->Tanggal->Sortable = TRUE; // Allow sort
-		$this->Tanggal->FldDefaultErrMsg = str_replace("%s", $GLOBALS["EW_DATE_FORMAT"], $Language->Phrase("IncorrectDate"));
+		$this->Tanggal->FldDefaultErrMsg = str_replace("%s", $GLOBALS["EW_DATE_SEPARATOR"], $Language->Phrase("IncorrectDateDMY"));
 		$this->fields['Tanggal'] = &$this->Tanggal;
 
 		// Keterangan
@@ -125,6 +125,53 @@ class ct06_pinjamantitipan extends cTable {
 		} else {
 			if (!$ctrl) $ofld->setSort("");
 		}
+	}
+
+	// Current master table name
+	function getCurrentMasterTable() {
+		return @$_SESSION[EW_PROJECT_NAME . "_" . $this->TableVar . "_" . EW_TABLE_MASTER_TABLE];
+	}
+
+	function setCurrentMasterTable($v) {
+		$_SESSION[EW_PROJECT_NAME . "_" . $this->TableVar . "_" . EW_TABLE_MASTER_TABLE] = $v;
+	}
+
+	// Session master WHERE clause
+	function GetMasterFilter() {
+
+		// Master filter
+		$sMasterFilter = "";
+		if ($this->getCurrentMasterTable() == "t03_pinjaman") {
+			if ($this->pinjaman_id->getSessionValue() <> "")
+				$sMasterFilter .= "`id`=" . ew_QuotedValue($this->pinjaman_id->getSessionValue(), EW_DATATYPE_NUMBER, "DB");
+			else
+				return "";
+		}
+		return $sMasterFilter;
+	}
+
+	// Session detail WHERE clause
+	function GetDetailFilter() {
+
+		// Detail filter
+		$sDetailFilter = "";
+		if ($this->getCurrentMasterTable() == "t03_pinjaman") {
+			if ($this->pinjaman_id->getSessionValue() <> "")
+				$sDetailFilter .= "`pinjaman_id`=" . ew_QuotedValue($this->pinjaman_id->getSessionValue(), EW_DATATYPE_NUMBER, "DB");
+			else
+				return "";
+		}
+		return $sDetailFilter;
+	}
+
+	// Master filter
+	function SqlMasterFilter_t03_pinjaman() {
+		return "`id`=@id@";
+	}
+
+	// Detail filter
+	function SqlDetailFilter_t03_pinjaman() {
+		return "`pinjaman_id`=@pinjaman_id@";
 	}
 
 	// Table level SQL
@@ -507,6 +554,10 @@ class ct06_pinjamantitipan extends cTable {
 
 	// Add master url
 	function AddMasterUrl($url) {
+		if ($this->getCurrentMasterTable() == "t03_pinjaman" && strpos($url, EW_TABLE_SHOW_MASTER . "=") === FALSE) {
+			$url .= (strpos($url, "?") !== FALSE ? "&" : "?") . EW_TABLE_SHOW_MASTER . "=" . $this->getCurrentMasterTable();
+			$url .= "&fk_id=" . urlencode($this->pinjaman_id->CurrentValue);
+		}
 		return $url;
 	}
 
@@ -638,7 +689,7 @@ class ct06_pinjamantitipan extends cTable {
 
 		// Tanggal
 		$this->Tanggal->ViewValue = $this->Tanggal->CurrentValue;
-		$this->Tanggal->ViewValue = ew_FormatDateTime($this->Tanggal->ViewValue, 0);
+		$this->Tanggal->ViewValue = ew_FormatDateTime($this->Tanggal->ViewValue, 7);
 		$this->Tanggal->ViewCustomAttributes = "";
 
 		// Keterangan
@@ -647,14 +698,20 @@ class ct06_pinjamantitipan extends cTable {
 
 		// Masuk
 		$this->Masuk->ViewValue = $this->Masuk->CurrentValue;
+		$this->Masuk->ViewValue = ew_FormatNumber($this->Masuk->ViewValue, 2, -2, -2, -2);
+		$this->Masuk->CellCssStyle .= "text-align: right;";
 		$this->Masuk->ViewCustomAttributes = "";
 
 		// Keluar
 		$this->Keluar->ViewValue = $this->Keluar->CurrentValue;
+		$this->Keluar->ViewValue = ew_FormatNumber($this->Keluar->ViewValue, 2, -2, -2, -2);
+		$this->Keluar->CellCssStyle .= "text-align: right;";
 		$this->Keluar->ViewCustomAttributes = "";
 
 		// Sisa
 		$this->Sisa->ViewValue = $this->Sisa->CurrentValue;
+		$this->Sisa->ViewValue = ew_FormatNumber($this->Sisa->ViewValue, 2, -2, -2, -2);
+		$this->Sisa->CellCssStyle .= "text-align: right;";
 		$this->Sisa->ViewCustomAttributes = "";
 
 		// id
@@ -712,13 +769,19 @@ class ct06_pinjamantitipan extends cTable {
 		// pinjaman_id
 		$this->pinjaman_id->EditAttrs["class"] = "form-control";
 		$this->pinjaman_id->EditCustomAttributes = "";
+		if ($this->pinjaman_id->getSessionValue() <> "") {
+			$this->pinjaman_id->CurrentValue = $this->pinjaman_id->getSessionValue();
+		$this->pinjaman_id->ViewValue = $this->pinjaman_id->CurrentValue;
+		$this->pinjaman_id->ViewCustomAttributes = "";
+		} else {
 		$this->pinjaman_id->EditValue = $this->pinjaman_id->CurrentValue;
 		$this->pinjaman_id->PlaceHolder = ew_RemoveHtml($this->pinjaman_id->FldCaption());
+		}
 
 		// Tanggal
 		$this->Tanggal->EditAttrs["class"] = "form-control";
 		$this->Tanggal->EditCustomAttributes = "";
-		$this->Tanggal->EditValue = ew_FormatDateTime($this->Tanggal->CurrentValue, 8);
+		$this->Tanggal->EditValue = ew_FormatDateTime($this->Tanggal->CurrentValue, 7);
 		$this->Tanggal->PlaceHolder = ew_RemoveHtml($this->Tanggal->FldCaption());
 
 		// Keterangan
@@ -732,21 +795,21 @@ class ct06_pinjamantitipan extends cTable {
 		$this->Masuk->EditCustomAttributes = "";
 		$this->Masuk->EditValue = $this->Masuk->CurrentValue;
 		$this->Masuk->PlaceHolder = ew_RemoveHtml($this->Masuk->FldCaption());
-		if (strval($this->Masuk->EditValue) <> "" && is_numeric($this->Masuk->EditValue)) $this->Masuk->EditValue = ew_FormatNumber($this->Masuk->EditValue, -2, -1, -2, 0);
+		if (strval($this->Masuk->EditValue) <> "" && is_numeric($this->Masuk->EditValue)) $this->Masuk->EditValue = ew_FormatNumber($this->Masuk->EditValue, -2, -2, -2, -2);
 
 		// Keluar
 		$this->Keluar->EditAttrs["class"] = "form-control";
 		$this->Keluar->EditCustomAttributes = "";
 		$this->Keluar->EditValue = $this->Keluar->CurrentValue;
 		$this->Keluar->PlaceHolder = ew_RemoveHtml($this->Keluar->FldCaption());
-		if (strval($this->Keluar->EditValue) <> "" && is_numeric($this->Keluar->EditValue)) $this->Keluar->EditValue = ew_FormatNumber($this->Keluar->EditValue, -2, -1, -2, 0);
+		if (strval($this->Keluar->EditValue) <> "" && is_numeric($this->Keluar->EditValue)) $this->Keluar->EditValue = ew_FormatNumber($this->Keluar->EditValue, -2, -2, -2, -2);
 
 		// Sisa
 		$this->Sisa->EditAttrs["class"] = "form-control";
 		$this->Sisa->EditCustomAttributes = "";
 		$this->Sisa->EditValue = $this->Sisa->CurrentValue;
 		$this->Sisa->PlaceHolder = ew_RemoveHtml($this->Sisa->FldCaption());
-		if (strval($this->Sisa->EditValue) <> "" && is_numeric($this->Sisa->EditValue)) $this->Sisa->EditValue = ew_FormatNumber($this->Sisa->EditValue, -2, -1, -2, 0);
+		if (strval($this->Sisa->EditValue) <> "" && is_numeric($this->Sisa->EditValue)) $this->Sisa->EditValue = ew_FormatNumber($this->Sisa->EditValue, -2, -2, -2, -2);
 
 		// Call Row Rendered event
 		$this->Row_Rendered();
@@ -775,8 +838,6 @@ class ct06_pinjamantitipan extends cTable {
 			if ($Doc->Horizontal) { // Horizontal format, write header
 				$Doc->BeginExportRow();
 				if ($ExportPageType == "view") {
-					if ($this->id->Exportable) $Doc->ExportCaption($this->id);
-					if ($this->pinjaman_id->Exportable) $Doc->ExportCaption($this->pinjaman_id);
 					if ($this->Tanggal->Exportable) $Doc->ExportCaption($this->Tanggal);
 					if ($this->Keterangan->Exportable) $Doc->ExportCaption($this->Keterangan);
 					if ($this->Masuk->Exportable) $Doc->ExportCaption($this->Masuk);
@@ -786,6 +847,7 @@ class ct06_pinjamantitipan extends cTable {
 					if ($this->id->Exportable) $Doc->ExportCaption($this->id);
 					if ($this->pinjaman_id->Exportable) $Doc->ExportCaption($this->pinjaman_id);
 					if ($this->Tanggal->Exportable) $Doc->ExportCaption($this->Tanggal);
+					if ($this->Keterangan->Exportable) $Doc->ExportCaption($this->Keterangan);
 					if ($this->Masuk->Exportable) $Doc->ExportCaption($this->Masuk);
 					if ($this->Keluar->Exportable) $Doc->ExportCaption($this->Keluar);
 					if ($this->Sisa->Exportable) $Doc->ExportCaption($this->Sisa);
@@ -820,8 +882,6 @@ class ct06_pinjamantitipan extends cTable {
 				if (!$Doc->ExportCustom) {
 					$Doc->BeginExportRow($RowCnt); // Allow CSS styles if enabled
 					if ($ExportPageType == "view") {
-						if ($this->id->Exportable) $Doc->ExportField($this->id);
-						if ($this->pinjaman_id->Exportable) $Doc->ExportField($this->pinjaman_id);
 						if ($this->Tanggal->Exportable) $Doc->ExportField($this->Tanggal);
 						if ($this->Keterangan->Exportable) $Doc->ExportField($this->Keterangan);
 						if ($this->Masuk->Exportable) $Doc->ExportField($this->Masuk);
@@ -831,6 +891,7 @@ class ct06_pinjamantitipan extends cTable {
 						if ($this->id->Exportable) $Doc->ExportField($this->id);
 						if ($this->pinjaman_id->Exportable) $Doc->ExportField($this->pinjaman_id);
 						if ($this->Tanggal->Exportable) $Doc->ExportField($this->Tanggal);
+						if ($this->Keterangan->Exportable) $Doc->ExportField($this->Keterangan);
 						if ($this->Masuk->Exportable) $Doc->ExportField($this->Masuk);
 						if ($this->Keluar->Exportable) $Doc->ExportField($this->Keluar);
 						if ($this->Sisa->Exportable) $Doc->ExportField($this->Sisa);
