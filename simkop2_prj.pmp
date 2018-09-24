@@ -301,6 +301,18 @@ $("#x_TglKontrak").val("<?php echo date('d-m-Y');?>");
 			}
 		}
 	);
+
+	// Table 't04_angsuran' Field 'pinjamantitipan_id'
+	$('[data-table=t04_pinjaman][data-field=x_pinjamantitipan_id]').on(
+		{ // keys = event types, values = handler functions
+			"change keyup": function(e) {
+				var $row = $(this).fields();
+				var pinjamantitipan_id = $row["AngsuranPokok"].val();
+				var sisa = "<?php echo f_carisisatitipan(".pinjamantitipan_id.")?>";
+				$row["Bayar_Titipan"].val(sisa);
+			}
+		}
+	);
 ]]></CustomScript>
   <CustomScript ScriptType="Server" ScriptCodeType="Table" ScriptName="Page_Render" ScriptCtrlID="list" ScriptL1Key="t03_pinjaman" ScriptL2Key=""><![CDATA[// Page Render event
 function Page_Render() {
@@ -381,7 +393,7 @@ function Page_Render() {
 
 }
 
-function f_carinilaititipan($param_id) {
+function f_carisisatitipan($param_id) {
 	$q = "select sisa from v01_pinjamantitipan where id = ".$param_id;
 }
 ]]></CustomScript>
