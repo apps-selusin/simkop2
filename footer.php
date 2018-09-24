@@ -144,6 +144,18 @@ jQuery.get("<?php echo $EW_RELATIVE_PATH ?>phpjs/userevt13.js");
 			}
 		}
 	);
+
+	// Table 't04_angsuran' Field 'pinjamantitipan_id'
+	$('[data-table=t04_pinjaman][data-field=x_pinjamantitipan_id]').on(
+		{ // keys = event types, values = handler functions
+			"change keyup": function(e) {
+				var $row = $(this).fields();
+				var pinjamantitipan_id = $row["AngsuranPokok"].val();
+				var sisa = "<?php echo f_carisisatitipan(".pinjamantitipan_id.")?>";
+				$row["Bayar_Titipan"].val(sisa);
+			}
+		}
+	);
 </script>
 <?php } ?>
 </body>
