@@ -380,6 +380,10 @@ function Page_Render() {
 	return $sTanggalAngsuran;
 
 }
+
+function f_carinilaititipan($param_id) {
+	$q = "select sisa from v01_pinjamantitipan where id = ".$param_id;
+}
 ]]></CustomScript>
   <CustomScript ScriptType="Server" ScriptCodeType="Global" ScriptName="Database_Connecting" ScriptCtrlID="" ScriptL1Key="" ScriptL2Key=""><![CDATA[// Database Connecting event
 function Database_Connecting(&$info) {
