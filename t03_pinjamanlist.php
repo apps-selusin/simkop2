@@ -2443,6 +2443,13 @@ class ct03_pinjaman_list extends ct03_pinjaman {
 
 		$this->OtherOptions['addedit'] = new cListOptions();
 		$this->OtherOptions['addedit']->Body = "";
+
+		//$this->OtherOptions["addedit"]->UseDropDownButton = FALSE; // jangan gunakan style DropDownButton
+		//$my_options = &$this->OtherOptions; // pastikan menggunakan area OtherOptions
+		//$my_option = $my_options["addedit"]; // dekat tombol addedit
+		//$my_item = &$my_option->Add("mynewbutton"); // tambahkan tombol baru
+		//$my_item->Body = "<a class=\"ewAddEdit ewAdd\" title=\"Your Title\" data-caption=\"Your Caption\" href=\"yourpage.php\">My New Button</a>"; // definisikan link, style, dan caption tombol
+
 	}
 
 	// Page Data Rendering event

@@ -869,7 +869,7 @@ class ct04_angsuran_edit extends ct04_angsuran {
 		// pinjamantitipan_id
 		if (strval($this->pinjamantitipan_id->CurrentValue) <> "") {
 			$sFilterWrk = "`id`" . ew_SearchString("=", $this->pinjamantitipan_id->CurrentValue, EW_DATATYPE_NUMBER, "");
-		$sSqlWrk = "SELECT `id`, `Sisa` AS `DispFld`, '' AS `Disp2Fld`, '' AS `Disp3Fld`, '' AS `Disp4Fld` FROM `t06_pinjamantitipan`";
+		$sSqlWrk = "SELECT `id`, `sisa` AS `DispFld`, '' AS `Disp2Fld`, '' AS `Disp3Fld`, '' AS `Disp4Fld` FROM `v01_pinjamantitipan`";
 		$sWhereWrk = "";
 		$this->pinjamantitipan_id->LookupFilters = array();
 		ew_AddFilter($sWhereWrk, $sFilterWrk);
@@ -878,7 +878,7 @@ class ct04_angsuran_edit extends ct04_angsuran {
 			$rswrk = Conn()->Execute($sSqlWrk);
 			if ($rswrk && !$rswrk->EOF) { // Lookup values found
 				$arwrk = array();
-				$arwrk[1] = ew_FormatNumber($rswrk->fields('DispFld'), 2, -2, -2, -2);
+				$arwrk[1] = $rswrk->fields('DispFld');
 				$this->pinjamantitipan_id->ViewValue = $this->pinjamantitipan_id->DisplayValue($arwrk);
 				$rswrk->Close();
 			} else {
@@ -1073,7 +1073,7 @@ class ct04_angsuran_edit extends ct04_angsuran {
 			} else {
 				$sFilterWrk = "`id`" . ew_SearchString("=", $this->pinjamantitipan_id->CurrentValue, EW_DATATYPE_NUMBER, "");
 			}
-			$sSqlWrk = "SELECT `id`, `Sisa` AS `DispFld`, '' AS `Disp2Fld`, '' AS `Disp3Fld`, '' AS `Disp4Fld`, `nasabah_id` AS `SelectFilterFld`, '' AS `SelectFilterFld2`, '' AS `SelectFilterFld3`, '' AS `SelectFilterFld4` FROM `t06_pinjamantitipan`";
+			$sSqlWrk = "SELECT `id`, `sisa` AS `DispFld`, '' AS `Disp2Fld`, '' AS `Disp3Fld`, '' AS `Disp4Fld`, `nasabah_id` AS `SelectFilterFld`, '' AS `SelectFilterFld2`, '' AS `SelectFilterFld3`, '' AS `SelectFilterFld4` FROM `v01_pinjamantitipan`";
 			$sWhereWrk = "";
 			$this->pinjamantitipan_id->LookupFilters = array();
 			ew_AddFilter($sWhereWrk, $sFilterWrk);
@@ -1082,10 +1082,6 @@ class ct04_angsuran_edit extends ct04_angsuran {
 			$rswrk = Conn()->Execute($sSqlWrk);
 			$arwrk = ($rswrk) ? $rswrk->GetRows() : array();
 			if ($rswrk) $rswrk->Close();
-			$rowswrk = count($arwrk);
-			for ($rowcntwrk = 0; $rowcntwrk < $rowswrk; $rowcntwrk++) {
-				$arwrk[$rowcntwrk][1] = ew_FormatNumber($arwrk[$rowcntwrk][1], 2, -2, -2, -2);
-			}
 			$this->pinjamantitipan_id->EditValue = $arwrk;
 
 			// Edit refer script
@@ -1393,7 +1389,7 @@ class ct04_angsuran_edit extends ct04_angsuran {
 		switch ($fld->FldVar) {
 		case "x_pinjamantitipan_id":
 			$sSqlWrk = "";
-			$sSqlWrk = "SELECT `id` AS `LinkFld`, `Sisa` AS `DispFld`, '' AS `Disp2Fld`, '' AS `Disp3Fld`, '' AS `Disp4Fld` FROM `t06_pinjamantitipan`";
+			$sSqlWrk = "SELECT `id` AS `LinkFld`, `sisa` AS `DispFld`, '' AS `Disp2Fld`, '' AS `Disp3Fld`, '' AS `Disp4Fld` FROM `v01_pinjamantitipan`";
 			$sWhereWrk = "";
 			$this->pinjamantitipan_id->LookupFilters = array();
 			$fld->LookupFilters += array("s" => $sSqlWrk, "d" => "", "f0" => '`id` = {filter_value}', "t0" => "3", "fn0" => "");
@@ -1576,7 +1572,7 @@ ft04_angsuranedit.ValidateRequired = false;
 <?php } ?>
 
 // Dynamic selection lists
-ft04_angsuranedit.Lists["x_pinjamantitipan_id"] = {"LinkField":"x_id","Ajax":true,"AutoFill":false,"DisplayFields":["x_Sisa","","",""],"ParentFields":[],"ChildFields":[],"FilterFields":[],"Options":[],"Template":"","LinkTable":"t06_pinjamantitipan"};
+ft04_angsuranedit.Lists["x_pinjamantitipan_id"] = {"LinkField":"x_id","Ajax":true,"AutoFill":false,"DisplayFields":["x_sisa","","",""],"ParentFields":[],"ChildFields":[],"FilterFields":[],"Options":[],"Template":"","LinkTable":"v01_pinjamantitipan"};
 
 // Form object for search
 </script>

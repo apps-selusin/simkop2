@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<ew-language date="2018/9/20" version="13.0.0" id="en" name="English" desc="English" author="e.World Technology Ltd.">
+<ew-language date="2018/9/24" version="13.0.0" id="en" name="English" desc="English" author="e.World Technology Ltd.">
   <!-- 
 	*** Important Notes:
 	1. Language ID should follow: https://developers.google.com/recaptcha/docs/language,
@@ -583,6 +583,9 @@
   <project>
     <phrase id="bodytitle" value="SIM Koperasi" />
     <phrase id="footertext" value="&amp;copy;2018 Selaras Solusindo. All rights reserved." />
+    <menu id="10012">
+      <phrase id="menutext" value="v 01 pinjamantitipan" />
+    </menu>
     <menu id="11">
       <phrase id="menutext" value="Home" />
     </menu>
@@ -967,6 +970,21 @@
     </table>
     <table id="cf01_home_php">
       <phrase id="tblcaption" value="Home" />
+    </table>
+    <table id="v01_pinjamantitipan">
+      <phrase id="tblcaption" value="v 01 pinjamantitipan" />
+      <field id="id">
+        <phrase id="fldcaption" value="id" />
+      </field>
+      <field id="pinjaman_id">
+        <phrase id="fldcaption" value="pinjaman id" />
+      </field>
+      <field id="nasabah_id">
+        <phrase id="fldcaption" value="nasabah id" />
+      </field>
+      <field id="sisa">
+        <phrase id="fldcaption" value="sisa" />
+      </field>
     </table>
   </project>
 </ew-language>

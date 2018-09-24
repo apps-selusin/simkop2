@@ -1501,6 +1501,7 @@ class ct03_pinjaman_edit extends ct03_pinjaman {
 
 		// Example:
 		//$header = "your header";
+		//$header = "<form><button class='btn ewButton' name='myFirstBtn' id='myFirstBtn' type='submit' formmethod='post' formaction='xxx.php'>My First Button</button>&nbsp;<button class='btn ewButton' name='mySecondBtn' id='mySecondtBtn' type='submit'>My Second Button</button>&nbsp;<button class='btn ewButton' name='myThirdBtn' id='myThirdBtn' type='submit'>My Third Button</button></form>";
 
 	}
 

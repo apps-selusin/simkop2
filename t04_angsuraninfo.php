@@ -847,7 +847,7 @@ class ct04_angsuran extends cTable {
 		// pinjamantitipan_id
 		if (strval($this->pinjamantitipan_id->CurrentValue) <> "") {
 			$sFilterWrk = "`id`" . ew_SearchString("=", $this->pinjamantitipan_id->CurrentValue, EW_DATATYPE_NUMBER, "");
-		$sSqlWrk = "SELECT `id`, `Sisa` AS `DispFld`, '' AS `Disp2Fld`, '' AS `Disp3Fld`, '' AS `Disp4Fld` FROM `t06_pinjamantitipan`";
+		$sSqlWrk = "SELECT `id`, `sisa` AS `DispFld`, '' AS `Disp2Fld`, '' AS `Disp3Fld`, '' AS `Disp4Fld` FROM `v01_pinjamantitipan`";
 		$sWhereWrk = "";
 		$this->pinjamantitipan_id->LookupFilters = array();
 		ew_AddFilter($sWhereWrk, $sFilterWrk);
@@ -856,7 +856,7 @@ class ct04_angsuran extends cTable {
 			$rswrk = Conn()->Execute($sSqlWrk);
 			if ($rswrk && !$rswrk->EOF) { // Lookup values found
 				$arwrk = array();
-				$arwrk[1] = ew_FormatNumber($rswrk->fields('DispFld'), 2, -2, -2, -2);
+				$arwrk[1] = $rswrk->fields('DispFld');
 				$this->pinjamantitipan_id->ViewValue = $this->pinjamantitipan_id->DisplayValue($arwrk);
 				$rswrk->Close();
 			} else {
