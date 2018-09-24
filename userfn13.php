@@ -77,7 +77,7 @@ function f_TanggalAngsuran($sTanggal, $sTgl) {
 
 function f_carisisatitipan($param_id) {
 	$q = "select sisa from v01_pinjamantitipan where id = ".$param_id;
-	$r = Conn->Execute($q);
+	$r = Conn()->Execute($q);
 	return $r->fields["sisa"];
 }
 ?>
