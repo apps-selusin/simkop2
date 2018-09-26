@@ -793,7 +793,7 @@
         <phrase id="fldcaption" value="Keterangan" />
       </field>
       <field id="pinjamantitipan_id">
-        <phrase id="fldcaption" value="pinjamantitipan id" />
+        <phrase id="fldcaption" value="Saldo Titipan" />
       </field>
     </table>
     <table id="t05_pinjamanjaminan">
