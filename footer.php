@@ -150,20 +150,111 @@ jQuery.get("<?php echo $EW_RELATIVE_PATH ?>phpjs/userevt13.js");
 		{ // keys = event types, values = handler functions
 			"change keyup": function(e) {
 				var $row = $(this).fields();
-
-				//var pinjamantitipan_id = $row["pinjamantitipan_id"].val();
-				//var pinjamantitipan_id_index = $row["pinjamantitipan_id"].selectedIndex;
-				//alert($row["pinjamantitipan_id"].find("option:selected").text());
-				//var pinjamantitipan_sisa = $row["pinjamantitipan_id"].options[pinjamantitipan_id_index].value;
-				//var sisa = " f_carisisatitipan(" + pinjamantitipan_id + ")";
-
 				$row["Bayar_Titipan"].val($row["pinjamantitipan_id"].find("option:selected").text());
 
-				//$row["Bayar_Titipan"].val(pinjamantitipan_id);
-				//$row["Bayar_Titipan"].val(pinjamantitipan_sisa);
-				//$row["Bayar_Titipan"].val(" echo f_carisisatitipan(" + pinjamantitipan_id + ")?>");
-				//$row["Bayar_Titipan"].val(' echo $_SESSION["jaminantitipan_sisa"]?>');
+				// denda
+				var denda_asli = $row["TotalDenda"].val();
+				var denda_clean = denda_asli.replace(/,/g, '');
+				var denda = parseFloat(denda_clean);
 
+				// bayar titipan
+				var titipan_asli = $row["Bayar_Titipan"].val();
+				var titipan_clean = titipan_asli.replace(/,/g, '');
+				var titipan = parseFloat(titipan_clean);
+				$row["Bayar_Titipan"].val(titipan);
+
+				// bayar non titipan
+				var nontitipan_asli = $row["Bayar_Non_Titipan"].val();
+				var nontitipan_clean = nontitipan_asli.replace(/,/g, '');
+				var nontitipan = parseFloat(nontitipan_clean);
+
+				// bayar_total
+				var bayar_total = denda + titipan + nontitipan;
+				$row["Bayar_Total"].val(bayar_total);
+			}
+		}
+	);
+
+	// Table 't04_angsuran' Field 'TotalDenda'
+	$('[data-table=t04_angsuran][data-field=x_TotalDenda]').on(
+		{ // keys = event types, values = handler functions
+			"change keyup": function(e) {
+				var $row = $(this).fields();
+
+				// denda
+				var denda_asli = $row["TotalDenda"].val();
+				var denda_clean = denda_asli.replace(/,/g, '');
+				var denda = parseFloat(denda_clean);
+
+				// bayar titipan
+				var titipan_asli = $row["Bayar_Titipan"].val();
+				var titipan_clean = titipan_asli.replace(/,/g, '');
+				var titipan = parseFloat(titipan_clean);
+
+				// bayar non titipan
+				var nontitipan_asli = $row["Bayar_Non_Titipan"].val();
+				var nontitipan_clean = nontitipan_asli.replace(/,/g, '');
+				var nontitipan = parseFloat(nontitipan_clean);
+
+				// bayar_total
+				var bayar_total = denda + titipan + nontitipan;
+				$row["Bayar_Total"].val(bayar_total);
+			}
+		}
+	);
+
+	// Table 't04_angsuran' Field 'Bayar_Titipan'
+	$('[data-table=t04_angsuran][data-field=x_Bayar_Titipan]').on(
+		{ // keys = event types, values = handler functions
+			"change keyup": function(e) {
+				var $row = $(this).fields();
+
+				// denda
+				var denda_asli = $row["TotalDenda"].val();
+				var denda_clean = denda_asli.replace(/,/g, '');
+				var denda = parseFloat(denda_clean);
+
+				// bayar titipan
+				var titipan_asli = $row["Bayar_Titipan"].val();
+				var titipan_clean = titipan_asli.replace(/,/g, '');
+				var titipan = parseFloat(titipan_clean);
+
+				// bayar non titipan
+				var nontitipan_asli = $row["Bayar_Non_Titipan"].val();
+				var nontitipan_clean = nontitipan_asli.replace(/,/g, '');
+				var nontitipan = parseFloat(nontitipan_clean);
+
+				// bayar_total
+				var bayar_total = denda + titipan + nontitipan;
+				$row["Bayar_Total"].val(bayar_total);
+			}
+		}
+	);
+
+	// Table 't04_angsuran' Field 'Bayar_Non_Titipan'
+	$('[data-table=t04_angsuran][data-field=x_Bayar_Non_Titipan]').on(
+		{ // keys = event types, values = handler functions
+			"change keyup": function(e) {
+				var $row = $(this).fields();
+
+				// denda
+				var denda_asli = $row["TotalDenda"].val();
+				var denda_clean = denda_asli.replace(/,/g, '');
+				var denda = parseFloat(denda_clean);
+
+				// bayar titipan
+				var titipan_asli = $row["Bayar_Titipan"].val();
+				var titipan_clean = titipan_asli.replace(/,/g, '');
+				var titipan = parseFloat(titipan_clean);
+
+				// bayar non titipan
+				var nontitipan_asli = $row["Bayar_Non_Titipan"].val();
+				var nontitipan_clean = nontitipan_asli.replace(/,/g, '');
+				var nontitipan = parseFloat(nontitipan_clean);
+
+				// bayar_total
+				var bayar_total = denda + titipan + nontitipan;
+				$row["Bayar_Total"].val(bayar_total);
 			}
 		}
 	);
