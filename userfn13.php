@@ -76,8 +76,12 @@ function f_TanggalAngsuran($sTanggal, $sTgl) {
 }
 
 function f_carisisatitipan($param_id) {
-	$q = "select sisa from v01_pinjamantitipan where id = ".$param_id;
+	$q = "select id, sisa from v01_pinjamantitipan where id = ".$param_id; //echo $q; //exit;
 	$r = Conn()->Execute($q);
+
+	//echo $r->fields["sisa"];
+	//$_SESSION["jaminantitipan_sisa"] = $r->fields["sisa"];
+
 	return $r->fields["sisa"];
 }
 ?>

@@ -146,13 +146,24 @@ jQuery.get("<?php echo $EW_RELATIVE_PATH ?>phpjs/userevt13.js");
 	);
 
 	// Table 't04_angsuran' Field 'pinjamantitipan_id'
-	$('[data-table=t04_pinjaman][data-field=x_pinjamantitipan_id]').on(
+	$('[data-table=t04_angsuran][data-field=x_pinjamantitipan_id]').on(
 		{ // keys = event types, values = handler functions
 			"change keyup": function(e) {
 				var $row = $(this).fields();
-				var pinjamantitipan_id = $row["AngsuranPokok"].val();
-				var sisa = "<?php echo f_carisisatitipan(".pinjamantitipan_id.")?>";
-				$row["Bayar_Titipan"].val(sisa);
+
+				//var pinjamantitipan_id = $row["pinjamantitipan_id"].val();
+				//var pinjamantitipan_id_index = $row["pinjamantitipan_id"].selectedIndex;
+				//alert($row["pinjamantitipan_id"].find("option:selected").text());
+				//var pinjamantitipan_sisa = $row["pinjamantitipan_id"].options[pinjamantitipan_id_index].value;
+				//var sisa = " f_carisisatitipan(" + pinjamantitipan_id + ")";
+
+				$row["Bayar_Titipan"].val($row["pinjamantitipan_id"].find("option:selected").text());
+
+				//$row["Bayar_Titipan"].val(pinjamantitipan_id);
+				//$row["Bayar_Titipan"].val(pinjamantitipan_sisa);
+				//$row["Bayar_Titipan"].val(" echo f_carisisatitipan(" + pinjamantitipan_id + ")?>");
+				//$row["Bayar_Titipan"].val(' echo $_SESSION["jaminantitipan_sisa"]?>');
+
 			}
 		}
 	);
