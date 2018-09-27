@@ -62,9 +62,6 @@ ft06_pinjamantitipangrid.Validate = function() {
 			elm = this.GetElements("x" + infix + "_Sisa");
 			if (elm && !ew_IsHidden(elm) && !ew_HasValue(elm))
 				return this.OnError(elm, "<?php echo ew_JsEncode2(str_replace("%s", $t06_pinjamantitipan->Sisa->FldCaption(), $t06_pinjamantitipan->Sisa->ReqErrMsg)) ?>");
-			elm = this.GetElements("x" + infix + "_Sisa");
-			if (elm && !ew_CheckNumber(elm.value))
-				return this.OnError(elm, "<?php echo ew_JsEncode2($t06_pinjamantitipan->Sisa->FldErrMsg()) ?>");
 			elm = this.GetElements("x" + infix + "_nasabah_id");
 			if (elm && !ew_IsHidden(elm) && !ew_HasValue(elm))
 				return this.OnError(elm, "<?php echo ew_JsEncode2(str_replace("%s", $t06_pinjamantitipan->nasabah_id->FldCaption(), $t06_pinjamantitipan->nasabah_id->ReqErrMsg)) ?>");
@@ -492,8 +489,10 @@ ew_CreateCalendar("ft06_pinjamantitipangrid", "x<?php echo $t06_pinjamantitipan_
 <?php } ?>
 <?php if ($t06_pinjamantitipan->RowType == EW_ROWTYPE_EDIT) { // Edit record ?>
 <span id="el<?php echo $t06_pinjamantitipan_grid->RowCnt ?>_t06_pinjamantitipan_Sisa" class="form-group t06_pinjamantitipan_Sisa">
-<input type="text" data-table="t06_pinjamantitipan" data-field="x_Sisa" name="x<?php echo $t06_pinjamantitipan_grid->RowIndex ?>_Sisa" id="x<?php echo $t06_pinjamantitipan_grid->RowIndex ?>_Sisa" size="10" placeholder="<?php echo ew_HtmlEncode($t06_pinjamantitipan->Sisa->getPlaceHolder()) ?>" value="<?php echo $t06_pinjamantitipan->Sisa->EditValue ?>"<?php echo $t06_pinjamantitipan->Sisa->EditAttributes() ?>>
+<span<?php echo $t06_pinjamantitipan->Sisa->ViewAttributes() ?>>
+<p class="form-control-static"><?php echo $t06_pinjamantitipan->Sisa->EditValue ?></p></span>
 </span>
+<input type="hidden" data-table="t06_pinjamantitipan" data-field="x_Sisa" name="x<?php echo $t06_pinjamantitipan_grid->RowIndex ?>_Sisa" id="x<?php echo $t06_pinjamantitipan_grid->RowIndex ?>_Sisa" value="<?php echo ew_HtmlEncode($t06_pinjamantitipan->Sisa->CurrentValue) ?>">
 <?php } ?>
 <?php if ($t06_pinjamantitipan->RowType == EW_ROWTYPE_VIEW) { // View record ?>
 <span id="el<?php echo $t06_pinjamantitipan_grid->RowCnt ?>_t06_pinjamantitipan_Sisa" class="t06_pinjamantitipan_Sisa">

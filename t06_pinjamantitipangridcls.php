@@ -1547,12 +1547,10 @@ class ct06_pinjamantitipan_grid extends ct06_pinjamantitipan {
 			// Sisa
 			$this->Sisa->EditAttrs["class"] = "form-control";
 			$this->Sisa->EditCustomAttributes = "";
-			$this->Sisa->EditValue = ew_HtmlEncode($this->Sisa->CurrentValue);
-			$this->Sisa->PlaceHolder = ew_RemoveHtml($this->Sisa->FldCaption());
-			if (strval($this->Sisa->EditValue) <> "" && is_numeric($this->Sisa->EditValue)) {
-			$this->Sisa->EditValue = ew_FormatNumber($this->Sisa->EditValue, -2, -2, -2, -2);
-			$this->Sisa->OldValue = $this->Sisa->EditValue;
-			}
+			$this->Sisa->EditValue = $this->Sisa->CurrentValue;
+			$this->Sisa->EditValue = ew_FormatNumber($this->Sisa->EditValue, 2, -2, -2, -2);
+			$this->Sisa->CellCssStyle .= "text-align: right;";
+			$this->Sisa->ViewCustomAttributes = "";
 
 			// nasabah_id
 			$this->nasabah_id->EditAttrs["class"] = "form-control";
@@ -1588,6 +1586,7 @@ class ct06_pinjamantitipan_grid extends ct06_pinjamantitipan {
 			// Sisa
 			$this->Sisa->LinkCustomAttributes = "";
 			$this->Sisa->HrefValue = "";
+			$this->Sisa->TooltipValue = "";
 
 			// nasabah_id
 			$this->nasabah_id->LinkCustomAttributes = "";
@@ -1631,9 +1630,6 @@ class ct06_pinjamantitipan_grid extends ct06_pinjamantitipan {
 		}
 		if (!$this->Sisa->FldIsDetailKey && !is_null($this->Sisa->FormValue) && $this->Sisa->FormValue == "") {
 			ew_AddMessage($gsFormError, str_replace("%s", $this->Sisa->FldCaption(), $this->Sisa->ReqErrMsg));
-		}
-		if (!ew_CheckNumber($this->Sisa->FormValue)) {
-			ew_AddMessage($gsFormError, $this->Sisa->FldErrMsg());
 		}
 		if (!$this->nasabah_id->FldIsDetailKey && !is_null($this->nasabah_id->FormValue) && $this->nasabah_id->FormValue == "") {
 			ew_AddMessage($gsFormError, str_replace("%s", $this->nasabah_id->FldCaption(), $this->nasabah_id->ReqErrMsg));
@@ -1770,9 +1766,6 @@ class ct06_pinjamantitipan_grid extends ct06_pinjamantitipan {
 
 			// Keluar
 			$this->Keluar->SetDbValueDef($rsnew, $this->Keluar->CurrentValue, 0, $this->Keluar->ReadOnly);
-
-			// Sisa
-			$this->Sisa->SetDbValueDef($rsnew, $this->Sisa->CurrentValue, 0, $this->Sisa->ReadOnly);
 
 			// nasabah_id
 			$this->nasabah_id->SetDbValueDef($rsnew, $this->nasabah_id->CurrentValue, 0, $this->nasabah_id->ReadOnly);
@@ -1967,6 +1960,7 @@ class ct06_pinjamantitipan_grid extends ct06_pinjamantitipan {
 	function Page_Load() {
 
 		//echo "Page Load";
+		$GLOBALS["saldo_titipan"] = 0;
 	}
 
 	// Page Unload event

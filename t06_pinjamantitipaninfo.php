@@ -835,8 +835,9 @@ class ct06_pinjamantitipan extends cTable {
 		$this->Sisa->EditAttrs["class"] = "form-control";
 		$this->Sisa->EditCustomAttributes = "";
 		$this->Sisa->EditValue = $this->Sisa->CurrentValue;
-		$this->Sisa->PlaceHolder = ew_RemoveHtml($this->Sisa->FldCaption());
-		if (strval($this->Sisa->EditValue) <> "" && is_numeric($this->Sisa->EditValue)) $this->Sisa->EditValue = ew_FormatNumber($this->Sisa->EditValue, -2, -2, -2, -2);
+		$this->Sisa->EditValue = ew_FormatNumber($this->Sisa->EditValue, 2, -2, -2, -2);
+		$this->Sisa->CellCssStyle .= "text-align: right;";
+		$this->Sisa->ViewCustomAttributes = "";
 
 		// nasabah_id
 		$this->nasabah_id->EditAttrs["class"] = "form-control";
@@ -1250,8 +1251,15 @@ class ct06_pinjamantitipan extends cTable {
 	function Row_Rendered() {
 
 		// To view properties of field class, use:
-		//var_dump($this-><FieldName>); 
+		//var_dump($this-><FieldName>);
 
+		if ($this->Masuk->CurrentValue > 0) {
+			$GLOBALS["saldo_titipan"] = $GLOBALS["saldo_titipan"] + $this->Masuk->CurrentValue;
+		}
+		else {
+			$GLOBALS["saldo_titipan"] = $GLOBALS["saldo_titipan"] - $this->Keluar->CurrentValue;
+		}
+		$this->Sisa->ViewValue = number_format($GLOBALS["saldo_titipan"]);
 	}
 
 	// User ID Filtering event

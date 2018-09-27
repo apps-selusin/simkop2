@@ -2129,6 +2129,7 @@ class ct06_pinjamantitipan_list extends ct06_pinjamantitipan {
 	function Page_Load() {
 
 		//echo "Page Load";
+		$GLOBALS["saldo_titipan"] = 0;
 	}
 
 	// Page Unload event

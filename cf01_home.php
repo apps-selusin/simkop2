@@ -311,7 +311,49 @@ Page_Rendering();
 <div class="clearfix"></div>
 </div>
 <?php } ?>
-<!-- %%Custom page content begin%% --><!-- %%Custom page content end%% --><?php if (EW_DEBUG_ENABLED) echo ew_DebugMsg(); ?>
+<style>
+.panel-heading a{
+  display:block;
+}
+
+.panel-heading a.collapsed {
+  background: url(http://upload.wikimedia.org/wikipedia/commons/3/36/Vector_skin_right_arrow.png) center right no-repeat;
+}
+
+.panel-heading a {
+  background: url(http://www.useragentman.com/blog/wp-content/themes/useragentman/images/widgets/downArrow.png) center right no-repeat;
+}
+</style>
+
+<?php
+	$db =& DbHelper(); // Create instance of the database helper class by DbHelper() (for main database) or DbHelper("<dbname>") (for linked databases) where <dbname> is database variable name
+?>
+
+<!-- log -->
+<div class="panel panel-default">
+	<div class="panel-heading"><strong><a class='collapsed' data-toggle="collapse" href="#log">Log</a></strong></div>
+	<div id="log" class="panel-collapse collapse in">
+		<div class="panel-body">
+			<div>
+to do:<br/>
+- tambah field untuk transaksi pembayaran<br/>
+&nbsp;<br/>
+done:<br/>
+- perbesar kolom tanggal bayar<br/>
+- log at home<br/>
+- rumus [jumlah angsuran]<br/>
+- button refresh detail angsuran<br/>
+			</div>
+		</div>
+	</div>
+</div>
+
+<!--
+<div>
+&copy;2018 Selaras Solusindo. All rights reserved.
+</div>
+-->
+<?php if (EW_DEBUG_ENABLED) echo ew_DebugMsg(); ?>
 <?php include_once "footer.php" ?>
 <?php
 $cf01_home_php->Page_Terminate();

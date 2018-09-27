@@ -797,9 +797,10 @@ class ct06_pinjamantitipan_edit extends ct06_pinjamantitipan {
 			// Sisa
 			$this->Sisa->EditAttrs["class"] = "form-control";
 			$this->Sisa->EditCustomAttributes = "";
-			$this->Sisa->EditValue = ew_HtmlEncode($this->Sisa->CurrentValue);
-			$this->Sisa->PlaceHolder = ew_RemoveHtml($this->Sisa->FldCaption());
-			if (strval($this->Sisa->EditValue) <> "" && is_numeric($this->Sisa->EditValue)) $this->Sisa->EditValue = ew_FormatNumber($this->Sisa->EditValue, -2, -2, -2, -2);
+			$this->Sisa->EditValue = $this->Sisa->CurrentValue;
+			$this->Sisa->EditValue = ew_FormatNumber($this->Sisa->EditValue, 2, -2, -2, -2);
+			$this->Sisa->CellCssStyle .= "text-align: right;";
+			$this->Sisa->ViewCustomAttributes = "";
 
 			// nasabah_id
 			$this->nasabah_id->EditAttrs["class"] = "form-control";
@@ -834,6 +835,7 @@ class ct06_pinjamantitipan_edit extends ct06_pinjamantitipan {
 			// Sisa
 			$this->Sisa->LinkCustomAttributes = "";
 			$this->Sisa->HrefValue = "";
+			$this->Sisa->TooltipValue = "";
 
 			// nasabah_id
 			$this->nasabah_id->LinkCustomAttributes = "";
@@ -877,12 +879,6 @@ class ct06_pinjamantitipan_edit extends ct06_pinjamantitipan {
 		}
 		if (!ew_CheckNumber($this->Keluar->FormValue)) {
 			ew_AddMessage($gsFormError, $this->Keluar->FldErrMsg());
-		}
-		if (!$this->Sisa->FldIsDetailKey && !is_null($this->Sisa->FormValue) && $this->Sisa->FormValue == "") {
-			ew_AddMessage($gsFormError, str_replace("%s", $this->Sisa->FldCaption(), $this->Sisa->ReqErrMsg));
-		}
-		if (!ew_CheckNumber($this->Sisa->FormValue)) {
-			ew_AddMessage($gsFormError, $this->Sisa->FldErrMsg());
 		}
 		if (!$this->nasabah_id->FldIsDetailKey && !is_null($this->nasabah_id->FormValue) && $this->nasabah_id->FormValue == "") {
 			ew_AddMessage($gsFormError, str_replace("%s", $this->nasabah_id->FldCaption(), $this->nasabah_id->ReqErrMsg));
@@ -937,9 +933,6 @@ class ct06_pinjamantitipan_edit extends ct06_pinjamantitipan {
 
 			// Keluar
 			$this->Keluar->SetDbValueDef($rsnew, $this->Keluar->CurrentValue, 0, $this->Keluar->ReadOnly);
-
-			// Sisa
-			$this->Sisa->SetDbValueDef($rsnew, $this->Sisa->CurrentValue, 0, $this->Sisa->ReadOnly);
 
 			// nasabah_id
 			$this->nasabah_id->SetDbValueDef($rsnew, $this->nasabah_id->CurrentValue, 0, $this->nasabah_id->ReadOnly);
@@ -1234,12 +1227,6 @@ ft06_pinjamantitipanedit.Validate = function() {
 			elm = this.GetElements("x" + infix + "_Keluar");
 			if (elm && !ew_CheckNumber(elm.value))
 				return this.OnError(elm, "<?php echo ew_JsEncode2($t06_pinjamantitipan->Keluar->FldErrMsg()) ?>");
-			elm = this.GetElements("x" + infix + "_Sisa");
-			if (elm && !ew_IsHidden(elm) && !ew_HasValue(elm))
-				return this.OnError(elm, "<?php echo ew_JsEncode2(str_replace("%s", $t06_pinjamantitipan->Sisa->FldCaption(), $t06_pinjamantitipan->Sisa->ReqErrMsg)) ?>");
-			elm = this.GetElements("x" + infix + "_Sisa");
-			if (elm && !ew_CheckNumber(elm.value))
-				return this.OnError(elm, "<?php echo ew_JsEncode2($t06_pinjamantitipan->Sisa->FldErrMsg()) ?>");
 			elm = this.GetElements("x" + infix + "_nasabah_id");
 			if (elm && !ew_IsHidden(elm) && !ew_HasValue(elm))
 				return this.OnError(elm, "<?php echo ew_JsEncode2(str_replace("%s", $t06_pinjamantitipan->nasabah_id->FldCaption(), $t06_pinjamantitipan->nasabah_id->ReqErrMsg)) ?>");
@@ -1404,11 +1391,13 @@ ew_CreateCalendar("ft06_pinjamantitipanedit", "x_Tanggal", 7);
 <?php } ?>
 <?php if ($t06_pinjamantitipan->Sisa->Visible) { // Sisa ?>
 	<div id="r_Sisa" class="form-group">
-		<label id="elh_t06_pinjamantitipan_Sisa" for="x_Sisa" class="col-sm-2 control-label ewLabel"><?php echo $t06_pinjamantitipan->Sisa->FldCaption() ?><?php echo $Language->Phrase("FieldRequiredIndicator") ?></label>
+		<label id="elh_t06_pinjamantitipan_Sisa" for="x_Sisa" class="col-sm-2 control-label ewLabel"><?php echo $t06_pinjamantitipan->Sisa->FldCaption() ?></label>
 		<div class="col-sm-10"><div<?php echo $t06_pinjamantitipan->Sisa->CellAttributes() ?>>
 <span id="el_t06_pinjamantitipan_Sisa">
-<input type="text" data-table="t06_pinjamantitipan" data-field="x_Sisa" name="x_Sisa" id="x_Sisa" size="10" placeholder="<?php echo ew_HtmlEncode($t06_pinjamantitipan->Sisa->getPlaceHolder()) ?>" value="<?php echo $t06_pinjamantitipan->Sisa->EditValue ?>"<?php echo $t06_pinjamantitipan->Sisa->EditAttributes() ?>>
+<span<?php echo $t06_pinjamantitipan->Sisa->ViewAttributes() ?>>
+<p class="form-control-static"><?php echo $t06_pinjamantitipan->Sisa->EditValue ?></p></span>
 </span>
+<input type="hidden" data-table="t06_pinjamantitipan" data-field="x_Sisa" name="x_Sisa" id="x_Sisa" value="<?php echo ew_HtmlEncode($t06_pinjamantitipan->Sisa->CurrentValue) ?>">
 <?php echo $t06_pinjamantitipan->Sisa->CustomMsg ?></div></div>
 	</div>
 <?php } ?>
