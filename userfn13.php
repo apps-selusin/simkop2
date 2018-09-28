@@ -74,4 +74,17 @@ function f_TanggalAngsuran($sTanggal, $sTgl) {
 	//echo $akhir_bulan;
 	return $sTanggalAngsuran;
 }
+
+function f_updatesaldotitipan($pinjaman_id) {
+	$q = "select * from t06_pinjamantitipan where pinjaman_id = ".$pinjaman_id."
+		order by id";
+	$r = Conn()->Execute($q);
+	$saldo = 0;
+	while (!$r->EOF) {
+		$saldo = $saldo + $r->fields["Masuk"] - $r->fields["Keluar"];
+		$q = "update t06_pinjamantitipan set Sisa = ".$saldo." where id = ".$r->fields["id"]."";
+		Conn()->Execute($q);
+		$r->MoveNext();
+	}
+}
 ?>

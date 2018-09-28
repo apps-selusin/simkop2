@@ -258,6 +258,34 @@ jQuery.get("<?php echo $EW_RELATIVE_PATH ?>phpjs/userevt13.js");
 			}
 		}
 	);
+
+	// Table 't04_angsuran' Field 'Bayar_Non_Titipan'
+	$('[data-table=t04_angsuran][data-field=x_Bayar_Non_Titipan]').on(
+		{ // keys = event types, values = handler functions
+			"change keyup": function(e) {
+				var $row = $(this).fields();
+
+				// denda
+				var denda_asli = $row["TotalDenda"].val();
+				var denda_clean = denda_asli.replace(/,/g, '');
+				var denda = parseFloat(denda_clean);
+
+				// bayar titipan
+				var titipan_asli = $row["Bayar_Titipan"].val();
+				var titipan_clean = titipan_asli.replace(/,/g, '');
+				var titipan = parseFloat(titipan_clean);
+
+				// bayar non titipan
+				var nontitipan_asli = $row["Bayar_Non_Titipan"].val();
+				var nontitipan_clean = nontitipan_asli.replace(/,/g, '');
+				var nontitipan = parseFloat(nontitipan_clean);
+
+				// bayar_total
+				var bayar_total = denda + titipan + nontitipan;
+				$row["Bayar_Total"].val(bayar_total);
+			}
+		}
+	);
 </script>
 <?php } ?>
 </body>

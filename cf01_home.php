@@ -336,9 +336,12 @@ Page_Rendering();
 		<div class="panel-body">
 			<div>
 to do:<br/>
-- tambah field untuk transaksi pembayaran<br/>
+pinjaman titipan<br/>
+- setelah input setoran titipan :: harus save dulu agar nilai saldo terupdate;<br/>
+
 &nbsp;<br/>
 done:<br/>
+- tambah field untuk transaksi pembayaran<br/>
 - perbesar kolom tanggal bayar<br/>
 - log at home<br/>
 - rumus [jumlah angsuran]<br/>

@@ -1538,6 +1538,7 @@ class ct03_pinjaman extends cTable {
 		// angs. total
 		// jika ada perubahan :: maka detail angsuran diperbarui
 
+		$pinjaman_id = $rsold["id"];
 		if (
 			$rsold["LamaAngsuran"] == $rsnew["LamaAngsuran"] and
 			$rsold["AngsuranPokok"] == $rsnew["AngsuranPokok"] and
@@ -1547,58 +1548,54 @@ class ct03_pinjaman extends cTable {
 		}
 		else {
 
-		// hapus data rincian angsuran yang lama
-		$q = "delete from t04_angsuran where pinjaman_id = ".$rsold["id"].""; //echo $q; exit;
-		ew_Execute($q);
+			// hapus data rincian angsuran yang lama
+			$q = "delete from t04_angsuran where pinjaman_id = ".$rsold["id"].""; //echo $q; exit;
+			ew_Execute($q);
 
-		// create data rincian angsuran
-		$pinjaman_id     = $rsold["id"];
-		$AngsuranTanggal = $rsnew["TglKontrak"]; //$_GET["TglKontrak"]; //$rsnew["TglKontrak"];
-		$AngsuranTgl     = substr($AngsuranTanggal, -2); //substr($rsnew["TglKontrak"], -2);
+			// create data rincian angsuran
+			//$pinjaman_id     = $rsold["id"];
 
-		//$AngsuranPokok   = round($rsnew["Pinjaman"] / $rsnew["LamaAngsuran"], -3);
-		$AngsuranPokok   = $rsnew["AngsuranPokok"];
-
-		//$AngsuranBunga   = $rsnew["JumlahAngsuran"] - $AngsuranPokok;
-		$AngsuranBunga   = $rsnew["AngsuranBunga"];
-		$AngsuranTotal   = $AngsuranPokok + $AngsuranBunga;
-		$SisaHutang      = $rsnew["Pinjaman"]; // - $AngsuranTotal;
-		$AngsuranPokokTotal = 0;
-		$AngsuranBungaTotal = 0;
-		$AngsuranTotalGrand = 0;
-
-		//for ($i; $i <= 12; $i++) {
-		for ($AngsuranKe = 1; $AngsuranKe <= $rsnew["LamaAngsuran"]; $AngsuranKe++) {
-			$AngsuranTanggal     = f_TanggalAngsuran($AngsuranTanggal, $AngsuranTgl);
-			$AngsuranPokokTotal += $AngsuranPokok;
-			if ($AngsuranPokokTotal >= $rsnew["Pinjaman"]) {
-				$AngsuranPokok      = $AngsuranPokok - ($AngsuranPokokTotal - $rsnew["Pinjaman"]);
-				$AngsuranPokokTotal = $AngsuranPokokTotal - ($AngsuranPokokTotal - $rsnew["Pinjaman"]);
+			$AngsuranTanggal = $rsnew["TglKontrak"]; //$_GET["TglKontrak"]; //$rsnew["TglKontrak"];
+			$AngsuranTgl     = substr($AngsuranTanggal, -2); //substr($rsnew["TglKontrak"], -2);
+			$AngsuranPokok   = $rsnew["AngsuranPokok"];
+			$AngsuranBunga   = $rsnew["AngsuranBunga"];
+			$AngsuranTotal   = $AngsuranPokok + $AngsuranBunga;
+			$SisaHutang      = $rsnew["Pinjaman"]; // - $AngsuranTotal;
+			$AngsuranPokokTotal = 0;
+			$AngsuranBungaTotal = 0;
+			$AngsuranTotalGrand = 0;
+			for ($AngsuranKe = 1; $AngsuranKe <= $rsnew["LamaAngsuran"]; $AngsuranKe++) {
+				$AngsuranTanggal     = f_TanggalAngsuran($AngsuranTanggal, $AngsuranTgl);
+				$AngsuranPokokTotal += $AngsuranPokok;
+				if ($AngsuranPokokTotal >= $rsnew["Pinjaman"]) {
+					$AngsuranPokok      = $AngsuranPokok - ($AngsuranPokokTotal - $rsnew["Pinjaman"]);
+					$AngsuranPokokTotal = $AngsuranPokokTotal - ($AngsuranPokokTotal - $rsnew["Pinjaman"]);
+				}
+				$SisaHutang         -= $AngsuranPokok;
+				$AngsuranBunga       = $AngsuranTotal - $AngsuranPokok;
+				$AngsuranBungaTotal += $AngsuranBunga;
+				$AngsuranTotalGrand += $AngsuranTotal;
+				$q = "insert into t04_angsuran (
+					pinjaman_id,
+					AngsuranKe,
+					AngsuranTanggal,
+					AngsuranPokok,
+					AngsuranBunga,
+					AngsuranTotal,
+					SisaHutang
+					) values (
+					'".$pinjaman_id."',
+					'".$AngsuranKe."',
+					'".$AngsuranTanggal."',
+					".$AngsuranPokok.",
+					".$AngsuranBunga.",
+					".$AngsuranTotal.",
+					".$SisaHutang."
+					)";
+				ew_Execute($q); //echo $q; exit;
 			}
-			$SisaHutang         -= $AngsuranPokok;
-			$AngsuranBunga       = $AngsuranTotal - $AngsuranPokok;
-			$AngsuranBungaTotal += $AngsuranBunga;
-			$AngsuranTotalGrand += $AngsuranTotal;
-			$q = "insert into t04_angsuran (
-				pinjaman_id,
-				AngsuranKe,
-				AngsuranTanggal,
-				AngsuranPokok,
-				AngsuranBunga,
-				AngsuranTotal,
-				SisaHutang
-				) values (
-				'".$pinjaman_id."',
-				'".$AngsuranKe."',
-				'".$AngsuranTanggal."',
-				".$AngsuranPokok.",
-				".$AngsuranBunga.",
-				".$AngsuranTotal.",
-				".$SisaHutang."
-				)";
-			ew_Execute($q); //echo $q; exit;
 		}
-		}
+		f_updatesaldotitipan($pinjaman_id);
 	}
 
 	// Row Update Conflict event
