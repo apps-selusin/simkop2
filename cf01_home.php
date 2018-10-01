@@ -338,6 +338,9 @@ Page_Rendering();
 to do:<br/>
 pinjaman - angsuran:<br/>
 - ada tambahan kolom POTONGAN, mengurangi SISA HUTANG;<br/>
+- setiap ada pembayaran menggunakan SALDO TITIPAN maka akan mengurangi jumlah SALDO TITIPAN;<br/>
+- buatkan CHECK FOR UPDATE;<br/>
+- check jumlah TOTAL PEMBAYARAN harus sama dengan jumlah TOTAL ANGSURAN;<br/>
 &nbsp;<br/>
 
 done:<br/>
