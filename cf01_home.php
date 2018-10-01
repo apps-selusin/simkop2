@@ -336,11 +336,14 @@ Page_Rendering();
 		<div class="panel-body">
 			<div>
 to do:<br/>
-pinjaman titipan<br/>
-- setelah input setoran titipan :: harus save dulu agar nilai saldo terupdate;<br/>
-
+pinjaman - angsuran:<br/>
+- ada tambahan kolom POTONGAN, mengurangi SISA HUTANG;<br/>
 &nbsp;<br/>
+
 done:<br/>
+pinjaman titipan:<br/>
+- setelah input setoran titipan :: harus save dulu agar nilai saldo terupdate;<br/>
+&nbsp;<br/>
 - tambah field untuk transaksi pembayaran<br/>
 - perbesar kolom tanggal bayar<br/>
 - log at home<br/>

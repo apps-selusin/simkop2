@@ -482,10 +482,7 @@ class ct01_nasabah_edit extends ct01_nasabah {
 				$this->SetUpDetailParms();
 				break;
 			Case "U": // Update
-				if ($this->getCurrentDetailTable() <> "") // Master/detail edit
-					$sReturnUrl = $this->GetViewUrl(EW_TABLE_SHOW_DETAIL . "=" . $this->getCurrentDetailTable()); // Master/Detail view page
-				else
-					$sReturnUrl = $this->getReturnUrl();
+				$sReturnUrl = "t01_nasabahlist.php";
 				if (ew_GetPageName($sReturnUrl) == "t01_nasabahlist.php")
 					$sReturnUrl = $this->AddMasterUrl($sReturnUrl); // List page, return to list page with correct master key if necessary
 				$this->SendEmail = TRUE; // Send email on update success
