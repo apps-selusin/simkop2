@@ -335,24 +335,27 @@ Page_Rendering();
 	<div id="log" class="panel-collapse collapse in">
 		<div class="panel-body">
 			<div>
-to do:<br/>
-pinjaman - angsuran:<br/>
+<strong>to do:</strong><br/>
+[pinjaman - angsuran]:<br/>
 - ada tambahan kolom POTONGAN, mengurangi SISA HUTANG;<br/>
 - setiap ada pembayaran menggunakan SALDO TITIPAN maka akan mengurangi jumlah SALDO TITIPAN;<br/>
 - check jumlah TOTAL PEMBAYARAN harus sama dengan jumlah TOTAL ANGSURAN;<br/>
 &nbsp;<br/>
-aplikasi:<br/>
+[aplikasi]:<br/>
 - buat CHECK FOR UPDATE;<br/>
 &nbsp;<br/>
-done:<br/>
-pinjaman titipan:<br/>
+<strong>done:</strong><br/>
+[pinjaman - titipan]:<br/>
 - setelah input setoran titipan :: harus save dulu agar nilai saldo terupdate;<br/>
 &nbsp;<br/>
-- tambah field untuk transaksi pembayaran<br/>
-- perbesar kolom tanggal bayar<br/>
-- log at home<br/>
-- rumus [jumlah angsuran]<br/>
-- button refresh detail angsuran<br/>
+[aplikasi]:<br/>
+- log at home, List - User Log;<br/>
+&nbsp;<br/>
+[pinjaman - angsuran]:<br/>
+- rumus [jumlah angsuran];<br/>
+- button refresh detail angsuran;<br/>
+- tambah field untuk transaksi pembayaran;<br/>
+- perbesar kolom tanggal bayar;<br/>
 			</div>
 		</div>
 	</div>
