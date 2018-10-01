@@ -1456,11 +1456,7 @@ class ct03_pinjaman extends cTable {
 		$pinjaman_id     = $rsnew["id"];
 		$AngsuranTanggal = $rsnew["TglKontrak"]; //$_GET["TglKontrak"]; //$rsnew["TglKontrak"];
 		$AngsuranTgl     = substr($AngsuranTanggal, -2); //substr($rsnew["TglKontrak"], -2);
-
-		//$AngsuranPokok   = round($rsnew["Pinjaman"] / $rsnew["LamaAngsuran"], -3);
 		$AngsuranPokok   = $rsnew["AngsuranPokok"];
-
-		//$AngsuranBunga   = $rsnew["JumlahAngsuran"] - $AngsuranPokok;
 		$AngsuranBunga   = $rsnew["AngsuranBunga"];
 		$AngsuranTotal   = $AngsuranPokok + $AngsuranBunga;
 		$SisaHutang      = $rsnew["Pinjaman"]; // - $AngsuranTotal;
@@ -1499,6 +1495,7 @@ class ct03_pinjaman extends cTable {
 				)";
 			ew_Execute($q);
 		}
+		f_updatesaldotitipan($pinjaman_id);
 	}
 
 	// Row Updating event
@@ -1506,6 +1503,9 @@ class ct03_pinjaman extends cTable {
 
 		// Enter your code here
 		// To cancel, set return value to FALSE
+		// check perubahan data master pinjaman
+		// jika ada perubahan pada data master tapi sudah ada data pembayaran
+		// maka perubahan harus tidak diperbolehkan
 
 		$q = "select count(id) from t04_angsuran where
 			pinjaman_id = ".$rsold["id"]."
@@ -1524,6 +1524,8 @@ class ct03_pinjaman extends cTable {
 				return FALSE;
 			}
 		}
+
+		// check jumlah total pembayaran apakah sama dengan total angsuran ?
 		return TRUE;
 	}
 

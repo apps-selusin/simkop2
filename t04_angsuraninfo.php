@@ -1413,7 +1413,13 @@ class ct04_angsuran extends cTable {
 
 		// Enter your code here
 		// To cancel, set return value to FALSE
+		// check inputan pembayaran apakah sudah sesuai dengan angsuran total ?
+		//echo "old - ".$rsold["TanggalBayar"]." - new - ".$rsnew["TanggalBayar"];
 
+		$id = $rsold["id"];
+		if ($rsnew["Bayar_Total"] < $rsold["AngsuranTotal"] and ($rsold["TanggalBayar"] != null or $rsnew["TanggalBayar"] != null)) {
+			$this->setFailureMessage("id: ".$rsold["id"].", total pembayaran: ".$rsnew["Bayar_Total"]);
+		}
 		return TRUE;
 	}
 
