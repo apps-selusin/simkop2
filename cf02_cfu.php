@@ -350,8 +350,10 @@ exec("git pull");
 <!--Proses Selesai !<br/>-->
 
 <?php
+
+CurrentPage()->ShowMessage();
 CurrentPage()->SetSuccessMessage("Proses selesai !");
-//CurrentPage()->ShowMessage();
+
 ?>
 
 <!-- &nbsp;<br/> -->
