@@ -613,14 +613,17 @@
     <menu id="10">
       <phrase id="menutext" value="t 99 audittrail" />
     </menu>
-    <menu id="4">
-      <phrase id="menutext" value="Angsuran" />
-    </menu>
     <menu id="10011">
       <phrase id="menutext" value="List" />
     </menu>
     <menu id="10010">
       <phrase id="menutext" value="User Log" />
+    </menu>
+    <menu id="10013">
+      <phrase id="menutext" value="Check for update" />
+    </menu>
+    <menu id="4">
+      <phrase id="menutext" value="Angsuran" />
     </menu>
     <menu id="5">
       <phrase id="menutext" value="Jaminan" />
@@ -985,6 +988,9 @@
       <field id="sisa">
         <phrase id="fldcaption" value="sisa" />
       </field>
+    </table>
+    <table id="cf02_cfu_php">
+      <phrase id="tblcaption" value="Check for update" />
     </table>
   </project>
 </ew-language>
