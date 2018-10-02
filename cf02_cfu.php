@@ -314,7 +314,8 @@ Page_Rendering();
 <?php
 // cfu = check for update
 
-include "GitRepository.php";
+include("IGit.php");
+include("GitRepository.php");
 
 $repo = new Cz\Git\GitRepository("https://github.com/apps-selusin/simkop2");
 $repo->fetch("simkop2", null);
