@@ -316,6 +316,46 @@ Page_Rendering();
 
 exec("git pull");
 ?>
+
+<style>
+.panel-heading a{
+  display:block;
+}
+
+.panel-heading a.collapsed {
+  background: url(http://upload.wikimedia.org/wikipedia/commons/3/36/Vector_skin_right_arrow.png) center right no-repeat;
+}
+
+.panel-heading a {
+  background: url(http://www.useragentman.com/blog/wp-content/themes/useragentman/images/widgets/downArrow.png) center right no-repeat;
+}
+</style>
+
+		<!-- <div class="panel panel-default">
+			<div class="panel-body">
+				<table class='table table-striped table-bordered table-hover table-condensed'>
+					<tr>
+						<td>Proses selesai !</td>
+					</tr>
+					<tr>
+						<td>&nbsp;</td>
+					</tr>
+					<tr>
+						<td><a href='.'><button>Selesai</button></a></td>
+					</tr>
+				</table>
+			</div>
+		</div> -->
+
+<!--Proses Selesai !<br/>-->
+
+<?php
+CurrentPage()->SetSuccessMessage("Proses selesai !");
+CurrentPage()->ShowMessage();
+?>
+
+<!-- &nbsp;<br/> -->
+<a href='.'><button>Back to Home</button></a>
 <?php if (EW_DEBUG_ENABLED) echo ew_DebugMsg(); ?>
 <?php include_once "footer.php" ?>
 <?php
