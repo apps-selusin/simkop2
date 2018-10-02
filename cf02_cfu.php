@@ -314,13 +314,7 @@ Page_Rendering();
 <?php
 // cfu = check for update
 
-include("IGit.php");
-include("GitRepository.php");
-
-$repo = new Cz\Git\GitRepository("https://github.com/apps-selusin/simkop2");
-$repo->fetch("simkop2", null);
-$repo->fetch("origin");
-$repo->fetch("origin", array("master"));
+exec("git pull");
 ?>
 <?php if (EW_DEBUG_ENABLED) echo ew_DebugMsg(); ?>
 <?php include_once "footer.php" ?>
