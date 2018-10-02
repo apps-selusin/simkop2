@@ -351,7 +351,7 @@ exec("git pull");
 
 <?php
 CurrentPage()->SetSuccessMessage("Proses selesai !");
-CurrentPage()->ShowMessage();
+//CurrentPage()->ShowMessage();
 ?>
 
 <!-- &nbsp;<br/> -->
