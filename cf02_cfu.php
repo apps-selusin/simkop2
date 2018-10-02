@@ -316,7 +316,7 @@ Page_Rendering();
 
 include "GitRepository.php";
 
-$repo = new GitRepository("https://github.com/apps-selusin/simkop2");
+$repo = new Cz\Git\GitRepository("https://github.com/apps-selusin/simkop2");
 $repo->fetch("simkop2", null);
 $repo->fetch("origin");
 $repo->fetch("origin", array("master"));
