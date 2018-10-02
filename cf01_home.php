@@ -342,13 +342,14 @@ Page_Rendering();
 - check jumlah TOTAL PEMBAYARAN harus sama dengan jumlah TOTAL ANGSURAN;<br/>
 &nbsp;<br/>
 [aplikasi]:<br/>
-- buat CHECK FOR UPDATE;<br/>
+
 &nbsp;<br/>
 <strong>done:</strong><br/>
 [pinjaman - titipan]:<br/>
 - setelah input setoran titipan :: harus save dulu agar nilai saldo terupdate;<br/>
 &nbsp;<br/>
 [aplikasi]:<br/>
+- buat CHECK FOR UPDATE; aplikasi yang harus ada :: github desktop & gitscm;<br/>
 - log at home, List - User Log;<br/>
 &nbsp;<br/>
 [pinjaman - angsuran]:<br/>
