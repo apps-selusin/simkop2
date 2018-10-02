@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
-<configuration date="2018/10/01" author="e.World Technology Ltd.">
-  <project id="{1F354293-F296-4B13-80A8-520A61B09C85}" file="C:\xampp-real\htdocs\simkop2\simkop2_prj.prp" name="simkop2_prj" product="PHPReportMaker" version="10.0" datetime="2018/10/01 14:51:56" languagefolder="phprptlang" userlevel="-2,&quot;Anonymous&quot;,0;0,&quot;Default&quot;,0">
+<configuration date="2018/10/02" author="e.World Technology Ltd.">
+  <project id="{1F354293-F296-4B13-80A8-520A61B09C85}" file="C:\xampp-real\htdocs\simkop2\simkop2_prj.prp" name="simkop2_prj" product="PHPReportMaker" version="10.0" datetime="2018/10/02 09:04:37" languagefolder="phprptlang" userlevel="-2,&quot;Anonymous&quot;,0;0,&quot;Default&quot;,0">
     <table id="t01_nasabah" name="t01_nasabah" caption="t 01 nasabah" userlevel="-2,&quot;Anonymous&quot;,0;0,&quot;Default&quot;,0" priv="1" />
     <table id="t02_jaminan" name="t02_jaminan" caption="t 02 jaminan" userlevel="-2,&quot;Anonymous&quot;,0;0,&quot;Default&quot;,0" priv="1" />
     <table id="t03_pinjaman" name="t03_pinjaman" caption="t 03 pinjaman" userlevel="-2,&quot;Anonymous&quot;,0;0,&quot;Default&quot;,0" priv="1" />
