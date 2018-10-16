@@ -131,7 +131,7 @@ class ct03_pinjaman extends cTable {
 		$this->fields['AngsuranTotal'] = &$this->AngsuranTotal;
 
 		// NoKontrakRefTo
-		$this->NoKontrakRefTo = new cField('t03_pinjaman', 't03_pinjaman', 'x_NoKontrakRefTo', 'NoKontrakRefTo', '`NoKontrakRefTo`', '`NoKontrakRefTo`', 3, -1, FALSE, '`NoKontrakRefTo`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXT');
+		$this->NoKontrakRefTo = new cField('t03_pinjaman', 't03_pinjaman', 'x_NoKontrakRefTo', 'NoKontrakRefTo', '`NoKontrakRefTo`', '`NoKontrakRefTo`', 200, -1, FALSE, '`NoKontrakRefTo`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXT');
 		$this->NoKontrakRefTo->Sortable = TRUE; // Allow sort
 		$this->NoKontrakRefTo->FldDefaultErrMsg = $Language->Phrase("IncorrectInteger");
 		$this->fields['NoKontrakRefTo'] = &$this->NoKontrakRefTo;

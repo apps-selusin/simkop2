@@ -385,8 +385,8 @@ class ct01_nasabah_view extends ct01_nasabah {
 		// Setup export options
 		$this->SetupExportOptions();
 		$this->Customer->SetVisibility();
-		$this->Pekerjaan->SetVisibility();
 		$this->Alamat->SetVisibility();
+		$this->Pekerjaan->SetVisibility();
 		$this->NoTelpHp->SetVisibility();
 
 		// Global Page Loading event (in userfn*.php)
@@ -784,8 +784,8 @@ class ct01_nasabah_view extends ct01_nasabah {
 		if ($this->AuditTrailOnView) $this->WriteAuditTrailOnView($row);
 		$this->id->setDbValue($rs->fields('id'));
 		$this->Customer->setDbValue($rs->fields('Customer'));
-		$this->Pekerjaan->setDbValue($rs->fields('Pekerjaan'));
 		$this->Alamat->setDbValue($rs->fields('Alamat'));
+		$this->Pekerjaan->setDbValue($rs->fields('Pekerjaan'));
 		$this->NoTelpHp->setDbValue($rs->fields('NoTelpHp'));
 	}
 
@@ -795,8 +795,8 @@ class ct01_nasabah_view extends ct01_nasabah {
 		$row = is_array($rs) ? $rs : $rs->fields;
 		$this->id->DbValue = $row['id'];
 		$this->Customer->DbValue = $row['Customer'];
-		$this->Pekerjaan->DbValue = $row['Pekerjaan'];
 		$this->Alamat->DbValue = $row['Alamat'];
+		$this->Pekerjaan->DbValue = $row['Pekerjaan'];
 		$this->NoTelpHp->DbValue = $row['NoTelpHp'];
 	}
 
@@ -818,8 +818,8 @@ class ct01_nasabah_view extends ct01_nasabah {
 		// Common render codes for all row types
 		// id
 		// Customer
-		// Pekerjaan
 		// Alamat
+		// Pekerjaan
 		// NoTelpHp
 
 		if ($this->RowType == EW_ROWTYPE_VIEW) { // View row
@@ -832,13 +832,13 @@ class ct01_nasabah_view extends ct01_nasabah {
 		$this->Customer->ViewValue = $this->Customer->CurrentValue;
 		$this->Customer->ViewCustomAttributes = "";
 
-		// Pekerjaan
-		$this->Pekerjaan->ViewValue = $this->Pekerjaan->CurrentValue;
-		$this->Pekerjaan->ViewCustomAttributes = "";
-
 		// Alamat
 		$this->Alamat->ViewValue = $this->Alamat->CurrentValue;
 		$this->Alamat->ViewCustomAttributes = "";
+
+		// Pekerjaan
+		$this->Pekerjaan->ViewValue = $this->Pekerjaan->CurrentValue;
+		$this->Pekerjaan->ViewCustomAttributes = "";
 
 		// NoTelpHp
 		$this->NoTelpHp->ViewValue = $this->NoTelpHp->CurrentValue;
@@ -849,15 +849,15 @@ class ct01_nasabah_view extends ct01_nasabah {
 			$this->Customer->HrefValue = "";
 			$this->Customer->TooltipValue = "";
 
-			// Pekerjaan
-			$this->Pekerjaan->LinkCustomAttributes = "";
-			$this->Pekerjaan->HrefValue = "";
-			$this->Pekerjaan->TooltipValue = "";
-
 			// Alamat
 			$this->Alamat->LinkCustomAttributes = "";
 			$this->Alamat->HrefValue = "";
 			$this->Alamat->TooltipValue = "";
+
+			// Pekerjaan
+			$this->Pekerjaan->LinkCustomAttributes = "";
+			$this->Pekerjaan->HrefValue = "";
+			$this->Pekerjaan->TooltipValue = "";
 
 			// NoTelpHp
 			$this->NoTelpHp->LinkCustomAttributes = "";
@@ -1424,17 +1424,6 @@ $t01_nasabah_view->ShowMessage();
 </td>
 	</tr>
 <?php } ?>
-<?php if ($t01_nasabah->Pekerjaan->Visible) { // Pekerjaan ?>
-	<tr id="r_Pekerjaan">
-		<td><span id="elh_t01_nasabah_Pekerjaan"><?php echo $t01_nasabah->Pekerjaan->FldCaption() ?></span></td>
-		<td data-name="Pekerjaan"<?php echo $t01_nasabah->Pekerjaan->CellAttributes() ?>>
-<span id="el_t01_nasabah_Pekerjaan">
-<span<?php echo $t01_nasabah->Pekerjaan->ViewAttributes() ?>>
-<?php echo $t01_nasabah->Pekerjaan->ViewValue ?></span>
-</span>
-</td>
-	</tr>
-<?php } ?>
 <?php if ($t01_nasabah->Alamat->Visible) { // Alamat ?>
 	<tr id="r_Alamat">
 		<td><span id="elh_t01_nasabah_Alamat"><?php echo $t01_nasabah->Alamat->FldCaption() ?></span></td>
@@ -1442,6 +1431,17 @@ $t01_nasabah_view->ShowMessage();
 <span id="el_t01_nasabah_Alamat">
 <span<?php echo $t01_nasabah->Alamat->ViewAttributes() ?>>
 <?php echo $t01_nasabah->Alamat->ViewValue ?></span>
+</span>
+</td>
+	</tr>
+<?php } ?>
+<?php if ($t01_nasabah->Pekerjaan->Visible) { // Pekerjaan ?>
+	<tr id="r_Pekerjaan">
+		<td><span id="elh_t01_nasabah_Pekerjaan"><?php echo $t01_nasabah->Pekerjaan->FldCaption() ?></span></td>
+		<td data-name="Pekerjaan"<?php echo $t01_nasabah->Pekerjaan->CellAttributes() ?>>
+<span id="el_t01_nasabah_Pekerjaan">
+<span<?php echo $t01_nasabah->Pekerjaan->ViewAttributes() ?>>
+<?php echo $t01_nasabah->Pekerjaan->ViewValue ?></span>
 </span>
 </td>
 	</tr>

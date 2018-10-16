@@ -15,8 +15,8 @@ class ct01_nasabah extends cTable {
 	var $AuditTrailOnSearch = FALSE;
 	var $id;
 	var $Customer;
-	var $Pekerjaan;
 	var $Alamat;
+	var $Pekerjaan;
 	var $NoTelpHp;
 
 	//
@@ -60,15 +60,15 @@ class ct01_nasabah extends cTable {
 		$this->Customer->Sortable = TRUE; // Allow sort
 		$this->fields['Customer'] = &$this->Customer;
 
-		// Pekerjaan
-		$this->Pekerjaan = new cField('t01_nasabah', 't01_nasabah', 'x_Pekerjaan', 'Pekerjaan', '`Pekerjaan`', '`Pekerjaan`', 200, -1, FALSE, '`Pekerjaan`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXT');
-		$this->Pekerjaan->Sortable = TRUE; // Allow sort
-		$this->fields['Pekerjaan'] = &$this->Pekerjaan;
-
 		// Alamat
 		$this->Alamat = new cField('t01_nasabah', 't01_nasabah', 'x_Alamat', 'Alamat', '`Alamat`', '`Alamat`', 201, -1, FALSE, '`Alamat`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXTAREA');
 		$this->Alamat->Sortable = TRUE; // Allow sort
 		$this->fields['Alamat'] = &$this->Alamat;
+
+		// Pekerjaan
+		$this->Pekerjaan = new cField('t01_nasabah', 't01_nasabah', 'x_Pekerjaan', 'Pekerjaan', '`Pekerjaan`', '`Pekerjaan`', 200, -1, FALSE, '`Pekerjaan`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXT');
+		$this->Pekerjaan->Sortable = TRUE; // Allow sort
+		$this->fields['Pekerjaan'] = &$this->Pekerjaan;
 
 		// NoTelpHp
 		$this->NoTelpHp = new cField('t01_nasabah', 't01_nasabah', 'x_NoTelpHp', 'NoTelpHp', '`NoTelpHp`', '`NoTelpHp`', 200, -1, FALSE, '`NoTelpHp`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXT');
@@ -646,8 +646,8 @@ class ct01_nasabah extends cTable {
 	function LoadListRowValues(&$rs) {
 		$this->id->setDbValue($rs->fields('id'));
 		$this->Customer->setDbValue($rs->fields('Customer'));
-		$this->Pekerjaan->setDbValue($rs->fields('Pekerjaan'));
 		$this->Alamat->setDbValue($rs->fields('Alamat'));
+		$this->Pekerjaan->setDbValue($rs->fields('Pekerjaan'));
 		$this->NoTelpHp->setDbValue($rs->fields('NoTelpHp'));
 	}
 
@@ -661,8 +661,8 @@ class ct01_nasabah extends cTable {
    // Common render codes
 		// id
 		// Customer
-		// Pekerjaan
 		// Alamat
+		// Pekerjaan
 		// NoTelpHp
 		// id
 
@@ -673,13 +673,13 @@ class ct01_nasabah extends cTable {
 		$this->Customer->ViewValue = $this->Customer->CurrentValue;
 		$this->Customer->ViewCustomAttributes = "";
 
-		// Pekerjaan
-		$this->Pekerjaan->ViewValue = $this->Pekerjaan->CurrentValue;
-		$this->Pekerjaan->ViewCustomAttributes = "";
-
 		// Alamat
 		$this->Alamat->ViewValue = $this->Alamat->CurrentValue;
 		$this->Alamat->ViewCustomAttributes = "";
+
+		// Pekerjaan
+		$this->Pekerjaan->ViewValue = $this->Pekerjaan->CurrentValue;
+		$this->Pekerjaan->ViewCustomAttributes = "";
 
 		// NoTelpHp
 		$this->NoTelpHp->ViewValue = $this->NoTelpHp->CurrentValue;
@@ -695,15 +695,15 @@ class ct01_nasabah extends cTable {
 		$this->Customer->HrefValue = "";
 		$this->Customer->TooltipValue = "";
 
-		// Pekerjaan
-		$this->Pekerjaan->LinkCustomAttributes = "";
-		$this->Pekerjaan->HrefValue = "";
-		$this->Pekerjaan->TooltipValue = "";
-
 		// Alamat
 		$this->Alamat->LinkCustomAttributes = "";
 		$this->Alamat->HrefValue = "";
 		$this->Alamat->TooltipValue = "";
+
+		// Pekerjaan
+		$this->Pekerjaan->LinkCustomAttributes = "";
+		$this->Pekerjaan->HrefValue = "";
+		$this->Pekerjaan->TooltipValue = "";
 
 		// NoTelpHp
 		$this->NoTelpHp->LinkCustomAttributes = "";
@@ -733,17 +733,17 @@ class ct01_nasabah extends cTable {
 		$this->Customer->EditValue = $this->Customer->CurrentValue;
 		$this->Customer->PlaceHolder = ew_RemoveHtml($this->Customer->FldCaption());
 
-		// Pekerjaan
-		$this->Pekerjaan->EditAttrs["class"] = "form-control";
-		$this->Pekerjaan->EditCustomAttributes = "";
-		$this->Pekerjaan->EditValue = $this->Pekerjaan->CurrentValue;
-		$this->Pekerjaan->PlaceHolder = ew_RemoveHtml($this->Pekerjaan->FldCaption());
-
 		// Alamat
 		$this->Alamat->EditAttrs["class"] = "form-control";
 		$this->Alamat->EditCustomAttributes = "";
 		$this->Alamat->EditValue = $this->Alamat->CurrentValue;
 		$this->Alamat->PlaceHolder = ew_RemoveHtml($this->Alamat->FldCaption());
+
+		// Pekerjaan
+		$this->Pekerjaan->EditAttrs["class"] = "form-control";
+		$this->Pekerjaan->EditCustomAttributes = "";
+		$this->Pekerjaan->EditValue = $this->Pekerjaan->CurrentValue;
+		$this->Pekerjaan->PlaceHolder = ew_RemoveHtml($this->Pekerjaan->FldCaption());
 
 		// NoTelpHp
 		$this->NoTelpHp->EditAttrs["class"] = "form-control";
@@ -779,14 +779,14 @@ class ct01_nasabah extends cTable {
 				$Doc->BeginExportRow();
 				if ($ExportPageType == "view") {
 					if ($this->Customer->Exportable) $Doc->ExportCaption($this->Customer);
-					if ($this->Pekerjaan->Exportable) $Doc->ExportCaption($this->Pekerjaan);
 					if ($this->Alamat->Exportable) $Doc->ExportCaption($this->Alamat);
+					if ($this->Pekerjaan->Exportable) $Doc->ExportCaption($this->Pekerjaan);
 					if ($this->NoTelpHp->Exportable) $Doc->ExportCaption($this->NoTelpHp);
 				} else {
 					if ($this->id->Exportable) $Doc->ExportCaption($this->id);
 					if ($this->Customer->Exportable) $Doc->ExportCaption($this->Customer);
-					if ($this->Pekerjaan->Exportable) $Doc->ExportCaption($this->Pekerjaan);
 					if ($this->Alamat->Exportable) $Doc->ExportCaption($this->Alamat);
+					if ($this->Pekerjaan->Exportable) $Doc->ExportCaption($this->Pekerjaan);
 					if ($this->NoTelpHp->Exportable) $Doc->ExportCaption($this->NoTelpHp);
 				}
 				$Doc->EndExportRow();
@@ -820,14 +820,14 @@ class ct01_nasabah extends cTable {
 					$Doc->BeginExportRow($RowCnt); // Allow CSS styles if enabled
 					if ($ExportPageType == "view") {
 						if ($this->Customer->Exportable) $Doc->ExportField($this->Customer);
-						if ($this->Pekerjaan->Exportable) $Doc->ExportField($this->Pekerjaan);
 						if ($this->Alamat->Exportable) $Doc->ExportField($this->Alamat);
+						if ($this->Pekerjaan->Exportable) $Doc->ExportField($this->Pekerjaan);
 						if ($this->NoTelpHp->Exportable) $Doc->ExportField($this->NoTelpHp);
 					} else {
 						if ($this->id->Exportable) $Doc->ExportField($this->id);
 						if ($this->Customer->Exportable) $Doc->ExportField($this->Customer);
-						if ($this->Pekerjaan->Exportable) $Doc->ExportField($this->Pekerjaan);
 						if ($this->Alamat->Exportable) $Doc->ExportField($this->Alamat);
+						if ($this->Pekerjaan->Exportable) $Doc->ExportField($this->Pekerjaan);
 						if ($this->NoTelpHp->Exportable) $Doc->ExportField($this->NoTelpHp);
 					}
 					$Doc->EndExportRow();
