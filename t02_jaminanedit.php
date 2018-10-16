@@ -703,6 +703,26 @@ class ct02_jaminan_edit extends ct02_jaminan {
 
 		// nasabah_id
 		$this->nasabah_id->ViewValue = $this->nasabah_id->CurrentValue;
+		if (strval($this->nasabah_id->CurrentValue) <> "") {
+			$sFilterWrk = "`id`" . ew_SearchString("=", $this->nasabah_id->CurrentValue, EW_DATATYPE_NUMBER, "");
+		$sSqlWrk = "SELECT `id`, `Customer` AS `DispFld`, '' AS `Disp2Fld`, '' AS `Disp3Fld`, '' AS `Disp4Fld` FROM `t01_nasabah`";
+		$sWhereWrk = "";
+		$this->nasabah_id->LookupFilters = array();
+		ew_AddFilter($sWhereWrk, $sFilterWrk);
+		$this->Lookup_Selecting($this->nasabah_id, $sWhereWrk); // Call Lookup selecting
+		if ($sWhereWrk <> "") $sSqlWrk .= " WHERE " . $sWhereWrk;
+			$rswrk = Conn()->Execute($sSqlWrk);
+			if ($rswrk && !$rswrk->EOF) { // Lookup values found
+				$arwrk = array();
+				$arwrk[1] = $rswrk->fields('DispFld');
+				$this->nasabah_id->ViewValue = $this->nasabah_id->DisplayValue($arwrk);
+				$rswrk->Close();
+			} else {
+				$this->nasabah_id->ViewValue = $this->nasabah_id->CurrentValue;
+			}
+		} else {
+			$this->nasabah_id->ViewValue = NULL;
+		}
 		$this->nasabah_id->ViewCustomAttributes = "";
 
 		// MerkType
@@ -777,14 +797,28 @@ class ct02_jaminan_edit extends ct02_jaminan {
 			// nasabah_id
 			$this->nasabah_id->EditAttrs["class"] = "form-control";
 			$this->nasabah_id->EditCustomAttributes = "";
-			if ($this->nasabah_id->getSessionValue() <> "") {
-				$this->nasabah_id->CurrentValue = $this->nasabah_id->getSessionValue();
-			$this->nasabah_id->ViewValue = $this->nasabah_id->CurrentValue;
-			$this->nasabah_id->ViewCustomAttributes = "";
+			$this->nasabah_id->EditValue = $this->nasabah_id->CurrentValue;
+			if (strval($this->nasabah_id->CurrentValue) <> "") {
+				$sFilterWrk = "`id`" . ew_SearchString("=", $this->nasabah_id->CurrentValue, EW_DATATYPE_NUMBER, "");
+			$sSqlWrk = "SELECT `id`, `Customer` AS `DispFld`, '' AS `Disp2Fld`, '' AS `Disp3Fld`, '' AS `Disp4Fld` FROM `t01_nasabah`";
+			$sWhereWrk = "";
+			$this->nasabah_id->LookupFilters = array();
+			ew_AddFilter($sWhereWrk, $sFilterWrk);
+			$this->Lookup_Selecting($this->nasabah_id, $sWhereWrk); // Call Lookup selecting
+			if ($sWhereWrk <> "") $sSqlWrk .= " WHERE " . $sWhereWrk;
+				$rswrk = Conn()->Execute($sSqlWrk);
+				if ($rswrk && !$rswrk->EOF) { // Lookup values found
+					$arwrk = array();
+					$arwrk[1] = $rswrk->fields('DispFld');
+					$this->nasabah_id->EditValue = $this->nasabah_id->DisplayValue($arwrk);
+					$rswrk->Close();
+				} else {
+					$this->nasabah_id->EditValue = $this->nasabah_id->CurrentValue;
+				}
 			} else {
-			$this->nasabah_id->EditValue = ew_HtmlEncode($this->nasabah_id->CurrentValue);
-			$this->nasabah_id->PlaceHolder = ew_RemoveHtml($this->nasabah_id->FldCaption());
+				$this->nasabah_id->EditValue = NULL;
 			}
+			$this->nasabah_id->ViewCustomAttributes = "";
 
 			// MerkType
 			$this->MerkType->EditAttrs["class"] = "form-control";
@@ -833,6 +867,7 @@ class ct02_jaminan_edit extends ct02_jaminan {
 
 			$this->nasabah_id->LinkCustomAttributes = "";
 			$this->nasabah_id->HrefValue = "";
+			$this->nasabah_id->TooltipValue = "";
 
 			// MerkType
 			$this->MerkType->LinkCustomAttributes = "";
@@ -883,12 +918,6 @@ class ct02_jaminan_edit extends ct02_jaminan {
 		// Check if validation required
 		if (!EW_SERVER_VALIDATE)
 			return ($gsFormError == "");
-		if (!$this->nasabah_id->FldIsDetailKey && !is_null($this->nasabah_id->FormValue) && $this->nasabah_id->FormValue == "") {
-			ew_AddMessage($gsFormError, str_replace("%s", $this->nasabah_id->FldCaption(), $this->nasabah_id->ReqErrMsg));
-		}
-		if (!ew_CheckInteger($this->nasabah_id->FormValue)) {
-			ew_AddMessage($gsFormError, $this->nasabah_id->FldErrMsg());
-		}
 		if (!$this->MerkType->FldIsDetailKey && !is_null($this->MerkType->FormValue) && $this->MerkType->FormValue == "") {
 			ew_AddMessage($gsFormError, str_replace("%s", $this->MerkType->FldCaption(), $this->MerkType->ReqErrMsg));
 		}
@@ -927,9 +956,6 @@ class ct02_jaminan_edit extends ct02_jaminan {
 			$rsold = &$rs->fields;
 			$this->LoadDbValues($rsold);
 			$rsnew = array();
-
-			// nasabah_id
-			$this->nasabah_id->SetDbValueDef($rsnew, $this->nasabah_id->CurrentValue, 0, $this->nasabah_id->ReadOnly);
 
 			// MerkType
 			$this->MerkType->SetDbValueDef($rsnew, $this->MerkType->CurrentValue, "", $this->MerkType->ReadOnly);
@@ -1201,12 +1227,6 @@ ft02_jaminanedit.Validate = function() {
 	for (var i = startcnt; i <= rowcnt; i++) {
 		var infix = ($k[0]) ? String(i) : "";
 		$fobj.data("rowindex", infix);
-			elm = this.GetElements("x" + infix + "_nasabah_id");
-			if (elm && !ew_IsHidden(elm) && !ew_HasValue(elm))
-				return this.OnError(elm, "<?php echo ew_JsEncode2(str_replace("%s", $t02_jaminan->nasabah_id->FldCaption(), $t02_jaminan->nasabah_id->ReqErrMsg)) ?>");
-			elm = this.GetElements("x" + infix + "_nasabah_id");
-			if (elm && !ew_CheckInteger(elm.value))
-				return this.OnError(elm, "<?php echo ew_JsEncode2($t02_jaminan->nasabah_id->FldErrMsg()) ?>");
 			elm = this.GetElements("x" + infix + "_MerkType");
 			if (elm && !ew_IsHidden(elm) && !ew_HasValue(elm))
 				return this.OnError(elm, "<?php echo ew_JsEncode2(str_replace("%s", $t02_jaminan->MerkType->FldCaption(), $t02_jaminan->MerkType->ReqErrMsg)) ?>");
@@ -1243,8 +1263,9 @@ ft02_jaminanedit.ValidateRequired = false;
 <?php } ?>
 
 // Dynamic selection lists
-// Form object for search
+ft02_jaminanedit.Lists["x_nasabah_id"] = {"LinkField":"x_id","Ajax":true,"AutoFill":false,"DisplayFields":["x_Customer","","",""],"ParentFields":[],"ChildFields":[],"FilterFields":[],"Options":[],"Template":"","LinkTable":"t01_nasabah"};
 
+// Form object for search
 </script>
 <script type="text/javascript">
 
@@ -1322,19 +1343,13 @@ $t02_jaminan_edit->ShowMessage();
 <div>
 <?php if ($t02_jaminan->nasabah_id->Visible) { // nasabah_id ?>
 	<div id="r_nasabah_id" class="form-group">
-		<label id="elh_t02_jaminan_nasabah_id" for="x_nasabah_id" class="col-sm-2 control-label ewLabel"><?php echo $t02_jaminan->nasabah_id->FldCaption() ?><?php echo $Language->Phrase("FieldRequiredIndicator") ?></label>
+		<label id="elh_t02_jaminan_nasabah_id" class="col-sm-2 control-label ewLabel"><?php echo $t02_jaminan->nasabah_id->FldCaption() ?></label>
 		<div class="col-sm-10"><div<?php echo $t02_jaminan->nasabah_id->CellAttributes() ?>>
-<?php if ($t02_jaminan->nasabah_id->getSessionValue() <> "") { ?>
 <span id="el_t02_jaminan_nasabah_id">
 <span<?php echo $t02_jaminan->nasabah_id->ViewAttributes() ?>>
-<p class="form-control-static"><?php echo $t02_jaminan->nasabah_id->ViewValue ?></p></span>
+<p class="form-control-static"><?php echo $t02_jaminan->nasabah_id->EditValue ?></p></span>
 </span>
-<input type="hidden" id="x_nasabah_id" name="x_nasabah_id" value="<?php echo ew_HtmlEncode($t02_jaminan->nasabah_id->CurrentValue) ?>">
-<?php } else { ?>
-<span id="el_t02_jaminan_nasabah_id">
-<input type="text" data-table="t02_jaminan" data-field="x_nasabah_id" name="x_nasabah_id" id="x_nasabah_id" size="30" placeholder="<?php echo ew_HtmlEncode($t02_jaminan->nasabah_id->getPlaceHolder()) ?>" value="<?php echo $t02_jaminan->nasabah_id->EditValue ?>"<?php echo $t02_jaminan->nasabah_id->EditAttributes() ?>>
-</span>
-<?php } ?>
+<input type="hidden" data-table="t02_jaminan" data-field="x_nasabah_id" name="x_nasabah_id" id="x_nasabah_id" value="<?php echo ew_HtmlEncode($t02_jaminan->nasabah_id->CurrentValue) ?>">
 <?php echo $t02_jaminan->nasabah_id->CustomMsg ?></div></div>
 	</div>
 <?php } ?>

@@ -668,7 +668,6 @@
       </field>
       <field id="alamat">
         <phrase id="fldcaption" value="Alamat" />
-        <phrase id="flderrmsg" value="Alamat harus terisi !" />
       </field>
       <field id="pekerjaan">
         <phrase id="fldcaption" value="Pekerjaan" />
@@ -689,7 +688,7 @@
         <phrase id="fldcaption" value="id" />
       </field>
       <field id="nasabah_id">
-        <phrase id="fldcaption" value="nasabah id" />
+        <phrase id="fldcaption" value="Customer" />
       </field>
       <field id="merktype">
         <phrase id="fldcaption" value="Merk/Type" />

@@ -44,9 +44,6 @@ ft02_jaminangrid.Validate = function() {
 			elm = this.GetElements("x" + infix + "_nasabah_id");
 			if (elm && !ew_IsHidden(elm) && !ew_HasValue(elm))
 				return this.OnError(elm, "<?php echo ew_JsEncode2(str_replace("%s", $t02_jaminan->nasabah_id->FldCaption(), $t02_jaminan->nasabah_id->ReqErrMsg)) ?>");
-			elm = this.GetElements("x" + infix + "_nasabah_id");
-			if (elm && !ew_CheckInteger(elm.value))
-				return this.OnError(elm, "<?php echo ew_JsEncode2($t02_jaminan->nasabah_id->FldErrMsg()) ?>");
 			elm = this.GetElements("x" + infix + "_MerkType");
 			if (elm && !ew_IsHidden(elm) && !ew_HasValue(elm))
 				return this.OnError(elm, "<?php echo ew_JsEncode2(str_replace("%s", $t02_jaminan->MerkType->FldCaption(), $t02_jaminan->MerkType->ReqErrMsg)) ?>");
@@ -89,8 +86,9 @@ ft02_jaminangrid.ValidateRequired = false;
 <?php } ?>
 
 // Dynamic selection lists
-// Form object for search
+ft02_jaminangrid.Lists["x_nasabah_id"] = {"LinkField":"x_id","Ajax":true,"AutoFill":false,"DisplayFields":["x_Customer","","",""],"ParentFields":[],"ChildFields":[],"FilterFields":[],"Options":[],"Template":"","LinkTable":"t01_nasabah"};
 
+// Form object for search
 </script>
 <?php } ?>
 <?php
@@ -363,23 +361,29 @@ $t02_jaminan_grid->ListOptions->Render("body", "left", $t02_jaminan_grid->RowCnt
 <input type="hidden" id="x<?php echo $t02_jaminan_grid->RowIndex ?>_nasabah_id" name="x<?php echo $t02_jaminan_grid->RowIndex ?>_nasabah_id" value="<?php echo ew_HtmlEncode($t02_jaminan->nasabah_id->CurrentValue) ?>">
 <?php } else { ?>
 <span id="el<?php echo $t02_jaminan_grid->RowCnt ?>_t02_jaminan_nasabah_id" class="form-group t02_jaminan_nasabah_id">
-<input type="text" data-table="t02_jaminan" data-field="x_nasabah_id" name="x<?php echo $t02_jaminan_grid->RowIndex ?>_nasabah_id" id="x<?php echo $t02_jaminan_grid->RowIndex ?>_nasabah_id" size="30" placeholder="<?php echo ew_HtmlEncode($t02_jaminan->nasabah_id->getPlaceHolder()) ?>" value="<?php echo $t02_jaminan->nasabah_id->EditValue ?>"<?php echo $t02_jaminan->nasabah_id->EditAttributes() ?>>
+<?php
+$wrkonchange = trim(" " . @$t02_jaminan->nasabah_id->EditAttrs["onchange"]);
+if ($wrkonchange <> "") $wrkonchange = " onchange=\"" . ew_JsEncode2($wrkonchange) . "\"";
+$t02_jaminan->nasabah_id->EditAttrs["onchange"] = "";
+?>
+<span id="as_x<?php echo $t02_jaminan_grid->RowIndex ?>_nasabah_id" style="white-space: nowrap; z-index: <?php echo (9000 - $t02_jaminan_grid->RowCnt * 10) ?>">
+	<input type="text" name="sv_x<?php echo $t02_jaminan_grid->RowIndex ?>_nasabah_id" id="sv_x<?php echo $t02_jaminan_grid->RowIndex ?>_nasabah_id" value="<?php echo $t02_jaminan->nasabah_id->EditValue ?>" size="30" placeholder="<?php echo ew_HtmlEncode($t02_jaminan->nasabah_id->getPlaceHolder()) ?>" data-placeholder="<?php echo ew_HtmlEncode($t02_jaminan->nasabah_id->getPlaceHolder()) ?>"<?php echo $t02_jaminan->nasabah_id->EditAttributes() ?>>
+</span>
+<input type="hidden" data-table="t02_jaminan" data-field="x_nasabah_id" data-value-separator="<?php echo $t02_jaminan->nasabah_id->DisplayValueSeparatorAttribute() ?>" name="x<?php echo $t02_jaminan_grid->RowIndex ?>_nasabah_id" id="x<?php echo $t02_jaminan_grid->RowIndex ?>_nasabah_id" value="<?php echo ew_HtmlEncode($t02_jaminan->nasabah_id->CurrentValue) ?>"<?php echo $wrkonchange ?>>
+<input type="hidden" name="q_x<?php echo $t02_jaminan_grid->RowIndex ?>_nasabah_id" id="q_x<?php echo $t02_jaminan_grid->RowIndex ?>_nasabah_id" value="<?php echo $t02_jaminan->nasabah_id->LookupFilterQuery(true) ?>">
+<script type="text/javascript">
+ft02_jaminangrid.CreateAutoSuggest({"id":"x<?php echo $t02_jaminan_grid->RowIndex ?>_nasabah_id","forceSelect":false});
+</script>
 </span>
 <?php } ?>
 <input type="hidden" data-table="t02_jaminan" data-field="x_nasabah_id" name="o<?php echo $t02_jaminan_grid->RowIndex ?>_nasabah_id" id="o<?php echo $t02_jaminan_grid->RowIndex ?>_nasabah_id" value="<?php echo ew_HtmlEncode($t02_jaminan->nasabah_id->OldValue) ?>">
 <?php } ?>
 <?php if ($t02_jaminan->RowType == EW_ROWTYPE_EDIT) { // Edit record ?>
-<?php if ($t02_jaminan->nasabah_id->getSessionValue() <> "") { ?>
 <span id="el<?php echo $t02_jaminan_grid->RowCnt ?>_t02_jaminan_nasabah_id" class="form-group t02_jaminan_nasabah_id">
 <span<?php echo $t02_jaminan->nasabah_id->ViewAttributes() ?>>
-<p class="form-control-static"><?php echo $t02_jaminan->nasabah_id->ViewValue ?></p></span>
+<p class="form-control-static"><?php echo $t02_jaminan->nasabah_id->EditValue ?></p></span>
 </span>
-<input type="hidden" id="x<?php echo $t02_jaminan_grid->RowIndex ?>_nasabah_id" name="x<?php echo $t02_jaminan_grid->RowIndex ?>_nasabah_id" value="<?php echo ew_HtmlEncode($t02_jaminan->nasabah_id->CurrentValue) ?>">
-<?php } else { ?>
-<span id="el<?php echo $t02_jaminan_grid->RowCnt ?>_t02_jaminan_nasabah_id" class="form-group t02_jaminan_nasabah_id">
-<input type="text" data-table="t02_jaminan" data-field="x_nasabah_id" name="x<?php echo $t02_jaminan_grid->RowIndex ?>_nasabah_id" id="x<?php echo $t02_jaminan_grid->RowIndex ?>_nasabah_id" size="30" placeholder="<?php echo ew_HtmlEncode($t02_jaminan->nasabah_id->getPlaceHolder()) ?>" value="<?php echo $t02_jaminan->nasabah_id->EditValue ?>"<?php echo $t02_jaminan->nasabah_id->EditAttributes() ?>>
-</span>
-<?php } ?>
+<input type="hidden" data-table="t02_jaminan" data-field="x_nasabah_id" name="x<?php echo $t02_jaminan_grid->RowIndex ?>_nasabah_id" id="x<?php echo $t02_jaminan_grid->RowIndex ?>_nasabah_id" value="<?php echo ew_HtmlEncode($t02_jaminan->nasabah_id->CurrentValue) ?>">
 <?php } ?>
 <?php if ($t02_jaminan->RowType == EW_ROWTYPE_VIEW) { // View record ?>
 <span id="el<?php echo $t02_jaminan_grid->RowCnt ?>_t02_jaminan_nasabah_id" class="t02_jaminan_nasabah_id">
@@ -652,7 +656,19 @@ $t02_jaminan_grid->ListOptions->Render("body", "left", $t02_jaminan_grid->RowInd
 <input type="hidden" id="x<?php echo $t02_jaminan_grid->RowIndex ?>_nasabah_id" name="x<?php echo $t02_jaminan_grid->RowIndex ?>_nasabah_id" value="<?php echo ew_HtmlEncode($t02_jaminan->nasabah_id->CurrentValue) ?>">
 <?php } else { ?>
 <span id="el$rowindex$_t02_jaminan_nasabah_id" class="form-group t02_jaminan_nasabah_id">
-<input type="text" data-table="t02_jaminan" data-field="x_nasabah_id" name="x<?php echo $t02_jaminan_grid->RowIndex ?>_nasabah_id" id="x<?php echo $t02_jaminan_grid->RowIndex ?>_nasabah_id" size="30" placeholder="<?php echo ew_HtmlEncode($t02_jaminan->nasabah_id->getPlaceHolder()) ?>" value="<?php echo $t02_jaminan->nasabah_id->EditValue ?>"<?php echo $t02_jaminan->nasabah_id->EditAttributes() ?>>
+<?php
+$wrkonchange = trim(" " . @$t02_jaminan->nasabah_id->EditAttrs["onchange"]);
+if ($wrkonchange <> "") $wrkonchange = " onchange=\"" . ew_JsEncode2($wrkonchange) . "\"";
+$t02_jaminan->nasabah_id->EditAttrs["onchange"] = "";
+?>
+<span id="as_x<?php echo $t02_jaminan_grid->RowIndex ?>_nasabah_id" style="white-space: nowrap; z-index: <?php echo (9000 - $t02_jaminan_grid->RowCnt * 10) ?>">
+	<input type="text" name="sv_x<?php echo $t02_jaminan_grid->RowIndex ?>_nasabah_id" id="sv_x<?php echo $t02_jaminan_grid->RowIndex ?>_nasabah_id" value="<?php echo $t02_jaminan->nasabah_id->EditValue ?>" size="30" placeholder="<?php echo ew_HtmlEncode($t02_jaminan->nasabah_id->getPlaceHolder()) ?>" data-placeholder="<?php echo ew_HtmlEncode($t02_jaminan->nasabah_id->getPlaceHolder()) ?>"<?php echo $t02_jaminan->nasabah_id->EditAttributes() ?>>
+</span>
+<input type="hidden" data-table="t02_jaminan" data-field="x_nasabah_id" data-value-separator="<?php echo $t02_jaminan->nasabah_id->DisplayValueSeparatorAttribute() ?>" name="x<?php echo $t02_jaminan_grid->RowIndex ?>_nasabah_id" id="x<?php echo $t02_jaminan_grid->RowIndex ?>_nasabah_id" value="<?php echo ew_HtmlEncode($t02_jaminan->nasabah_id->CurrentValue) ?>"<?php echo $wrkonchange ?>>
+<input type="hidden" name="q_x<?php echo $t02_jaminan_grid->RowIndex ?>_nasabah_id" id="q_x<?php echo $t02_jaminan_grid->RowIndex ?>_nasabah_id" value="<?php echo $t02_jaminan->nasabah_id->LookupFilterQuery(true) ?>">
+<script type="text/javascript">
+ft02_jaminangrid.CreateAutoSuggest({"id":"x<?php echo $t02_jaminan_grid->RowIndex ?>_nasabah_id","forceSelect":false});
+</script>
 </span>
 <?php } ?>
 <?php } else { ?>

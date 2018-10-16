@@ -1444,6 +1444,17 @@ class ct03_pinjaman extends cTable {
 		// Enter your code here
 		// To cancel, set return value to FALSE
 
+		print_r($rsnew);
+
+		// check data jaminan, data jaminan harus terisi
+		$q = "select count(id) from t05_pinjamanjaminan where pinjaman_id = ".$rsnew["id"]."";
+		$rec_cnt = ew_ExecuteScalar($q);
+		if ($rec_cnt > 0) {
+		}
+		else {
+			$this->setFailureMessage("Jaminan harus terisi !");
+			return false;
+		}
 		return TRUE;
 	}
 
@@ -1525,7 +1536,15 @@ class ct03_pinjaman extends cTable {
 			}
 		}
 
-		// check jumlah total pembayaran apakah sama dengan total angsuran ?
+		// check data jaminan, data jaminan harus terisi
+		$q = "select count(id) from t05_pinjamanjaminan where pinjaman_id = ".$rsold["id"]."";
+		$rec_cnt = ew_ExecuteScalar($q);
+		if ($rec_cnt > 0) {
+		}
+		else {
+			$this->setFailureMessage("Jaminan harus terisi !");
+			return false;
+		}
 		return TRUE;
 	}
 

@@ -1371,6 +1371,26 @@ class ct02_jaminan_grid extends ct02_jaminan {
 
 		// nasabah_id
 		$this->nasabah_id->ViewValue = $this->nasabah_id->CurrentValue;
+		if (strval($this->nasabah_id->CurrentValue) <> "") {
+			$sFilterWrk = "`id`" . ew_SearchString("=", $this->nasabah_id->CurrentValue, EW_DATATYPE_NUMBER, "");
+		$sSqlWrk = "SELECT `id`, `Customer` AS `DispFld`, '' AS `Disp2Fld`, '' AS `Disp3Fld`, '' AS `Disp4Fld` FROM `t01_nasabah`";
+		$sWhereWrk = "";
+		$this->nasabah_id->LookupFilters = array();
+		ew_AddFilter($sWhereWrk, $sFilterWrk);
+		$this->Lookup_Selecting($this->nasabah_id, $sWhereWrk); // Call Lookup selecting
+		if ($sWhereWrk <> "") $sSqlWrk .= " WHERE " . $sWhereWrk;
+			$rswrk = Conn()->Execute($sSqlWrk);
+			if ($rswrk && !$rswrk->EOF) { // Lookup values found
+				$arwrk = array();
+				$arwrk[1] = $rswrk->fields('DispFld');
+				$this->nasabah_id->ViewValue = $this->nasabah_id->DisplayValue($arwrk);
+				$rswrk->Close();
+			} else {
+				$this->nasabah_id->ViewValue = $this->nasabah_id->CurrentValue;
+			}
+		} else {
+			$this->nasabah_id->ViewValue = NULL;
+		}
 		$this->nasabah_id->ViewCustomAttributes = "";
 
 		// MerkType
@@ -1449,9 +1469,49 @@ class ct02_jaminan_grid extends ct02_jaminan {
 				$this->nasabah_id->CurrentValue = $this->nasabah_id->getSessionValue();
 				$this->nasabah_id->OldValue = $this->nasabah_id->CurrentValue;
 			$this->nasabah_id->ViewValue = $this->nasabah_id->CurrentValue;
+			if (strval($this->nasabah_id->CurrentValue) <> "") {
+				$sFilterWrk = "`id`" . ew_SearchString("=", $this->nasabah_id->CurrentValue, EW_DATATYPE_NUMBER, "");
+			$sSqlWrk = "SELECT `id`, `Customer` AS `DispFld`, '' AS `Disp2Fld`, '' AS `Disp3Fld`, '' AS `Disp4Fld` FROM `t01_nasabah`";
+			$sWhereWrk = "";
+			$this->nasabah_id->LookupFilters = array();
+			ew_AddFilter($sWhereWrk, $sFilterWrk);
+			$this->Lookup_Selecting($this->nasabah_id, $sWhereWrk); // Call Lookup selecting
+			if ($sWhereWrk <> "") $sSqlWrk .= " WHERE " . $sWhereWrk;
+				$rswrk = Conn()->Execute($sSqlWrk);
+				if ($rswrk && !$rswrk->EOF) { // Lookup values found
+					$arwrk = array();
+					$arwrk[1] = $rswrk->fields('DispFld');
+					$this->nasabah_id->ViewValue = $this->nasabah_id->DisplayValue($arwrk);
+					$rswrk->Close();
+				} else {
+					$this->nasabah_id->ViewValue = $this->nasabah_id->CurrentValue;
+				}
+			} else {
+				$this->nasabah_id->ViewValue = NULL;
+			}
 			$this->nasabah_id->ViewCustomAttributes = "";
 			} else {
 			$this->nasabah_id->EditValue = ew_HtmlEncode($this->nasabah_id->CurrentValue);
+			if (strval($this->nasabah_id->CurrentValue) <> "") {
+				$sFilterWrk = "`id`" . ew_SearchString("=", $this->nasabah_id->CurrentValue, EW_DATATYPE_NUMBER, "");
+			$sSqlWrk = "SELECT `id`, `Customer` AS `DispFld`, '' AS `Disp2Fld`, '' AS `Disp3Fld`, '' AS `Disp4Fld` FROM `t01_nasabah`";
+			$sWhereWrk = "";
+			$this->nasabah_id->LookupFilters = array();
+			ew_AddFilter($sWhereWrk, $sFilterWrk);
+			$this->Lookup_Selecting($this->nasabah_id, $sWhereWrk); // Call Lookup selecting
+			if ($sWhereWrk <> "") $sSqlWrk .= " WHERE " . $sWhereWrk;
+				$rswrk = Conn()->Execute($sSqlWrk);
+				if ($rswrk && !$rswrk->EOF) { // Lookup values found
+					$arwrk = array();
+					$arwrk[1] = ew_HtmlEncode($rswrk->fields('DispFld'));
+					$this->nasabah_id->EditValue = $this->nasabah_id->DisplayValue($arwrk);
+					$rswrk->Close();
+				} else {
+					$this->nasabah_id->EditValue = ew_HtmlEncode($this->nasabah_id->CurrentValue);
+				}
+			} else {
+				$this->nasabah_id->EditValue = NULL;
+			}
 			$this->nasabah_id->PlaceHolder = ew_RemoveHtml($this->nasabah_id->FldCaption());
 			}
 
@@ -1535,15 +1595,28 @@ class ct02_jaminan_grid extends ct02_jaminan {
 			// nasabah_id
 			$this->nasabah_id->EditAttrs["class"] = "form-control";
 			$this->nasabah_id->EditCustomAttributes = "";
-			if ($this->nasabah_id->getSessionValue() <> "") {
-				$this->nasabah_id->CurrentValue = $this->nasabah_id->getSessionValue();
-				$this->nasabah_id->OldValue = $this->nasabah_id->CurrentValue;
-			$this->nasabah_id->ViewValue = $this->nasabah_id->CurrentValue;
-			$this->nasabah_id->ViewCustomAttributes = "";
+			$this->nasabah_id->EditValue = $this->nasabah_id->CurrentValue;
+			if (strval($this->nasabah_id->CurrentValue) <> "") {
+				$sFilterWrk = "`id`" . ew_SearchString("=", $this->nasabah_id->CurrentValue, EW_DATATYPE_NUMBER, "");
+			$sSqlWrk = "SELECT `id`, `Customer` AS `DispFld`, '' AS `Disp2Fld`, '' AS `Disp3Fld`, '' AS `Disp4Fld` FROM `t01_nasabah`";
+			$sWhereWrk = "";
+			$this->nasabah_id->LookupFilters = array();
+			ew_AddFilter($sWhereWrk, $sFilterWrk);
+			$this->Lookup_Selecting($this->nasabah_id, $sWhereWrk); // Call Lookup selecting
+			if ($sWhereWrk <> "") $sSqlWrk .= " WHERE " . $sWhereWrk;
+				$rswrk = Conn()->Execute($sSqlWrk);
+				if ($rswrk && !$rswrk->EOF) { // Lookup values found
+					$arwrk = array();
+					$arwrk[1] = $rswrk->fields('DispFld');
+					$this->nasabah_id->EditValue = $this->nasabah_id->DisplayValue($arwrk);
+					$rswrk->Close();
+				} else {
+					$this->nasabah_id->EditValue = $this->nasabah_id->CurrentValue;
+				}
 			} else {
-			$this->nasabah_id->EditValue = ew_HtmlEncode($this->nasabah_id->CurrentValue);
-			$this->nasabah_id->PlaceHolder = ew_RemoveHtml($this->nasabah_id->FldCaption());
+				$this->nasabah_id->EditValue = NULL;
 			}
+			$this->nasabah_id->ViewCustomAttributes = "";
 
 			// MerkType
 			$this->MerkType->EditAttrs["class"] = "form-control";
@@ -1592,6 +1665,7 @@ class ct02_jaminan_grid extends ct02_jaminan {
 
 			$this->nasabah_id->LinkCustomAttributes = "";
 			$this->nasabah_id->HrefValue = "";
+			$this->nasabah_id->TooltipValue = "";
 
 			// MerkType
 			$this->MerkType->LinkCustomAttributes = "";
@@ -1641,9 +1715,6 @@ class ct02_jaminan_grid extends ct02_jaminan {
 			return ($gsFormError == "");
 		if (!$this->nasabah_id->FldIsDetailKey && !is_null($this->nasabah_id->FormValue) && $this->nasabah_id->FormValue == "") {
 			ew_AddMessage($gsFormError, str_replace("%s", $this->nasabah_id->FldCaption(), $this->nasabah_id->ReqErrMsg));
-		}
-		if (!ew_CheckInteger($this->nasabah_id->FormValue)) {
-			ew_AddMessage($gsFormError, $this->nasabah_id->FldErrMsg());
 		}
 		if (!$this->MerkType->FldIsDetailKey && !is_null($this->MerkType->FormValue) && $this->MerkType->FormValue == "") {
 			ew_AddMessage($gsFormError, str_replace("%s", $this->MerkType->FldCaption(), $this->MerkType->ReqErrMsg));
@@ -1765,9 +1836,6 @@ class ct02_jaminan_grid extends ct02_jaminan {
 			$rsold = &$rs->fields;
 			$this->LoadDbValues($rsold);
 			$rsnew = array();
-
-			// nasabah_id
-			$this->nasabah_id->SetDbValueDef($rsnew, $this->nasabah_id->CurrentValue, 0, $this->nasabah_id->ReadOnly);
 
 			// MerkType
 			$this->MerkType->SetDbValueDef($rsnew, $this->MerkType->CurrentValue, "", $this->MerkType->ReadOnly);
@@ -1952,6 +2020,18 @@ class ct02_jaminan_grid extends ct02_jaminan {
 		global $gsLanguage;
 		$pageId = $pageId ?: $this->PageID;
 		switch ($fld->FldVar) {
+		case "x_nasabah_id":
+			$sSqlWrk = "";
+			$sSqlWrk = "SELECT `id` AS `LinkFld`, `Customer` AS `DispFld`, '' AS `Disp2Fld`, '' AS `Disp3Fld`, '' AS `Disp4Fld` FROM `t01_nasabah`";
+			$sWhereWrk = "{filter}";
+			$this->nasabah_id->LookupFilters = array();
+			$fld->LookupFilters += array("s" => $sSqlWrk, "d" => "", "f0" => '`id` = {filter_value}', "t0" => "3", "fn0" => "");
+			$sSqlWrk = "";
+			$this->Lookup_Selecting($this->nasabah_id, $sWhereWrk); // Call Lookup selecting
+			if ($sWhereWrk <> "") $sSqlWrk .= " WHERE " . $sWhereWrk;
+			if ($sSqlWrk <> "")
+				$fld->LookupFilters["s"] .= $sSqlWrk;
+			break;
 		}
 	}
 
@@ -1960,6 +2040,19 @@ class ct02_jaminan_grid extends ct02_jaminan {
 		global $gsLanguage;
 		$pageId = $pageId ?: $this->PageID;
 		switch ($fld->FldVar) {
+		case "x_nasabah_id":
+			$sSqlWrk = "";
+			$sSqlWrk = "SELECT `id`, `Customer` AS `DispFld` FROM `t01_nasabah`";
+			$sWhereWrk = "`Customer` LIKE '{query_value}%'";
+			$this->nasabah_id->LookupFilters = array();
+			$fld->LookupFilters += array("s" => $sSqlWrk, "d" => "");
+			$sSqlWrk = "";
+			$this->Lookup_Selecting($this->nasabah_id, $sWhereWrk); // Call Lookup selecting
+			if ($sWhereWrk <> "") $sSqlWrk .= " WHERE " . $sWhereWrk;
+			$sSqlWrk .= " LIMIT " . EW_AUTO_SUGGEST_MAX_ENTRIES;
+			if ($sSqlWrk <> "")
+				$fld->LookupFilters["s"] .= $sSqlWrk;
+			break;
 		}
 	}
 
