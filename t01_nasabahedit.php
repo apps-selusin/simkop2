@@ -290,6 +290,8 @@ class ct01_nasabah_edit extends ct01_nasabah {
 		$this->Alamat->SetVisibility();
 		$this->Pekerjaan->SetVisibility();
 		$this->NoTelpHp->SetVisibility();
+		$this->AlamatPekerjaan->SetVisibility();
+		$this->NoTelpPekerjaan->SetVisibility();
 
 		// Global Page Loading event (in userfn*.php)
 		Page_Loading();
@@ -570,6 +572,12 @@ class ct01_nasabah_edit extends ct01_nasabah {
 		if (!$this->NoTelpHp->FldIsDetailKey) {
 			$this->NoTelpHp->setFormValue($objForm->GetValue("x_NoTelpHp"));
 		}
+		if (!$this->AlamatPekerjaan->FldIsDetailKey) {
+			$this->AlamatPekerjaan->setFormValue($objForm->GetValue("x_AlamatPekerjaan"));
+		}
+		if (!$this->NoTelpPekerjaan->FldIsDetailKey) {
+			$this->NoTelpPekerjaan->setFormValue($objForm->GetValue("x_NoTelpPekerjaan"));
+		}
 		if (!$this->id->FldIsDetailKey)
 			$this->id->setFormValue($objForm->GetValue("x_id"));
 	}
@@ -583,6 +591,8 @@ class ct01_nasabah_edit extends ct01_nasabah {
 		$this->Alamat->CurrentValue = $this->Alamat->FormValue;
 		$this->Pekerjaan->CurrentValue = $this->Pekerjaan->FormValue;
 		$this->NoTelpHp->CurrentValue = $this->NoTelpHp->FormValue;
+		$this->AlamatPekerjaan->CurrentValue = $this->AlamatPekerjaan->FormValue;
+		$this->NoTelpPekerjaan->CurrentValue = $this->NoTelpPekerjaan->FormValue;
 	}
 
 	// Load recordset
@@ -645,6 +655,8 @@ class ct01_nasabah_edit extends ct01_nasabah {
 		$this->Alamat->setDbValue($rs->fields('Alamat'));
 		$this->Pekerjaan->setDbValue($rs->fields('Pekerjaan'));
 		$this->NoTelpHp->setDbValue($rs->fields('NoTelpHp'));
+		$this->AlamatPekerjaan->setDbValue($rs->fields('AlamatPekerjaan'));
+		$this->NoTelpPekerjaan->setDbValue($rs->fields('NoTelpPekerjaan'));
 	}
 
 	// Load DbValue from recordset
@@ -656,6 +668,8 @@ class ct01_nasabah_edit extends ct01_nasabah {
 		$this->Alamat->DbValue = $row['Alamat'];
 		$this->Pekerjaan->DbValue = $row['Pekerjaan'];
 		$this->NoTelpHp->DbValue = $row['NoTelpHp'];
+		$this->AlamatPekerjaan->DbValue = $row['AlamatPekerjaan'];
+		$this->NoTelpPekerjaan->DbValue = $row['NoTelpPekerjaan'];
 	}
 
 	// Render row values based on field settings
@@ -673,6 +687,8 @@ class ct01_nasabah_edit extends ct01_nasabah {
 		// Alamat
 		// Pekerjaan
 		// NoTelpHp
+		// AlamatPekerjaan
+		// NoTelpPekerjaan
 
 		if ($this->RowType == EW_ROWTYPE_VIEW) { // View row
 
@@ -696,6 +712,14 @@ class ct01_nasabah_edit extends ct01_nasabah {
 		$this->NoTelpHp->ViewValue = $this->NoTelpHp->CurrentValue;
 		$this->NoTelpHp->ViewCustomAttributes = "";
 
+		// AlamatPekerjaan
+		$this->AlamatPekerjaan->ViewValue = $this->AlamatPekerjaan->CurrentValue;
+		$this->AlamatPekerjaan->ViewCustomAttributes = "";
+
+		// NoTelpPekerjaan
+		$this->NoTelpPekerjaan->ViewValue = $this->NoTelpPekerjaan->CurrentValue;
+		$this->NoTelpPekerjaan->ViewCustomAttributes = "";
+
 			// Customer
 			$this->Customer->LinkCustomAttributes = "";
 			$this->Customer->HrefValue = "";
@@ -715,6 +739,16 @@ class ct01_nasabah_edit extends ct01_nasabah {
 			$this->NoTelpHp->LinkCustomAttributes = "";
 			$this->NoTelpHp->HrefValue = "";
 			$this->NoTelpHp->TooltipValue = "";
+
+			// AlamatPekerjaan
+			$this->AlamatPekerjaan->LinkCustomAttributes = "";
+			$this->AlamatPekerjaan->HrefValue = "";
+			$this->AlamatPekerjaan->TooltipValue = "";
+
+			// NoTelpPekerjaan
+			$this->NoTelpPekerjaan->LinkCustomAttributes = "";
+			$this->NoTelpPekerjaan->HrefValue = "";
+			$this->NoTelpPekerjaan->TooltipValue = "";
 		} elseif ($this->RowType == EW_ROWTYPE_EDIT) { // Edit row
 
 			// Customer
@@ -741,6 +775,18 @@ class ct01_nasabah_edit extends ct01_nasabah {
 			$this->NoTelpHp->EditValue = ew_HtmlEncode($this->NoTelpHp->CurrentValue);
 			$this->NoTelpHp->PlaceHolder = ew_RemoveHtml($this->NoTelpHp->FldCaption());
 
+			// AlamatPekerjaan
+			$this->AlamatPekerjaan->EditAttrs["class"] = "form-control";
+			$this->AlamatPekerjaan->EditCustomAttributes = "";
+			$this->AlamatPekerjaan->EditValue = ew_HtmlEncode($this->AlamatPekerjaan->CurrentValue);
+			$this->AlamatPekerjaan->PlaceHolder = ew_RemoveHtml($this->AlamatPekerjaan->FldCaption());
+
+			// NoTelpPekerjaan
+			$this->NoTelpPekerjaan->EditAttrs["class"] = "form-control";
+			$this->NoTelpPekerjaan->EditCustomAttributes = "";
+			$this->NoTelpPekerjaan->EditValue = ew_HtmlEncode($this->NoTelpPekerjaan->CurrentValue);
+			$this->NoTelpPekerjaan->PlaceHolder = ew_RemoveHtml($this->NoTelpPekerjaan->FldCaption());
+
 			// Edit refer script
 			// Customer
 
@@ -758,6 +804,14 @@ class ct01_nasabah_edit extends ct01_nasabah {
 			// NoTelpHp
 			$this->NoTelpHp->LinkCustomAttributes = "";
 			$this->NoTelpHp->HrefValue = "";
+
+			// AlamatPekerjaan
+			$this->AlamatPekerjaan->LinkCustomAttributes = "";
+			$this->AlamatPekerjaan->HrefValue = "";
+
+			// NoTelpPekerjaan
+			$this->NoTelpPekerjaan->LinkCustomAttributes = "";
+			$this->NoTelpPekerjaan->HrefValue = "";
 		}
 		if ($this->RowType == EW_ROWTYPE_ADD ||
 			$this->RowType == EW_ROWTYPE_EDIT ||
@@ -788,6 +842,15 @@ class ct01_nasabah_edit extends ct01_nasabah {
 		}
 		if (!$this->Pekerjaan->FldIsDetailKey && !is_null($this->Pekerjaan->FormValue) && $this->Pekerjaan->FormValue == "") {
 			ew_AddMessage($gsFormError, str_replace("%s", $this->Pekerjaan->FldCaption(), $this->Pekerjaan->ReqErrMsg));
+		}
+		if (!$this->NoTelpHp->FldIsDetailKey && !is_null($this->NoTelpHp->FormValue) && $this->NoTelpHp->FormValue == "") {
+			ew_AddMessage($gsFormError, str_replace("%s", $this->NoTelpHp->FldCaption(), $this->NoTelpHp->ReqErrMsg));
+		}
+		if (!$this->AlamatPekerjaan->FldIsDetailKey && !is_null($this->AlamatPekerjaan->FormValue) && $this->AlamatPekerjaan->FormValue == "") {
+			ew_AddMessage($gsFormError, str_replace("%s", $this->AlamatPekerjaan->FldCaption(), $this->AlamatPekerjaan->ReqErrMsg));
+		}
+		if (!$this->NoTelpPekerjaan->FldIsDetailKey && !is_null($this->NoTelpPekerjaan->FormValue) && $this->NoTelpPekerjaan->FormValue == "") {
+			ew_AddMessage($gsFormError, str_replace("%s", $this->NoTelpPekerjaan->FldCaption(), $this->NoTelpPekerjaan->ReqErrMsg));
 		}
 
 		// Validate detail grid
@@ -840,13 +903,19 @@ class ct01_nasabah_edit extends ct01_nasabah {
 			$this->Customer->SetDbValueDef($rsnew, $this->Customer->CurrentValue, "", $this->Customer->ReadOnly);
 
 			// Alamat
-			$this->Alamat->SetDbValueDef($rsnew, $this->Alamat->CurrentValue, NULL, $this->Alamat->ReadOnly);
+			$this->Alamat->SetDbValueDef($rsnew, $this->Alamat->CurrentValue, "", $this->Alamat->ReadOnly);
 
 			// Pekerjaan
-			$this->Pekerjaan->SetDbValueDef($rsnew, $this->Pekerjaan->CurrentValue, NULL, $this->Pekerjaan->ReadOnly);
+			$this->Pekerjaan->SetDbValueDef($rsnew, $this->Pekerjaan->CurrentValue, "", $this->Pekerjaan->ReadOnly);
 
 			// NoTelpHp
-			$this->NoTelpHp->SetDbValueDef($rsnew, $this->NoTelpHp->CurrentValue, NULL, $this->NoTelpHp->ReadOnly);
+			$this->NoTelpHp->SetDbValueDef($rsnew, $this->NoTelpHp->CurrentValue, "", $this->NoTelpHp->ReadOnly);
+
+			// AlamatPekerjaan
+			$this->AlamatPekerjaan->SetDbValueDef($rsnew, $this->AlamatPekerjaan->CurrentValue, "", $this->AlamatPekerjaan->ReadOnly);
+
+			// NoTelpPekerjaan
+			$this->NoTelpPekerjaan->SetDbValueDef($rsnew, $this->NoTelpPekerjaan->CurrentValue, "", $this->NoTelpPekerjaan->ReadOnly);
 
 			// Call Row Updating event
 			$bUpdateRow = $this->Row_Updating($rsold, $rsnew);
@@ -1073,6 +1142,15 @@ ft01_nasabahedit.Validate = function() {
 			elm = this.GetElements("x" + infix + "_Pekerjaan");
 			if (elm && !ew_IsHidden(elm) && !ew_HasValue(elm))
 				return this.OnError(elm, "<?php echo ew_JsEncode2(str_replace("%s", $t01_nasabah->Pekerjaan->FldCaption(), $t01_nasabah->Pekerjaan->ReqErrMsg)) ?>");
+			elm = this.GetElements("x" + infix + "_NoTelpHp");
+			if (elm && !ew_IsHidden(elm) && !ew_HasValue(elm))
+				return this.OnError(elm, "<?php echo ew_JsEncode2(str_replace("%s", $t01_nasabah->NoTelpHp->FldCaption(), $t01_nasabah->NoTelpHp->ReqErrMsg)) ?>");
+			elm = this.GetElements("x" + infix + "_AlamatPekerjaan");
+			if (elm && !ew_IsHidden(elm) && !ew_HasValue(elm))
+				return this.OnError(elm, "<?php echo ew_JsEncode2(str_replace("%s", $t01_nasabah->AlamatPekerjaan->FldCaption(), $t01_nasabah->AlamatPekerjaan->ReqErrMsg)) ?>");
+			elm = this.GetElements("x" + infix + "_NoTelpPekerjaan");
+			if (elm && !ew_IsHidden(elm) && !ew_HasValue(elm))
+				return this.OnError(elm, "<?php echo ew_JsEncode2(str_replace("%s", $t01_nasabah->NoTelpPekerjaan->FldCaption(), $t01_nasabah->NoTelpPekerjaan->ReqErrMsg)) ?>");
 
 			// Fire Form_CustomValidate event
 			if (!this.Form_CustomValidate(fobj))
@@ -1211,12 +1289,32 @@ $t01_nasabah_edit->ShowMessage();
 <?php } ?>
 <?php if ($t01_nasabah->NoTelpHp->Visible) { // NoTelpHp ?>
 	<div id="r_NoTelpHp" class="form-group">
-		<label id="elh_t01_nasabah_NoTelpHp" for="x_NoTelpHp" class="col-sm-2 control-label ewLabel"><?php echo $t01_nasabah->NoTelpHp->FldCaption() ?></label>
+		<label id="elh_t01_nasabah_NoTelpHp" for="x_NoTelpHp" class="col-sm-2 control-label ewLabel"><?php echo $t01_nasabah->NoTelpHp->FldCaption() ?><?php echo $Language->Phrase("FieldRequiredIndicator") ?></label>
 		<div class="col-sm-10"><div<?php echo $t01_nasabah->NoTelpHp->CellAttributes() ?>>
 <span id="el_t01_nasabah_NoTelpHp">
 <input type="text" data-table="t01_nasabah" data-field="x_NoTelpHp" name="x_NoTelpHp" id="x_NoTelpHp" size="30" maxlength="25" placeholder="<?php echo ew_HtmlEncode($t01_nasabah->NoTelpHp->getPlaceHolder()) ?>" value="<?php echo $t01_nasabah->NoTelpHp->EditValue ?>"<?php echo $t01_nasabah->NoTelpHp->EditAttributes() ?>>
 </span>
 <?php echo $t01_nasabah->NoTelpHp->CustomMsg ?></div></div>
+	</div>
+<?php } ?>
+<?php if ($t01_nasabah->AlamatPekerjaan->Visible) { // AlamatPekerjaan ?>
+	<div id="r_AlamatPekerjaan" class="form-group">
+		<label id="elh_t01_nasabah_AlamatPekerjaan" for="x_AlamatPekerjaan" class="col-sm-2 control-label ewLabel"><?php echo $t01_nasabah->AlamatPekerjaan->FldCaption() ?><?php echo $Language->Phrase("FieldRequiredIndicator") ?></label>
+		<div class="col-sm-10"><div<?php echo $t01_nasabah->AlamatPekerjaan->CellAttributes() ?>>
+<span id="el_t01_nasabah_AlamatPekerjaan">
+<textarea data-table="t01_nasabah" data-field="x_AlamatPekerjaan" name="x_AlamatPekerjaan" id="x_AlamatPekerjaan" cols="35" rows="4" placeholder="<?php echo ew_HtmlEncode($t01_nasabah->AlamatPekerjaan->getPlaceHolder()) ?>"<?php echo $t01_nasabah->AlamatPekerjaan->EditAttributes() ?>><?php echo $t01_nasabah->AlamatPekerjaan->EditValue ?></textarea>
+</span>
+<?php echo $t01_nasabah->AlamatPekerjaan->CustomMsg ?></div></div>
+	</div>
+<?php } ?>
+<?php if ($t01_nasabah->NoTelpPekerjaan->Visible) { // NoTelpPekerjaan ?>
+	<div id="r_NoTelpPekerjaan" class="form-group">
+		<label id="elh_t01_nasabah_NoTelpPekerjaan" for="x_NoTelpPekerjaan" class="col-sm-2 control-label ewLabel"><?php echo $t01_nasabah->NoTelpPekerjaan->FldCaption() ?><?php echo $Language->Phrase("FieldRequiredIndicator") ?></label>
+		<div class="col-sm-10"><div<?php echo $t01_nasabah->NoTelpPekerjaan->CellAttributes() ?>>
+<span id="el_t01_nasabah_NoTelpPekerjaan">
+<input type="text" data-table="t01_nasabah" data-field="x_NoTelpPekerjaan" name="x_NoTelpPekerjaan" id="x_NoTelpPekerjaan" size="30" maxlength="25" placeholder="<?php echo ew_HtmlEncode($t01_nasabah->NoTelpPekerjaan->getPlaceHolder()) ?>" value="<?php echo $t01_nasabah->NoTelpPekerjaan->EditValue ?>"<?php echo $t01_nasabah->NoTelpPekerjaan->EditAttributes() ?>>
+</span>
+<?php echo $t01_nasabah->NoTelpPekerjaan->CustomMsg ?></div></div>
 	</div>
 <?php } ?>
 </div>

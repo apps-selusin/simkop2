@@ -415,6 +415,7 @@ class ct01_nasabah_list extends ct01_nasabah {
 		$this->Alamat->SetVisibility();
 		$this->Pekerjaan->SetVisibility();
 		$this->NoTelpHp->SetVisibility();
+		$this->NoTelpPekerjaan->SetVisibility();
 
 		// Global Page Loading event (in userfn*.php)
 		Page_Loading();
@@ -753,6 +754,8 @@ class ct01_nasabah_list extends ct01_nasabah {
 		$sFilterList = ew_Concat($sFilterList, $this->Alamat->AdvancedSearch->ToJSON(), ","); // Field Alamat
 		$sFilterList = ew_Concat($sFilterList, $this->Pekerjaan->AdvancedSearch->ToJSON(), ","); // Field Pekerjaan
 		$sFilterList = ew_Concat($sFilterList, $this->NoTelpHp->AdvancedSearch->ToJSON(), ","); // Field NoTelpHp
+		$sFilterList = ew_Concat($sFilterList, $this->AlamatPekerjaan->AdvancedSearch->ToJSON(), ","); // Field AlamatPekerjaan
+		$sFilterList = ew_Concat($sFilterList, $this->NoTelpPekerjaan->AdvancedSearch->ToJSON(), ","); // Field NoTelpPekerjaan
 		if ($this->BasicSearch->Keyword <> "") {
 			$sWrk = "\"" . EW_TABLE_BASIC_SEARCH . "\":\"" . ew_JsEncode2($this->BasicSearch->Keyword) . "\",\"" . EW_TABLE_BASIC_SEARCH_TYPE . "\":\"" . ew_JsEncode2($this->BasicSearch->Type) . "\"";
 			$sFilterList = ew_Concat($sFilterList, $sWrk, ",");
@@ -836,6 +839,22 @@ class ct01_nasabah_list extends ct01_nasabah {
 		$this->NoTelpHp->AdvancedSearch->SearchValue2 = @$filter["y_NoTelpHp"];
 		$this->NoTelpHp->AdvancedSearch->SearchOperator2 = @$filter["w_NoTelpHp"];
 		$this->NoTelpHp->AdvancedSearch->Save();
+
+		// Field AlamatPekerjaan
+		$this->AlamatPekerjaan->AdvancedSearch->SearchValue = @$filter["x_AlamatPekerjaan"];
+		$this->AlamatPekerjaan->AdvancedSearch->SearchOperator = @$filter["z_AlamatPekerjaan"];
+		$this->AlamatPekerjaan->AdvancedSearch->SearchCondition = @$filter["v_AlamatPekerjaan"];
+		$this->AlamatPekerjaan->AdvancedSearch->SearchValue2 = @$filter["y_AlamatPekerjaan"];
+		$this->AlamatPekerjaan->AdvancedSearch->SearchOperator2 = @$filter["w_AlamatPekerjaan"];
+		$this->AlamatPekerjaan->AdvancedSearch->Save();
+
+		// Field NoTelpPekerjaan
+		$this->NoTelpPekerjaan->AdvancedSearch->SearchValue = @$filter["x_NoTelpPekerjaan"];
+		$this->NoTelpPekerjaan->AdvancedSearch->SearchOperator = @$filter["z_NoTelpPekerjaan"];
+		$this->NoTelpPekerjaan->AdvancedSearch->SearchCondition = @$filter["v_NoTelpPekerjaan"];
+		$this->NoTelpPekerjaan->AdvancedSearch->SearchValue2 = @$filter["y_NoTelpPekerjaan"];
+		$this->NoTelpPekerjaan->AdvancedSearch->SearchOperator2 = @$filter["w_NoTelpPekerjaan"];
+		$this->NoTelpPekerjaan->AdvancedSearch->Save();
 		$this->BasicSearch->setKeyword(@$filter[EW_TABLE_BASIC_SEARCH]);
 		$this->BasicSearch->setType(@$filter[EW_TABLE_BASIC_SEARCH_TYPE]);
 	}
@@ -847,6 +866,8 @@ class ct01_nasabah_list extends ct01_nasabah {
 		$this->BuildBasicSearchSQL($sWhere, $this->Alamat, $arKeywords, $type);
 		$this->BuildBasicSearchSQL($sWhere, $this->Pekerjaan, $arKeywords, $type);
 		$this->BuildBasicSearchSQL($sWhere, $this->NoTelpHp, $arKeywords, $type);
+		$this->BuildBasicSearchSQL($sWhere, $this->AlamatPekerjaan, $arKeywords, $type);
+		$this->BuildBasicSearchSQL($sWhere, $this->NoTelpPekerjaan, $arKeywords, $type);
 		return $sWhere;
 	}
 
@@ -1019,6 +1040,7 @@ class ct01_nasabah_list extends ct01_nasabah {
 			$this->UpdateSort($this->Alamat, $bCtrl); // Alamat
 			$this->UpdateSort($this->Pekerjaan, $bCtrl); // Pekerjaan
 			$this->UpdateSort($this->NoTelpHp, $bCtrl); // NoTelpHp
+			$this->UpdateSort($this->NoTelpPekerjaan, $bCtrl); // NoTelpPekerjaan
 			$this->setStartRecordNumber(1); // Reset start position
 		}
 	}
@@ -1055,6 +1077,7 @@ class ct01_nasabah_list extends ct01_nasabah {
 				$this->Alamat->setSort("");
 				$this->Pekerjaan->setSort("");
 				$this->NoTelpHp->setSort("");
+				$this->NoTelpPekerjaan->setSort("");
 			}
 
 			// Reset start position
@@ -1616,6 +1639,8 @@ class ct01_nasabah_list extends ct01_nasabah {
 		$this->Alamat->setDbValue($rs->fields('Alamat'));
 		$this->Pekerjaan->setDbValue($rs->fields('Pekerjaan'));
 		$this->NoTelpHp->setDbValue($rs->fields('NoTelpHp'));
+		$this->AlamatPekerjaan->setDbValue($rs->fields('AlamatPekerjaan'));
+		$this->NoTelpPekerjaan->setDbValue($rs->fields('NoTelpPekerjaan'));
 	}
 
 	// Load DbValue from recordset
@@ -1627,6 +1652,8 @@ class ct01_nasabah_list extends ct01_nasabah {
 		$this->Alamat->DbValue = $row['Alamat'];
 		$this->Pekerjaan->DbValue = $row['Pekerjaan'];
 		$this->NoTelpHp->DbValue = $row['NoTelpHp'];
+		$this->AlamatPekerjaan->DbValue = $row['AlamatPekerjaan'];
+		$this->NoTelpPekerjaan->DbValue = $row['NoTelpPekerjaan'];
 	}
 
 	// Load old record
@@ -1673,6 +1700,8 @@ class ct01_nasabah_list extends ct01_nasabah {
 		// Alamat
 		// Pekerjaan
 		// NoTelpHp
+		// AlamatPekerjaan
+		// NoTelpPekerjaan
 
 		if ($this->RowType == EW_ROWTYPE_VIEW) { // View row
 
@@ -1696,6 +1725,10 @@ class ct01_nasabah_list extends ct01_nasabah {
 		$this->NoTelpHp->ViewValue = $this->NoTelpHp->CurrentValue;
 		$this->NoTelpHp->ViewCustomAttributes = "";
 
+		// NoTelpPekerjaan
+		$this->NoTelpPekerjaan->ViewValue = $this->NoTelpPekerjaan->CurrentValue;
+		$this->NoTelpPekerjaan->ViewCustomAttributes = "";
+
 			// Customer
 			$this->Customer->LinkCustomAttributes = "";
 			$this->Customer->HrefValue = "";
@@ -1715,6 +1748,11 @@ class ct01_nasabah_list extends ct01_nasabah {
 			$this->NoTelpHp->LinkCustomAttributes = "";
 			$this->NoTelpHp->HrefValue = "";
 			$this->NoTelpHp->TooltipValue = "";
+
+			// NoTelpPekerjaan
+			$this->NoTelpPekerjaan->LinkCustomAttributes = "";
+			$this->NoTelpPekerjaan->HrefValue = "";
+			$this->NoTelpPekerjaan->TooltipValue = "";
 		}
 
 		// Call Row Rendered event
@@ -2408,6 +2446,15 @@ $t01_nasabah_list->ListOptions->Render("header", "left");
         </div></div></th>
 	<?php } ?>
 <?php } ?>		
+<?php if ($t01_nasabah->NoTelpPekerjaan->Visible) { // NoTelpPekerjaan ?>
+	<?php if ($t01_nasabah->SortUrl($t01_nasabah->NoTelpPekerjaan) == "") { ?>
+		<th data-name="NoTelpPekerjaan"><div id="elh_t01_nasabah_NoTelpPekerjaan" class="t01_nasabah_NoTelpPekerjaan"><div class="ewTableHeaderCaption"><?php echo $t01_nasabah->NoTelpPekerjaan->FldCaption() ?></div></div></th>
+	<?php } else { ?>
+		<th data-name="NoTelpPekerjaan"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t01_nasabah->SortUrl($t01_nasabah->NoTelpPekerjaan) ?>',2);"><div id="elh_t01_nasabah_NoTelpPekerjaan" class="t01_nasabah_NoTelpPekerjaan">
+			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t01_nasabah->NoTelpPekerjaan->FldCaption() ?><?php echo $Language->Phrase("SrchLegend") ?></span><span class="ewTableHeaderSort"><?php if ($t01_nasabah->NoTelpPekerjaan->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t01_nasabah->NoTelpPekerjaan->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
+        </div></div></th>
+	<?php } ?>
+<?php } ?>		
 <?php
 
 // Render list options (header, right)
@@ -2502,6 +2549,14 @@ $t01_nasabah_list->ListOptions->Render("body", "left", $t01_nasabah_list->RowCnt
 <span id="el<?php echo $t01_nasabah_list->RowCnt ?>_t01_nasabah_NoTelpHp" class="t01_nasabah_NoTelpHp">
 <span<?php echo $t01_nasabah->NoTelpHp->ViewAttributes() ?>>
 <?php echo $t01_nasabah->NoTelpHp->ListViewValue() ?></span>
+</span>
+</td>
+	<?php } ?>
+	<?php if ($t01_nasabah->NoTelpPekerjaan->Visible) { // NoTelpPekerjaan ?>
+		<td data-name="NoTelpPekerjaan"<?php echo $t01_nasabah->NoTelpPekerjaan->CellAttributes() ?>>
+<span id="el<?php echo $t01_nasabah_list->RowCnt ?>_t01_nasabah_NoTelpPekerjaan" class="t01_nasabah_NoTelpPekerjaan">
+<span<?php echo $t01_nasabah->NoTelpPekerjaan->ViewAttributes() ?>>
+<?php echo $t01_nasabah->NoTelpPekerjaan->ListViewValue() ?></span>
 </span>
 </td>
 	<?php } ?>

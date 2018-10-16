@@ -388,6 +388,8 @@ class ct01_nasabah_view extends ct01_nasabah {
 		$this->Alamat->SetVisibility();
 		$this->Pekerjaan->SetVisibility();
 		$this->NoTelpHp->SetVisibility();
+		$this->AlamatPekerjaan->SetVisibility();
+		$this->NoTelpPekerjaan->SetVisibility();
 
 		// Global Page Loading event (in userfn*.php)
 		Page_Loading();
@@ -787,6 +789,8 @@ class ct01_nasabah_view extends ct01_nasabah {
 		$this->Alamat->setDbValue($rs->fields('Alamat'));
 		$this->Pekerjaan->setDbValue($rs->fields('Pekerjaan'));
 		$this->NoTelpHp->setDbValue($rs->fields('NoTelpHp'));
+		$this->AlamatPekerjaan->setDbValue($rs->fields('AlamatPekerjaan'));
+		$this->NoTelpPekerjaan->setDbValue($rs->fields('NoTelpPekerjaan'));
 	}
 
 	// Load DbValue from recordset
@@ -798,6 +802,8 @@ class ct01_nasabah_view extends ct01_nasabah {
 		$this->Alamat->DbValue = $row['Alamat'];
 		$this->Pekerjaan->DbValue = $row['Pekerjaan'];
 		$this->NoTelpHp->DbValue = $row['NoTelpHp'];
+		$this->AlamatPekerjaan->DbValue = $row['AlamatPekerjaan'];
+		$this->NoTelpPekerjaan->DbValue = $row['NoTelpPekerjaan'];
 	}
 
 	// Render row values based on field settings
@@ -821,6 +827,8 @@ class ct01_nasabah_view extends ct01_nasabah {
 		// Alamat
 		// Pekerjaan
 		// NoTelpHp
+		// AlamatPekerjaan
+		// NoTelpPekerjaan
 
 		if ($this->RowType == EW_ROWTYPE_VIEW) { // View row
 
@@ -844,6 +852,14 @@ class ct01_nasabah_view extends ct01_nasabah {
 		$this->NoTelpHp->ViewValue = $this->NoTelpHp->CurrentValue;
 		$this->NoTelpHp->ViewCustomAttributes = "";
 
+		// AlamatPekerjaan
+		$this->AlamatPekerjaan->ViewValue = $this->AlamatPekerjaan->CurrentValue;
+		$this->AlamatPekerjaan->ViewCustomAttributes = "";
+
+		// NoTelpPekerjaan
+		$this->NoTelpPekerjaan->ViewValue = $this->NoTelpPekerjaan->CurrentValue;
+		$this->NoTelpPekerjaan->ViewCustomAttributes = "";
+
 			// Customer
 			$this->Customer->LinkCustomAttributes = "";
 			$this->Customer->HrefValue = "";
@@ -863,6 +879,16 @@ class ct01_nasabah_view extends ct01_nasabah {
 			$this->NoTelpHp->LinkCustomAttributes = "";
 			$this->NoTelpHp->HrefValue = "";
 			$this->NoTelpHp->TooltipValue = "";
+
+			// AlamatPekerjaan
+			$this->AlamatPekerjaan->LinkCustomAttributes = "";
+			$this->AlamatPekerjaan->HrefValue = "";
+			$this->AlamatPekerjaan->TooltipValue = "";
+
+			// NoTelpPekerjaan
+			$this->NoTelpPekerjaan->LinkCustomAttributes = "";
+			$this->NoTelpPekerjaan->HrefValue = "";
+			$this->NoTelpPekerjaan->TooltipValue = "";
 		}
 
 		// Call Row Rendered event
@@ -1453,6 +1479,28 @@ $t01_nasabah_view->ShowMessage();
 <span id="el_t01_nasabah_NoTelpHp">
 <span<?php echo $t01_nasabah->NoTelpHp->ViewAttributes() ?>>
 <?php echo $t01_nasabah->NoTelpHp->ViewValue ?></span>
+</span>
+</td>
+	</tr>
+<?php } ?>
+<?php if ($t01_nasabah->AlamatPekerjaan->Visible) { // AlamatPekerjaan ?>
+	<tr id="r_AlamatPekerjaan">
+		<td><span id="elh_t01_nasabah_AlamatPekerjaan"><?php echo $t01_nasabah->AlamatPekerjaan->FldCaption() ?></span></td>
+		<td data-name="AlamatPekerjaan"<?php echo $t01_nasabah->AlamatPekerjaan->CellAttributes() ?>>
+<span id="el_t01_nasabah_AlamatPekerjaan">
+<span<?php echo $t01_nasabah->AlamatPekerjaan->ViewAttributes() ?>>
+<?php echo $t01_nasabah->AlamatPekerjaan->ViewValue ?></span>
+</span>
+</td>
+	</tr>
+<?php } ?>
+<?php if ($t01_nasabah->NoTelpPekerjaan->Visible) { // NoTelpPekerjaan ?>
+	<tr id="r_NoTelpPekerjaan">
+		<td><span id="elh_t01_nasabah_NoTelpPekerjaan"><?php echo $t01_nasabah->NoTelpPekerjaan->FldCaption() ?></span></td>
+		<td data-name="NoTelpPekerjaan"<?php echo $t01_nasabah->NoTelpPekerjaan->CellAttributes() ?>>
+<span id="el_t01_nasabah_NoTelpPekerjaan">
+<span<?php echo $t01_nasabah->NoTelpPekerjaan->ViewAttributes() ?>>
+<?php echo $t01_nasabah->NoTelpPekerjaan->ViewValue ?></span>
 </span>
 </td>
 	</tr>

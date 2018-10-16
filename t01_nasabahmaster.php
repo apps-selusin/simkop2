@@ -4,6 +4,7 @@
 // Alamat
 // Pekerjaan
 // NoTelpHp
+// NoTelpPekerjaan
 
 ?>
 <?php if ($t01_nasabah->Visible) { ?>
@@ -51,6 +52,17 @@
 <span id="el_t01_nasabah_NoTelpHp">
 <span<?php echo $t01_nasabah->NoTelpHp->ViewAttributes() ?>>
 <?php echo $t01_nasabah->NoTelpHp->ListViewValue() ?></span>
+</span>
+</td>
+		</tr>
+<?php } ?>
+<?php if ($t01_nasabah->NoTelpPekerjaan->Visible) { // NoTelpPekerjaan ?>
+		<tr id="r_NoTelpPekerjaan">
+			<td><?php echo $t01_nasabah->NoTelpPekerjaan->FldCaption() ?></td>
+			<td<?php echo $t01_nasabah->NoTelpPekerjaan->CellAttributes() ?>>
+<span id="el_t01_nasabah_NoTelpPekerjaan">
+<span<?php echo $t01_nasabah->NoTelpPekerjaan->ViewAttributes() ?>>
+<?php echo $t01_nasabah->NoTelpPekerjaan->ListViewValue() ?></span>
 </span>
 </td>
 		</tr>

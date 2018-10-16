@@ -668,12 +668,19 @@
       </field>
       <field id="alamat">
         <phrase id="fldcaption" value="Alamat" />
+        <phrase id="flderrmsg" value="Alamat harus terisi !" />
       </field>
       <field id="pekerjaan">
         <phrase id="fldcaption" value="Pekerjaan" />
       </field>
       <field id="notelphp">
         <phrase id="fldcaption" value="No. Telp./HP" />
+      </field>
+      <field id="alamatpekerjaan">
+        <phrase id="fldcaption" value="Alamat Pekerjaan" />
+      </field>
+      <field id="notelppekerjaan">
+        <phrase id="fldcaption" value="No Telp Pekerjaan" />
       </field>
     </table>
     <table id="t02_jaminan">
