@@ -354,6 +354,7 @@ Page_Rendering();
 - setelah input setoran titipan :: harus save dulu agar nilai saldo terupdate;<br/>
 &nbsp;<br/>
 [aplikasi]:<br/>
+- menghilangkan menu setup nasabah;<br/>
 - buat CHECK FOR UPDATE; aplikasi yang harus ada :: github desktop & gitscm;<br/>
 - log at home, List - User Log;<br/>
 &nbsp;<br/>
