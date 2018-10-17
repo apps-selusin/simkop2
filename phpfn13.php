@@ -4990,7 +4990,7 @@ function Database_Connecting(&$info) {
 		$info["user"] = "root"; // sesuaikan dengan username database di komputer localhost
 		$info["pass"] = "admin"; // sesuaikan dengan password database di komputer localhost
 		$info["db"] = "db_simkop2"; // sesuaikan dengan nama database di komputer localhost
-		$info["port"] = "3306";
+		$info["port"] = "3307";
 	} elseif (ew_CurrentHost () == "simkop2.nma-indonesia.com") { // setting koneksi database untuk komputer server
 		$info["host"] = "mysql.hostinger.co.id";  // sesuaikan dengan ip address atau hostname komputer server
 		$info["user"] = "u945388674_simk2"; // sesuaikan dengan username database di komputer server
