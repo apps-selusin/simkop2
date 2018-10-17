@@ -1069,6 +1069,7 @@ class ct05_pinjamanjaminan extends cTable {
 		// Enter your code here
 		// To cancel, set return value to FALSE
 
+		print_r($rsnew);
 		return TRUE;
 	}
 
