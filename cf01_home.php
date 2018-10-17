@@ -342,9 +342,14 @@ Page_Rendering();
 - check jumlah TOTAL PEMBAYARAN harus sama dengan jumlah TOTAL ANGSURAN;<br/>
 &nbsp;<br/>
 [aplikasi]:<br/>
-
 &nbsp;<br/>
 <strong>done:</strong><br/>
+[pinjaman]:<br/>
+- tipe data nomor referensi diubah dari integer menjadi varchar;<br/>
+&nbsp;<br/>
+[pinjaman - nasabah]:<br/>
+- alamat nasabah harus diisi;<br/>
+&nbsp;<br/>
 [pinjaman - titipan]:<br/>
 - setelah input setoran titipan :: harus save dulu agar nilai saldo terupdate;<br/>
 &nbsp;<br/>
