@@ -339,30 +339,32 @@ Page_Rendering();
 [pinjaman - angsuran]:<br/>
 - ada tambahan kolom POTONGAN, mengurangi SISA HUTANG;<br/>
 - setiap ada pembayaran menggunakan SALDO TITIPAN maka akan mengurangi jumlah SALDO TITIPAN;<br/>
-- check jumlah TOTAL PEMBAYARAN harus sama dengan jumlah TOTAL ANGSURAN;<br/>
-&nbsp;<br/>
-[aplikasi]:<br/>
-&nbsp;<br/>
+- check jumlah TOTAL PEMBAYARAN harus sama dengan jumlah TOTAL ANGSURAN;<br/>&nbsp;<br/>
+
+[aplikasi]:<br/>&nbsp;<br/>
+
 <strong>done:</strong><br/>
 [pinjaman]:<br/>
-- tipe data nomor referensi diubah dari integer menjadi varchar;<br/>
-&nbsp;<br/>
-[pinjaman - nasabah]:<br/>
-- alamat nasabah harus diisi;<br/>
-&nbsp;<br/>
-[pinjaman - titipan]:<br/>
-- setelah input setoran titipan :: harus save dulu agar nilai saldo terupdate;<br/>
-&nbsp;<br/>
-[aplikasi]:<br/>
-- menghilangkan menu setup nasabah;<br/>
-- buat CHECK FOR UPDATE; aplikasi yang harus ada :: github desktop & gitscm;<br/>
-- log at home, List - User Log;<br/>
-&nbsp;<br/>
+- tipe data nomor referensi diubah dari integer menjadi varchar;<br/>&nbsp;<br/>
+
 [pinjaman - angsuran]:<br/>
 - rumus [jumlah angsuran];<br/>
 - button refresh detail angsuran;<br/>
 - tambah field untuk transaksi pembayaran;<br/>
-- perbesar kolom tanggal bayar;<br/>
+- perbesar kolom tanggal bayar;<br/>&nbsp;<br/>
+
+[pinjaman - nasabah]:<br/>
+- alamat nasabah harus diisi;<br/>
+- melengkapi tampilan add nasabah di menu pinjaman;<br/>&nbsp;<br/>
+
+[pinjaman - titipan]:<br/>
+- menghilangkan nasabah_id di add jaminan pada proses input pinjaman;<br/>
+- setelah input setoran titipan :: harus save dulu agar nilai saldo terupdate;<br/>&nbsp;<br/>
+
+[aplikasi]:<br/>
+- menghilangkan menu setup nasabah;<br/>
+- buat CHECK FOR UPDATE; aplikasi yang harus ada :: github desktop & gitscm;<br/>
+- log at home, List - User Log;<br/>&nbsp;<br/>
 			</div>
 		</div>
 	</div>
