@@ -311,6 +311,10 @@ Page_Rendering();
 <div class="clearfix"></div>
 </div>
 <?php } ?>
+<?php
+$db =& DbHelper(); 
+?>
+
 <style>
 .panel-heading a{
   display:block;
@@ -335,46 +339,97 @@ Page_Rendering();
 	<div id="log2" class="panel-collapse collapse in">
 		<div class="panel-body">
 			<div>
-				<table>
-					<tr>
-						<td><strong>to do</strong> :</td>
-					</tr>
-<?php
-$q = "
-	select
-		a.index_,
-		a.subj_,
-		b.date_issued,
-		b.desc_
-	from
-		t94_log a
-		left join t95_logdesc b on a.id = b.log_id
-	where
-		b.date_solved is not null
-	order by
-		a.index_
-	";
-$r = Conn()->Execute($q);
-while (!$r->EOF) {
-	$index_ = $r->fields["index_"];
-	?>
-	<tr>
-		<td>[<?php echo $r->fields["subj_"]; ?>] :</td>
-	</tr>
-	<?php
-	while ($index_ == $r->fields["index_"]) {
-		?>
-		<tr>
-			<td>- <?php echo $r->fields["date_issued"]; ?>, <?php echo $r->fields["desc_"]; ?></td>
-		</tr>
-		<?php
-		$r->MoveNext();
-	}
-}
-?>
-					<tr>
-						<td>&nbsp;</td>
-					</tr>
+				<!-- to do -->
+				<p><strong>to do</strong></p>
+				<?php
+				$q = "
+					select
+						a.index_,
+						a.subj_,
+						b.date_issued,
+						b.desc_,
+						b.date_solved
+					from
+						t94_log a
+						left join t95_logdesc b on a.id = b.log_id
+					where
+						b.date_solved is null
+					order by
+						a.index_
+					";
+				//echo $db->ExecuteHtml($q, array("fieldcaption" => TRUE, "tablename" => array("t94_log", "t95_logdesc")));
+				$r = Conn()->Execute($q);
+				?>
+				<table class='table table-striped table-hover table-condensed'>
+					<tbody>
+					<?php
+					while (!$r->EOF) {
+						$index_ = $r->fields["index_"];
+						?>
+						<tr>
+							<td colspan="4">[<?php echo $r->fields["subj_"]; ?>]</td>
+						</tr>
+						<?php
+						while ($index_ == $r->fields["index_"]) {
+							?>
+							<tr>
+								<td width="20">-</td>
+								<td><?php echo $r->fields["desc_"];?></td>
+								<td width="100"><?php echo $r->fields["date_issued"];?></td>
+								<td width="100">&nbsp;</td>
+							</tr>
+							<?php
+							$r->MoveNext();
+						}
+					}
+					?>
+					</tbody>
+				</table>
+				<p>&nbsp;</p>
+
+				<!-- done -->
+				<p><strong>done</strong></p>
+				<?php
+				$q = "
+					select
+						a.index_,
+						a.subj_,
+						b.date_issued,
+						b.desc_,
+						b.date_solved
+					from
+						t94_log a
+						left join t95_logdesc b on a.id = b.log_id
+					where
+						b.date_solved is not null
+					order by
+						a.index_
+					";
+				//echo $db->ExecuteHtml($q, array("fieldcaption" => TRUE, "tablename" => array("t94_log", "t95_logdesc")));
+				$r = Conn()->Execute($q);
+				?>
+				<table class='table table-striped table-hover table-condensed'>
+					<?php
+					while (!$r->EOF) {
+						$index_ = $r->fields["index_"];
+						?>
+						<tr>
+							<td colspan="4">[<?php echo $r->fields["subj_"]; ?>]</td>
+						</tr>
+						<?php
+						while ($index_ == $r->fields["index_"]) {
+							?>
+							<tr>
+								<td width="20">-</td>
+								<td><?php echo $r->fields["desc_"];?></td>
+								<td width="100"><?php echo $r->fields["date_issued"];?></td>
+								<td width="100"><?php echo $r->fields["date_solved"];?></td>
+							</tr>
+							<?php
+							$r->MoveNext();
+						}
+					}
+					?>
 				</table>
 			</div>
 		</div>
