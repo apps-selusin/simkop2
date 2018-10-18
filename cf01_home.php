@@ -332,12 +332,12 @@ Page_Rendering();
 <!-- log #2 -->
 <div class="panel panel-default">
 	<div class="panel-heading"><strong><a class='collapsed' data-toggle="collapse" href="#log2">Log #2</a></strong></div>
-	<div id="log" class="panel-collapse collapse in">
+	<div id="log2" class="panel-collapse collapse in">
 		<div class="panel-body">
 			<div>
 				<table>
 					<tr>
-						<td>done</td>
+						<td><strong>to do</strong> :</td>
 					</tr>
 <?php
 $q = "
@@ -372,6 +372,9 @@ while (!$r->EOF) {
 	}
 }
 ?>
+					<tr>
+						<td>&nbsp;</td>
+					</tr>
 				</table>
 			</div>
 		</div>
