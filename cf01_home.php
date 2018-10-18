@@ -329,10 +329,59 @@ Page_Rendering();
 	$db =& DbHelper(); // Create instance of the database helper class by DbHelper() (for main database) or DbHelper("<dbname>") (for linked databases) where <dbname> is database variable name
 ?>
 
+<!-- log #2 -->
+<div class="panel panel-default">
+	<div class="panel-heading"><strong><a class='collapsed' data-toggle="collapse" href="#log2">Log #2</a></strong></div>
+	<div id="log" class="panel-collapse collapse in">
+		<div class="panel-body">
+			<div>
+				<table>
+					<tr>
+						<td>done</td>
+					</tr>
+<?php
+$q = "
+	select
+		a.index_,
+		a.subj_,
+		b.date_issued,
+		b.desc_
+	from
+		t94_log a
+		left join t95_logdesc b on a.id = b.log_id
+	where
+		b.date_solved is not null
+	order by
+		a.index_
+	";
+$r = Conn()->Execute($q);
+while (!$r->EOF) {
+	$index_ = $r->fields["index_"];
+	?>
+	<tr>
+		<td>[<?php echo $r->fields["subj_"]; ?>] :</td>
+	</tr>
+	<?php
+	while ($index_ == $r->fields["index_"]) {
+		?>
+		<tr>
+			<td>- <?php echo $r->fields["date_issued"]; ?>, <?php echo $r->fields["desc_"]; ?></td>
+		</tr>
+		<?php
+		$r->MoveNext();
+	}
+}
+?>
+				</table>
+			</div>
+		</div>
+	</div>
+</div>
+
 <!-- log -->
 <div class="panel panel-default">
 	<div class="panel-heading"><strong><a class='collapsed' data-toggle="collapse" href="#log">Log</a></strong></div>
-	<div id="log" class="panel-collapse collapse in">
+	<div id="log" class="panel-collapse collapse out">
 		<div class="panel-body">
 			<div>
 <strong>to do:</strong><br/>
