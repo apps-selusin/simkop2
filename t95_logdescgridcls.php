@@ -875,6 +875,8 @@ class ct95_logdesc_grid extends ct95_logdesc {
 			if ($this->getSqlOrderBy() <> "") {
 				$sOrderBy = $this->getSqlOrderBy();
 				$this->setSessionOrderBy($sOrderBy);
+				$this->date_issued->setSort("ASC");
+				$this->date_solved->setSort("ASC");
 			}
 		}
 	}

@@ -195,7 +195,7 @@ class ct94_log extends cTable {
 	var $_SqlOrderBy = "";
 
 	function getSqlOrderBy() { // Order By
-		return ($this->_SqlOrderBy <> "") ? $this->_SqlOrderBy : "";
+		return ($this->_SqlOrderBy <> "") ? $this->_SqlOrderBy : "`index_` ASC";
 	}
 
 	function SqlOrderBy() { // For backward compatibility

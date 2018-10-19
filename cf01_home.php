@@ -333,12 +333,13 @@ $db =& DbHelper();
 	$db =& DbHelper(); // Create instance of the database helper class by DbHelper() (for main database) or DbHelper("<dbname>") (for linked databases) where <dbname> is database variable name
 ?>
 
-<!-- log #2 -->
+<!-- log -->
 <div class="panel panel-default">
-	<div class="panel-heading"><strong><a class='collapsed' data-toggle="collapse" href="#log2">Log #2</a></strong></div>
-	<div id="log2" class="panel-collapse collapse in">
+	<div class="panel-heading"><strong><a class='collapsed' data-toggle="collapse" href="#log">Log</a></strong></div>
+	<div id="log" class="panel-collapse collapse in">
 		<div class="panel-body">
 			<div>
+				<p>&nbsp;</p>
 				<!-- to do -->
 				<p><strong>to do</strong></p>
 				<?php
@@ -355,7 +356,8 @@ $db =& DbHelper();
 					where
 						b.date_solved is null
 					order by
-						a.index_
+						a.index_,
+						b.date_issued
 					";
 				//echo $db->ExecuteHtml($q, array("fieldcaption" => TRUE, "tablename" => array("t94_log", "t95_logdesc")));
 				$r = Conn()->Execute($q);
@@ -381,12 +383,19 @@ $db =& DbHelper();
 							<?php
 							$r->MoveNext();
 						}
+						if (!$r->EOF) {
+							?>
+							<tr>
+								<td colspan="4">&nbsp;</td>
+							</tr>
+							<?php
+						}
 					}
 					?>
 					</tbody>
 				</table>
-				<p>&nbsp;</p>
 
+				<p>&nbsp;</p>
 				<!-- done -->
 				<p><strong>done</strong></p>
 				<?php
@@ -403,7 +412,9 @@ $db =& DbHelper();
 					where
 						b.date_solved is not null
 					order by
-						a.index_
+						a.index_,
+						b.date_issued,
+						b.date_solved
 					";
 				//echo $db->ExecuteHtml($q, array("fieldcaption" => TRUE, "tablename" => array("t94_log", "t95_logdesc")));
 				$r = Conn()->Execute($q);
@@ -428,6 +439,13 @@ $db =& DbHelper();
 							<?php
 							$r->MoveNext();
 						}
+						if (!$r->EOF) {
+							?>
+							<tr>
+								<td colspan="4">&nbsp;</td>
+							</tr>
+							<?php
+						}
 					}
 					?>
 				</table>
@@ -437,45 +455,45 @@ $db =& DbHelper();
 </div>
 
 <!-- log -->
-<div class="panel panel-default">
+<!-- <div class="panel panel-default">
 	<div class="panel-heading"><strong><a class='collapsed' data-toggle="collapse" href="#log">Log</a></strong></div>
 	<div id="log" class="panel-collapse collapse out">
 		<div class="panel-body">
-			<div>
-<strong>to do:</strong><br/>
-[pinjaman - angsuran]:<br/>
-- ada tambahan kolom POTONGAN, mengurangi SISA HUTANG;<br/>
-- setiap ada pembayaran menggunakan SALDO TITIPAN maka akan mengurangi jumlah SALDO TITIPAN;<br/>
-- check jumlah TOTAL PEMBAYARAN harus sama dengan jumlah TOTAL ANGSURAN;<br/>&nbsp;<br/>
+			<div> -->
+<!-- <strong>to do:</strong><br/> -->
+<!-- [pinjaman - angsuran]:<br/> -->
+<!-- - ada tambahan kolom POTONGAN, mengurangi SISA HUTANG;<br/> -->
+<!-- - setiap ada pembayaran menggunakan SALDO TITIPAN maka akan mengurangi jumlah SALDO TITIPAN;<br/> -->
+<!-- - check jumlah TOTAL PEMBAYARAN harus sama dengan jumlah TOTAL ANGSURAN;<br/>&nbsp;<br/> -->
 
-[aplikasi]:<br/>&nbsp;<br/>
+<!-- [aplikasi]:<br/>&nbsp;<br/> -->
 
-<strong>done:</strong><br/>
-[pinjaman]:<br/>
-- tipe data nomor referensi diubah dari integer menjadi varchar;<br/>&nbsp;<br/>
+<!-- <strong>done:</strong><br/> -->
+<!-- [pinjaman]:<br/> -->
+<!-- - tipe data nomor referensi diubah dari integer menjadi varchar;<br/>&nbsp;<br/> -->
 
-[pinjaman - angsuran]:<br/>
-- rumus [jumlah angsuran];<br/>
-- button refresh detail angsuran;<br/>
-- tambah field untuk transaksi pembayaran;<br/>
-- perbesar kolom tanggal bayar;<br/>&nbsp;<br/>
+<!-- [pinjaman - angsuran]:<br/> -->
+<!-- - rumus [jumlah angsuran];<br/> -->
+<!-- - button refresh detail angsuran;<br/> -->
+<!-- - tambah field untuk transaksi pembayaran;<br/> -->
+<!-- - perbesar kolom tanggal bayar;<br/>&nbsp;<br/> -->
 
-[pinjaman - nasabah]:<br/>
-- alamat nasabah harus diisi;<br/>
-- melengkapi tampilan add nasabah di menu pinjaman;<br/>&nbsp;<br/>
+<!-- [pinjaman - nasabah]:<br/> -->
+<!-- - alamat nasabah harus diisi;<br/> -->
+<!-- - melengkapi tampilan add nasabah di menu pinjaman;<br/>&nbsp;<br/> -->
 
-[pinjaman - titipan]:<br/>
-- menghilangkan nasabah_id di add jaminan pada proses input pinjaman;<br/>
-- setelah input setoran titipan :: harus save dulu agar nilai saldo terupdate;<br/>&nbsp;<br/>
+<!-- [pinjaman - titipan]:<br/> -->
+<!-- - menghilangkan nasabah_id di add jaminan pada proses input pinjaman;<br/> -->
+<!-- - setelah input setoran titipan :: harus save dulu agar nilai saldo terupdate;<br/>&nbsp;<br/> -->
 
-[aplikasi]:<br/>
-- menghilangkan menu setup nasabah;<br/>
-- buat CHECK FOR UPDATE; aplikasi yang harus ada :: github desktop & gitscm;<br/>
-- log at home, List - User Log;<br/>&nbsp;<br/>
-			</div>
+<!-- [aplikasi]:<br/> -->
+<!-- - menghilangkan menu setup nasabah;<br/> -->
+<!-- - buat CHECK FOR UPDATE; aplikasi yang harus ada :: github desktop & gitscm;<br/> -->
+<!-- - log at home, List - User Log;<br/>&nbsp;<br/> -->
+<!--			</div>
 		</div>
 	</div>
-</div>
+</div> -->
 
 <!--
 <div>
