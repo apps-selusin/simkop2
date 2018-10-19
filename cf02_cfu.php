@@ -312,9 +312,7 @@ Page_Rendering();
 </div>
 <?php } ?>
 <?php
-// cfu = check for update
-
-exec("git pull");
+$db =& DbHelper(); 
 ?>
 
 <style>
@@ -331,33 +329,159 @@ exec("git pull");
 }
 </style>
 
-		<!-- <div class="panel panel-default">
-			<div class="panel-body">
-				<table class='table table-striped table-bordered table-hover table-condensed'>
-					<tr>
-						<td>Proses selesai !</td>
-					</tr>
-					<tr>
-						<td>&nbsp;</td>
-					</tr>
-					<tr>
-						<td><a href='.'><button>Selesai</button></a></td>
-					</tr>
-				</table>
-			</div>
-		</div> -->
-
-<!--Proses Selesai !<br/>-->
-
 <?php
-
-CurrentPage()->SetSuccessMessage("Proses selesai !");
-CurrentPage()->ShowMessage();
-
+	$db =& DbHelper(); // Create instance of the database helper class by DbHelper() (for main database) or DbHelper("<dbname>") (for linked databases) where <dbname> is database variable name
 ?>
 
-<!-- &nbsp;<br/> -->
-<a href='.'><button>Back to Home</button></a>
+<!-- log #2 -->
+<div class="panel panel-default">
+	<div class="panel-heading"><strong><a class='collapsed' data-toggle="collapse" href="#log2">Log #2</a></strong></div>
+	<div id="log2" class="panel-collapse collapse in">
+		<div class="panel-body">
+			<div>
+				<!-- to do -->
+				<p><strong>to do</strong></p>
+				<?php
+				$q = "
+					select
+						a.index_,
+						a.subj_,
+						b.date_issued,
+						b.desc_,
+						b.date_solved
+					from
+						t94_log a
+						left join t95_logdesc b on a.id = b.log_id
+					where
+						b.date_solved is null
+					order by
+						a.index_
+					";
+				//echo $db->ExecuteHtml($q, array("fieldcaption" => TRUE, "tablename" => array("t94_log", "t95_logdesc")));
+				$r = Conn()->Execute($q);
+				?>
+				<table class='table table-striped table-hover table-condensed'>
+					<tbody>
+					<?php
+					while (!$r->EOF) {
+						$index_ = $r->fields["index_"];
+						?>
+						<tr>
+							<td colspan="4">[<?php echo $r->fields["subj_"]; ?>]</td>
+						</tr>
+						<?php
+						while ($index_ == $r->fields["index_"]) {
+							?>
+							<tr>
+								<td>-</td>
+								<td><?php echo $r->fields["desc_"];?></td>
+								<td><?php echo $r->fields["date_issued"];?></td>
+								<td>&nbsp;</td>
+							</tr>
+							<?php
+							$r->MoveNext();
+						}
+					}
+					?>
+					</tbody>
+				</table>
+				<p>&nbsp;</p>
+
+				<!-- done -->
+				<p><strong>done</strong></p>
+				<?php
+				$q = "
+					select
+						a.index_,
+						a.subj_,
+						b.date_issued,
+						b.desc_,
+						b.date_solved
+					from
+						t94_log a
+						left join t95_logdesc b on a.id = b.log_id
+					where
+						b.date_solved is not null
+					order by
+						a.index_
+					";
+				//echo $db->ExecuteHtml($q, array("fieldcaption" => TRUE, "tablename" => array("t94_log", "t95_logdesc")));
+				$r = Conn()->Execute($q);
+				?>
+				<table class='table table-striped table-hover table-condensed'>
+					<?php
+					while (!$r->EOF) {
+						$index_ = $r->fields["index_"];
+						?>
+						<tr>
+							<td colspan="4">[<?php echo $r->fields["subj_"]; ?>]</td>
+						</tr>
+						<?php
+						while ($index_ == $r->fields["index_"]) {
+							?>
+							<tr>
+								<td>-</td>
+								<td><?php echo $r->fields["desc_"];?></td>
+								<td><?php echo $r->fields["date_issued"];?></td>
+								<td><?php echo $r->fields["date_solved"];?></td>
+							</tr>
+							<?php
+							$r->MoveNext();
+						}
+					}
+					?>
+				</table>
+			</div>
+		</div>
+	</div>
+</div>
+
+<!-- log -->
+<div class="panel panel-default">
+	<div class="panel-heading"><strong><a class='collapsed' data-toggle="collapse" href="#log">Log</a></strong></div>
+	<div id="log" class="panel-collapse collapse out">
+		<div class="panel-body">
+			<div>
+<strong>to do:</strong><br/>
+[pinjaman - angsuran]:<br/>
+- ada tambahan kolom POTONGAN, mengurangi SISA HUTANG;<br/>
+- setiap ada pembayaran menggunakan SALDO TITIPAN maka akan mengurangi jumlah SALDO TITIPAN;<br/>
+- check jumlah TOTAL PEMBAYARAN harus sama dengan jumlah TOTAL ANGSURAN;<br/>&nbsp;<br/>
+
+[aplikasi]:<br/>&nbsp;<br/>
+
+<strong>done:</strong><br/>
+[pinjaman]:<br/>
+- tipe data nomor referensi diubah dari integer menjadi varchar;<br/>&nbsp;<br/>
+
+[pinjaman - angsuran]:<br/>
+- rumus [jumlah angsuran];<br/>
+- button refresh detail angsuran;<br/>
+- tambah field untuk transaksi pembayaran;<br/>
+- perbesar kolom tanggal bayar;<br/>&nbsp;<br/>
+
+[pinjaman - nasabah]:<br/>
+- alamat nasabah harus diisi;<br/>
+- melengkapi tampilan add nasabah di menu pinjaman;<br/>&nbsp;<br/>
+
+[pinjaman - titipan]:<br/>
+- menghilangkan nasabah_id di add jaminan pada proses input pinjaman;<br/>
+- setelah input setoran titipan :: harus save dulu agar nilai saldo terupdate;<br/>&nbsp;<br/>
+
+[aplikasi]:<br/>
+- menghilangkan menu setup nasabah;<br/>
+- buat CHECK FOR UPDATE; aplikasi yang harus ada :: github desktop & gitscm;<br/>
+- log at home, List - User Log;<br/>&nbsp;<br/>
+			</div>
+		</div>
+	</div>
+</div>
+
+<!--
+<div>
+&copy;2018 Selaras Solusindo. All rights reserved.
+</div>
+-->
 <?php if (EW_DEBUG_ENABLED) echo ew_DebugMsg(); ?>
 <?php include_once "footer.php" ?>
 <?php

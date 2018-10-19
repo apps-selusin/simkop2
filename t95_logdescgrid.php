@@ -47,15 +47,15 @@ ft95_logdescgrid.Validate = function() {
 			elm = this.GetElements("x" + infix + "_log_id");
 			if (elm && !ew_CheckInteger(elm.value))
 				return this.OnError(elm, "<?php echo ew_JsEncode2($t95_logdesc->log_id->FldErrMsg()) ?>");
+			elm = this.GetElements("x" + infix + "_desc_");
+			if (elm && !ew_IsHidden(elm) && !ew_HasValue(elm))
+				return this.OnError(elm, "<?php echo ew_JsEncode2(str_replace("%s", $t95_logdesc->desc_->FldCaption(), $t95_logdesc->desc_->ReqErrMsg)) ?>");
 			elm = this.GetElements("x" + infix + "_date_issued");
 			if (elm && !ew_IsHidden(elm) && !ew_HasValue(elm))
 				return this.OnError(elm, "<?php echo ew_JsEncode2(str_replace("%s", $t95_logdesc->date_issued->FldCaption(), $t95_logdesc->date_issued->ReqErrMsg)) ?>");
 			elm = this.GetElements("x" + infix + "_date_issued");
 			if (elm && !ew_CheckDateDef(elm.value))
 				return this.OnError(elm, "<?php echo ew_JsEncode2($t95_logdesc->date_issued->FldErrMsg()) ?>");
-			elm = this.GetElements("x" + infix + "_desc_");
-			if (elm && !ew_IsHidden(elm) && !ew_HasValue(elm))
-				return this.OnError(elm, "<?php echo ew_JsEncode2(str_replace("%s", $t95_logdesc->desc_->FldCaption(), $t95_logdesc->desc_->ReqErrMsg)) ?>");
 			elm = this.GetElements("x" + infix + "_date_solved");
 			if (elm && !ew_CheckDateDef(elm.value))
 				return this.OnError(elm, "<?php echo ew_JsEncode2($t95_logdesc->date_solved->FldErrMsg()) ?>");
@@ -72,8 +72,8 @@ ft95_logdescgrid.Validate = function() {
 ft95_logdescgrid.EmptyRow = function(infix) {
 	var fobj = this.Form;
 	if (ew_ValueChanged(fobj, infix, "log_id", false)) return false;
-	if (ew_ValueChanged(fobj, infix, "date_issued", false)) return false;
 	if (ew_ValueChanged(fobj, infix, "desc_", false)) return false;
+	if (ew_ValueChanged(fobj, infix, "date_issued", false)) return false;
 	if (ew_ValueChanged(fobj, infix, "date_solved", false)) return false;
 	return true;
 }
@@ -186,21 +186,21 @@ $t95_logdesc_grid->ListOptions->Render("header", "left");
         </div></div></th>
 	<?php } ?>
 <?php } ?>		
-<?php if ($t95_logdesc->date_issued->Visible) { // date_issued ?>
-	<?php if ($t95_logdesc->SortUrl($t95_logdesc->date_issued) == "") { ?>
-		<th data-name="date_issued"><div id="elh_t95_logdesc_date_issued" class="t95_logdesc_date_issued"><div class="ewTableHeaderCaption"><?php echo $t95_logdesc->date_issued->FldCaption() ?></div></div></th>
-	<?php } else { ?>
-		<th data-name="date_issued"><div><div id="elh_t95_logdesc_date_issued" class="t95_logdesc_date_issued">
-			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t95_logdesc->date_issued->FldCaption() ?></span><span class="ewTableHeaderSort"><?php if ($t95_logdesc->date_issued->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t95_logdesc->date_issued->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
-        </div></div></th>
-	<?php } ?>
-<?php } ?>		
 <?php if ($t95_logdesc->desc_->Visible) { // desc_ ?>
 	<?php if ($t95_logdesc->SortUrl($t95_logdesc->desc_) == "") { ?>
 		<th data-name="desc_"><div id="elh_t95_logdesc_desc_" class="t95_logdesc_desc_"><div class="ewTableHeaderCaption"><?php echo $t95_logdesc->desc_->FldCaption() ?></div></div></th>
 	<?php } else { ?>
 		<th data-name="desc_"><div><div id="elh_t95_logdesc_desc_" class="t95_logdesc_desc_">
 			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t95_logdesc->desc_->FldCaption() ?></span><span class="ewTableHeaderSort"><?php if ($t95_logdesc->desc_->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t95_logdesc->desc_->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
+        </div></div></th>
+	<?php } ?>
+<?php } ?>		
+<?php if ($t95_logdesc->date_issued->Visible) { // date_issued ?>
+	<?php if ($t95_logdesc->SortUrl($t95_logdesc->date_issued) == "") { ?>
+		<th data-name="date_issued"><div id="elh_t95_logdesc_date_issued" class="t95_logdesc_date_issued"><div class="ewTableHeaderCaption"><?php echo $t95_logdesc->date_issued->FldCaption() ?></div></div></th>
+	<?php } else { ?>
+		<th data-name="date_issued"><div><div id="elh_t95_logdesc_date_issued" class="t95_logdesc_date_issued">
+			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t95_logdesc->date_issued->FldCaption() ?></span><span class="ewTableHeaderSort"><?php if ($t95_logdesc->date_issued->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t95_logdesc->date_issued->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
         </div></div></th>
 	<?php } ?>
 <?php } ?>		
@@ -397,6 +397,34 @@ ft95_logdescgrid.CreateAutoSuggest({"id":"x<?php echo $t95_logdesc_grid->RowInde
 <?php if ($t95_logdesc->RowType == EW_ROWTYPE_EDIT || $t95_logdesc->CurrentMode == "edit") { ?>
 <input type="hidden" data-table="t95_logdesc" data-field="x_id" name="x<?php echo $t95_logdesc_grid->RowIndex ?>_id" id="x<?php echo $t95_logdesc_grid->RowIndex ?>_id" value="<?php echo ew_HtmlEncode($t95_logdesc->id->CurrentValue) ?>">
 <?php } ?>
+	<?php if ($t95_logdesc->desc_->Visible) { // desc_ ?>
+		<td data-name="desc_"<?php echo $t95_logdesc->desc_->CellAttributes() ?>>
+<?php if ($t95_logdesc->RowType == EW_ROWTYPE_ADD) { // Add record ?>
+<span id="el<?php echo $t95_logdesc_grid->RowCnt ?>_t95_logdesc_desc_" class="form-group t95_logdesc_desc_">
+<textarea data-table="t95_logdesc" data-field="x_desc_" name="x<?php echo $t95_logdesc_grid->RowIndex ?>_desc_" id="x<?php echo $t95_logdesc_grid->RowIndex ?>_desc_" cols="35" rows="4" placeholder="<?php echo ew_HtmlEncode($t95_logdesc->desc_->getPlaceHolder()) ?>"<?php echo $t95_logdesc->desc_->EditAttributes() ?>><?php echo $t95_logdesc->desc_->EditValue ?></textarea>
+</span>
+<input type="hidden" data-table="t95_logdesc" data-field="x_desc_" name="o<?php echo $t95_logdesc_grid->RowIndex ?>_desc_" id="o<?php echo $t95_logdesc_grid->RowIndex ?>_desc_" value="<?php echo ew_HtmlEncode($t95_logdesc->desc_->OldValue) ?>">
+<?php } ?>
+<?php if ($t95_logdesc->RowType == EW_ROWTYPE_EDIT) { // Edit record ?>
+<span id="el<?php echo $t95_logdesc_grid->RowCnt ?>_t95_logdesc_desc_" class="form-group t95_logdesc_desc_">
+<textarea data-table="t95_logdesc" data-field="x_desc_" name="x<?php echo $t95_logdesc_grid->RowIndex ?>_desc_" id="x<?php echo $t95_logdesc_grid->RowIndex ?>_desc_" cols="35" rows="4" placeholder="<?php echo ew_HtmlEncode($t95_logdesc->desc_->getPlaceHolder()) ?>"<?php echo $t95_logdesc->desc_->EditAttributes() ?>><?php echo $t95_logdesc->desc_->EditValue ?></textarea>
+</span>
+<?php } ?>
+<?php if ($t95_logdesc->RowType == EW_ROWTYPE_VIEW) { // View record ?>
+<span id="el<?php echo $t95_logdesc_grid->RowCnt ?>_t95_logdesc_desc_" class="t95_logdesc_desc_">
+<span<?php echo $t95_logdesc->desc_->ViewAttributes() ?>>
+<?php echo $t95_logdesc->desc_->ListViewValue() ?></span>
+</span>
+<?php if ($t95_logdesc->CurrentAction <> "F") { ?>
+<input type="hidden" data-table="t95_logdesc" data-field="x_desc_" name="x<?php echo $t95_logdesc_grid->RowIndex ?>_desc_" id="x<?php echo $t95_logdesc_grid->RowIndex ?>_desc_" value="<?php echo ew_HtmlEncode($t95_logdesc->desc_->FormValue) ?>">
+<input type="hidden" data-table="t95_logdesc" data-field="x_desc_" name="o<?php echo $t95_logdesc_grid->RowIndex ?>_desc_" id="o<?php echo $t95_logdesc_grid->RowIndex ?>_desc_" value="<?php echo ew_HtmlEncode($t95_logdesc->desc_->OldValue) ?>">
+<?php } else { ?>
+<input type="hidden" data-table="t95_logdesc" data-field="x_desc_" name="ft95_logdescgrid$x<?php echo $t95_logdesc_grid->RowIndex ?>_desc_" id="ft95_logdescgrid$x<?php echo $t95_logdesc_grid->RowIndex ?>_desc_" value="<?php echo ew_HtmlEncode($t95_logdesc->desc_->FormValue) ?>">
+<input type="hidden" data-table="t95_logdesc" data-field="x_desc_" name="ft95_logdescgrid$o<?php echo $t95_logdesc_grid->RowIndex ?>_desc_" id="ft95_logdescgrid$o<?php echo $t95_logdesc_grid->RowIndex ?>_desc_" value="<?php echo ew_HtmlEncode($t95_logdesc->desc_->OldValue) ?>">
+<?php } ?>
+<?php } ?>
+</td>
+	<?php } ?>
 	<?php if ($t95_logdesc->date_issued->Visible) { // date_issued ?>
 		<td data-name="date_issued"<?php echo $t95_logdesc->date_issued->CellAttributes() ?>>
 <?php if ($t95_logdesc->RowType == EW_ROWTYPE_ADD) { // Add record ?>
@@ -431,34 +459,6 @@ ew_CreateCalendar("ft95_logdescgrid", "x<?php echo $t95_logdesc_grid->RowIndex ?
 <?php } else { ?>
 <input type="hidden" data-table="t95_logdesc" data-field="x_date_issued" name="ft95_logdescgrid$x<?php echo $t95_logdesc_grid->RowIndex ?>_date_issued" id="ft95_logdescgrid$x<?php echo $t95_logdesc_grid->RowIndex ?>_date_issued" value="<?php echo ew_HtmlEncode($t95_logdesc->date_issued->FormValue) ?>">
 <input type="hidden" data-table="t95_logdesc" data-field="x_date_issued" name="ft95_logdescgrid$o<?php echo $t95_logdesc_grid->RowIndex ?>_date_issued" id="ft95_logdescgrid$o<?php echo $t95_logdesc_grid->RowIndex ?>_date_issued" value="<?php echo ew_HtmlEncode($t95_logdesc->date_issued->OldValue) ?>">
-<?php } ?>
-<?php } ?>
-</td>
-	<?php } ?>
-	<?php if ($t95_logdesc->desc_->Visible) { // desc_ ?>
-		<td data-name="desc_"<?php echo $t95_logdesc->desc_->CellAttributes() ?>>
-<?php if ($t95_logdesc->RowType == EW_ROWTYPE_ADD) { // Add record ?>
-<span id="el<?php echo $t95_logdesc_grid->RowCnt ?>_t95_logdesc_desc_" class="form-group t95_logdesc_desc_">
-<textarea data-table="t95_logdesc" data-field="x_desc_" name="x<?php echo $t95_logdesc_grid->RowIndex ?>_desc_" id="x<?php echo $t95_logdesc_grid->RowIndex ?>_desc_" cols="35" rows="4" placeholder="<?php echo ew_HtmlEncode($t95_logdesc->desc_->getPlaceHolder()) ?>"<?php echo $t95_logdesc->desc_->EditAttributes() ?>><?php echo $t95_logdesc->desc_->EditValue ?></textarea>
-</span>
-<input type="hidden" data-table="t95_logdesc" data-field="x_desc_" name="o<?php echo $t95_logdesc_grid->RowIndex ?>_desc_" id="o<?php echo $t95_logdesc_grid->RowIndex ?>_desc_" value="<?php echo ew_HtmlEncode($t95_logdesc->desc_->OldValue) ?>">
-<?php } ?>
-<?php if ($t95_logdesc->RowType == EW_ROWTYPE_EDIT) { // Edit record ?>
-<span id="el<?php echo $t95_logdesc_grid->RowCnt ?>_t95_logdesc_desc_" class="form-group t95_logdesc_desc_">
-<textarea data-table="t95_logdesc" data-field="x_desc_" name="x<?php echo $t95_logdesc_grid->RowIndex ?>_desc_" id="x<?php echo $t95_logdesc_grid->RowIndex ?>_desc_" cols="35" rows="4" placeholder="<?php echo ew_HtmlEncode($t95_logdesc->desc_->getPlaceHolder()) ?>"<?php echo $t95_logdesc->desc_->EditAttributes() ?>><?php echo $t95_logdesc->desc_->EditValue ?></textarea>
-</span>
-<?php } ?>
-<?php if ($t95_logdesc->RowType == EW_ROWTYPE_VIEW) { // View record ?>
-<span id="el<?php echo $t95_logdesc_grid->RowCnt ?>_t95_logdesc_desc_" class="t95_logdesc_desc_">
-<span<?php echo $t95_logdesc->desc_->ViewAttributes() ?>>
-<?php echo $t95_logdesc->desc_->ListViewValue() ?></span>
-</span>
-<?php if ($t95_logdesc->CurrentAction <> "F") { ?>
-<input type="hidden" data-table="t95_logdesc" data-field="x_desc_" name="x<?php echo $t95_logdesc_grid->RowIndex ?>_desc_" id="x<?php echo $t95_logdesc_grid->RowIndex ?>_desc_" value="<?php echo ew_HtmlEncode($t95_logdesc->desc_->FormValue) ?>">
-<input type="hidden" data-table="t95_logdesc" data-field="x_desc_" name="o<?php echo $t95_logdesc_grid->RowIndex ?>_desc_" id="o<?php echo $t95_logdesc_grid->RowIndex ?>_desc_" value="<?php echo ew_HtmlEncode($t95_logdesc->desc_->OldValue) ?>">
-<?php } else { ?>
-<input type="hidden" data-table="t95_logdesc" data-field="x_desc_" name="ft95_logdescgrid$x<?php echo $t95_logdesc_grid->RowIndex ?>_desc_" id="ft95_logdescgrid$x<?php echo $t95_logdesc_grid->RowIndex ?>_desc_" value="<?php echo ew_HtmlEncode($t95_logdesc->desc_->FormValue) ?>">
-<input type="hidden" data-table="t95_logdesc" data-field="x_desc_" name="ft95_logdescgrid$o<?php echo $t95_logdesc_grid->RowIndex ?>_desc_" id="ft95_logdescgrid$o<?php echo $t95_logdesc_grid->RowIndex ?>_desc_" value="<?php echo ew_HtmlEncode($t95_logdesc->desc_->OldValue) ?>">
 <?php } ?>
 <?php } ?>
 </td>
@@ -579,6 +579,22 @@ ft95_logdescgrid.CreateAutoSuggest({"id":"x<?php echo $t95_logdesc_grid->RowInde
 <input type="hidden" data-table="t95_logdesc" data-field="x_log_id" name="o<?php echo $t95_logdesc_grid->RowIndex ?>_log_id" id="o<?php echo $t95_logdesc_grid->RowIndex ?>_log_id" value="<?php echo ew_HtmlEncode($t95_logdesc->log_id->OldValue) ?>">
 </td>
 	<?php } ?>
+	<?php if ($t95_logdesc->desc_->Visible) { // desc_ ?>
+		<td data-name="desc_">
+<?php if ($t95_logdesc->CurrentAction <> "F") { ?>
+<span id="el$rowindex$_t95_logdesc_desc_" class="form-group t95_logdesc_desc_">
+<textarea data-table="t95_logdesc" data-field="x_desc_" name="x<?php echo $t95_logdesc_grid->RowIndex ?>_desc_" id="x<?php echo $t95_logdesc_grid->RowIndex ?>_desc_" cols="35" rows="4" placeholder="<?php echo ew_HtmlEncode($t95_logdesc->desc_->getPlaceHolder()) ?>"<?php echo $t95_logdesc->desc_->EditAttributes() ?>><?php echo $t95_logdesc->desc_->EditValue ?></textarea>
+</span>
+<?php } else { ?>
+<span id="el$rowindex$_t95_logdesc_desc_" class="form-group t95_logdesc_desc_">
+<span<?php echo $t95_logdesc->desc_->ViewAttributes() ?>>
+<p class="form-control-static"><?php echo $t95_logdesc->desc_->ViewValue ?></p></span>
+</span>
+<input type="hidden" data-table="t95_logdesc" data-field="x_desc_" name="x<?php echo $t95_logdesc_grid->RowIndex ?>_desc_" id="x<?php echo $t95_logdesc_grid->RowIndex ?>_desc_" value="<?php echo ew_HtmlEncode($t95_logdesc->desc_->FormValue) ?>">
+<?php } ?>
+<input type="hidden" data-table="t95_logdesc" data-field="x_desc_" name="o<?php echo $t95_logdesc_grid->RowIndex ?>_desc_" id="o<?php echo $t95_logdesc_grid->RowIndex ?>_desc_" value="<?php echo ew_HtmlEncode($t95_logdesc->desc_->OldValue) ?>">
+</td>
+	<?php } ?>
 	<?php if ($t95_logdesc->date_issued->Visible) { // date_issued ?>
 		<td data-name="date_issued">
 <?php if ($t95_logdesc->CurrentAction <> "F") { ?>
@@ -598,22 +614,6 @@ ew_CreateCalendar("ft95_logdescgrid", "x<?php echo $t95_logdesc_grid->RowIndex ?
 <input type="hidden" data-table="t95_logdesc" data-field="x_date_issued" name="x<?php echo $t95_logdesc_grid->RowIndex ?>_date_issued" id="x<?php echo $t95_logdesc_grid->RowIndex ?>_date_issued" value="<?php echo ew_HtmlEncode($t95_logdesc->date_issued->FormValue) ?>">
 <?php } ?>
 <input type="hidden" data-table="t95_logdesc" data-field="x_date_issued" name="o<?php echo $t95_logdesc_grid->RowIndex ?>_date_issued" id="o<?php echo $t95_logdesc_grid->RowIndex ?>_date_issued" value="<?php echo ew_HtmlEncode($t95_logdesc->date_issued->OldValue) ?>">
-</td>
-	<?php } ?>
-	<?php if ($t95_logdesc->desc_->Visible) { // desc_ ?>
-		<td data-name="desc_">
-<?php if ($t95_logdesc->CurrentAction <> "F") { ?>
-<span id="el$rowindex$_t95_logdesc_desc_" class="form-group t95_logdesc_desc_">
-<textarea data-table="t95_logdesc" data-field="x_desc_" name="x<?php echo $t95_logdesc_grid->RowIndex ?>_desc_" id="x<?php echo $t95_logdesc_grid->RowIndex ?>_desc_" cols="35" rows="4" placeholder="<?php echo ew_HtmlEncode($t95_logdesc->desc_->getPlaceHolder()) ?>"<?php echo $t95_logdesc->desc_->EditAttributes() ?>><?php echo $t95_logdesc->desc_->EditValue ?></textarea>
-</span>
-<?php } else { ?>
-<span id="el$rowindex$_t95_logdesc_desc_" class="form-group t95_logdesc_desc_">
-<span<?php echo $t95_logdesc->desc_->ViewAttributes() ?>>
-<p class="form-control-static"><?php echo $t95_logdesc->desc_->ViewValue ?></p></span>
-</span>
-<input type="hidden" data-table="t95_logdesc" data-field="x_desc_" name="x<?php echo $t95_logdesc_grid->RowIndex ?>_desc_" id="x<?php echo $t95_logdesc_grid->RowIndex ?>_desc_" value="<?php echo ew_HtmlEncode($t95_logdesc->desc_->FormValue) ?>">
-<?php } ?>
-<input type="hidden" data-table="t95_logdesc" data-field="x_desc_" name="o<?php echo $t95_logdesc_grid->RowIndex ?>_desc_" id="o<?php echo $t95_logdesc_grid->RowIndex ?>_desc_" value="<?php echo ew_HtmlEncode($t95_logdesc->desc_->OldValue) ?>">
 </td>
 	<?php } ?>
 	<?php if ($t95_logdesc->date_solved->Visible) { // date_solved ?>
