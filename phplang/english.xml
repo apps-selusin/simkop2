@@ -595,6 +595,9 @@
     <menu id="12">
       <phrase id="menutext" value="Setup" />
     </menu>
+    <menu id="1">
+      <phrase id="menutext" value="Nasabah" />
+    </menu>
     <menu id="7">
       <phrase id="menutext" value="User" />
     </menu>
@@ -606,9 +609,6 @@
     </menu>
     <menu id="10015">
       <phrase id="menutext" value="Description" />
-    </menu>
-    <menu id="1">
-      <phrase id="menutext" value="Nasabah" />
     </menu>
     <menu id="2">
       <phrase id="menutext" value="Jaminan" />
